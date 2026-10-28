@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">한글 타자 촉지법 3차시: 자리연습 심화 & 요양보호 낱말 연습</span>
+    <span data-lang="my">ကိုရီးယား လက်ရိုက် (၃) ကြိမ်မြောက်: နေရာလေ့ကျင့်မှု အဆင့်မြင့် & စောင့်ရှောက်ရေး စကားလုံးများ</span>
+    <span data-lang="vi">Luyện Gõ Hangul Bài 3: Nâng Cao Gõ Vị Trí & Luyện Từ Vựng Điều Dưỡng</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">3차시 강의 목차</span>
+        <span data-lang="my">၃ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 3</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#shift" id="nav-shift">
+        <span>⚠️</span>
+        <span data-lang="ko">2. Shift 반대손 복습</span>
+        <span data-lang="my">၂။ Shift ဆန့်ကျင်ဘက်လက် ပြန်နွှေးခြင်း</span>
+        <span data-lang="vi">2. Ôn Tập Shift Ngược Bên</span>
+      </a>
+      <a href="#words" id="nav-words">
+        <span>📝</span>
+        <span data-lang="ko">3. 낱말연습 실전 돌입</span>
+        <span data-lang="my">၃။ စကားလုံးလေ့ကျင့်မှု စတင်ခြင်း</span>
+        <span data-lang="vi">3. Bắt Đầu Luyện Từ Vựng</span>
+      </a>
+      <a href="#carewords" id="nav-carewords">
+        <span>🏥</span>
+        <span data-lang="ko">4. 요양보호 실무 단어 타건</span>
+        <span data-lang="my">၄။ စောင့်ရှောက်ရေး လက်တွေ့ဝါကျများ</span>
+        <span data-lang="vi">4. Luyện Từ Vựng Điều Dưỡng</span>
+      </a>
+      <a href="#accuracy" id="nav-accuracy">
+        <span>🎯</span>
+        <span data-lang="ko">5. 속도보다 정확도 유지</span>
+        <span data-lang="my">၅။ မြန်နှုန်းထက် တိကျမှုကို ဦးစားပေးခြင်း</span>
+        <span data-lang="vi">5. Đề Cao Độ Chính Xác Hơn Tốc Độ</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 3차시 점검 체크리스트</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (3/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 자리연습 심화 & 요양보호 낱말 연습</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: နေရာလေ့ကျင့်မှု အဆင့်မြင့် & စောင့်ရှောက်ရေး စကားလုံးများ</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Nâng Cao Gõ Vị Trí & Luyện Từ Vựng Điều Dưỡng</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">2차시까지 글쇠 하나하나의 자리를 익혔다면, 3차시부터는 글자들이 모여 단어가 되는 <strong>'낱말연습'</strong>에 돌입합니다. 특히 요양보호 현장에서 매일 일지에 기록하게 될 필수 실무 단어들을 직접 타건하며 머리와 손에 각인시킵니다.</span>
+        <span data-lang="my">၂ ကြိမ်မြောက်အထိ ခလုတ်တစ်ခုချင်းစီ၏ နေရာများကို လေ့ကျင့်ခဲ့ပြီး၊ ၃ ကြိမ်မြောက်မှစ၍ စာလုံးများပေါင်းစပ်ထားသော <strong>'စကားလုံးလေ့ကျင့်မှု'</strong> ကို စတင်ပါမည်။ အထူးသဖြင့် စောင့်ရှောက်ရေးလုပ်ငန်းခွင်တွင် နေ့စဉ်မှတ်တမ်းတင်ရမည့် မရှိမဖြစ် ဝေါဟာရများကို ကိုယ်တိုင်ရိုက်နှိပ်၍ လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">Sau khi đã quen với vị trí từng phím ở bài 2, từ bài 3 chúng ta sẽ bước vào <strong>'Luyện từ vựng'</strong>. Đặc biệt, bạn sẽ trực tiếp gõ các từ vựng thực tế bắt buộc phải dùng hàng ngày trong nhật ký chăm sóc để ghi khắc vào đầu và tay.</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="shift">
+      <div class="badge">STEP 1: SHIFT REVIEW</div>
+      <h2>
+        <span data-lang="ko">2. 실수하기 쉬운 Shift(된소리/이중모음) 반대손 복습</span>
+        <span data-lang="my">၂။ အမှားများသော Shift (အသံပြင်း/သရတွဲ) ဆန့်ကျင်ဘက်လက် ပြန်နွှေးခြင်း</span>
+        <span data-lang="vi">2. Ôn Tập Shift Ngược Bên (Âm Đôi/Nguyên Âm Kép) Dễ Lỗi</span>
+      </h2>
+      <p>
+        <span data-lang="ko">낱말 연습에 들어가면 가장 많이 오타가 나는 부분이 바로 <strong>ㄲ, ㄸ, ㅃ, ㅆ, ㅉ</strong> 같은 된소리와 <strong>ㅒ, ㅖ</strong> 같은 이중모음입니다. Shift 키는 반드시 <strong>글자를 치는 손의 '반대쪽' 새끼손가락</strong>으로 누르는 철칙을 다시 확인합니다.</span>
+        <span data-lang="my">စကားလုံးများ စတင်ရိုက်နှိပ်ရာတွင် အမှားအများဆုံးဖြစ်လေ့ရှိသည်မှာ <strong>ㄲ, ㄸ, ㅃ, ㅆ, ㅉ</strong> ကဲ့သို့သော အသံပြင်းများနှင့် <strong>ㅒ, ㅖ</strong> ကဲ့သို့သော သရတွဲများ ဖြစ်ပါသည်။ Shift ခလုတ်ကို <strong>စာရိုက်မည့်လက်၏ ဆန့်ကျင်ဘက် လက်သန်း</strong> ဖြင့် မဖြစ်မနေ နှိပ်ရမည့် စည်းမျဉ်းကို ပြန်လည်စစ်ဆေးပါမည်။</span>
+        <span data-lang="vi">Khi bắt đầu luyện từ, phần dễ gõ sai nhất là các âm đôi như <strong>ㄲ, ㄸ, ㅃ, ㅆ, ㅉ</strong> và nguyên âm kép như <strong>ㅒ, ㅖ</strong>. Hãy ôn lại nguyên tắc thép: Bắt buộc dùng <strong>ngón út của tay ngược lại</strong> để giữ phím Shift.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🖐️ 오른쪽 Shift (Right Shift) 누를 때</div>
+          <p>
+            <span data-lang="ko"><strong>왼손</strong>으로 글자(ㅃ, ㅉ, ㄸ, ㄲ, ㅆ)를 칠 때!<br>➔ <strong>오른손 새끼손가락</strong>으로 Shift를 꾹 누르고 칩니다.</span>
+            <span data-lang="my"><strong>ဘယ်လက်</strong> ဖြင့် စာလုံး (ㅃ, ㅉ, ㄸ, ㄲ, ㅆ) ရိုက်သည့်အခါ!<br>➔ <strong>ညာလက်သန်း</strong> ဖြင့် Shift ကို ဖိထားပြီး ရိုက်ပါ။</span>
+            <span data-lang="vi">Khi gõ chữ bằng <strong>tay trái</strong> (ㅃ, ㅉ, ㄸ, ㄲ, ㅆ)!<br>➔ Dùng <strong>ngón út tay phải</strong> nhấn giữ Shift rồi gõ.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🖐️ 왼쪽 Shift (Left Shift) 누를 때</div>
+          <p>
+            <span data-lang="ko"><strong>오른손</strong>으로 글자(ㅛ, ㅕ, ㅑ, ㅒ, ㅖ)를 칠 때!<br>➔ <strong>왼손 새끼손가락</strong>으로 Shift를 꾹 누르고 칩니다.</span>
+            <span data-lang="my"><strong>ညာလက်</strong> ဖြင့် စာလုံး (ㅛ, ㅕ, ㅑ, ㅒ, ㅖ) ရိုက်သည့်အခါ!<br>➔ <strong>ဘယ်လက်သန်း</strong> ဖြင့် Shift ကို ဖိထားပြီး ရိုက်ပါ။</span>
+            <span data-lang="vi">Khi gõ chữ bằng <strong>tay phải</strong> (ㅛ, ㅕ, ㅑ, ㅒ, ㅖ)!<br>➔ Dùng <strong>ngón út tay trái</strong> nhấn giữ Shift rồi gõ.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="words">
+      <div class="badge">STEP 2: WORD DRILLS</div>
+      <h2>
+        <span data-lang="ko">3. 한컴타자 '낱말연습' 실전 돌입</span>
+        <span data-lang="my">၃။ Hancom Typing 'စကားလုံးလေ့ကျင့်မှု' စတင်ခြင်း</span>
+        <span data-lang="vi">3. Bắt Đầu 'Luyện Từ Vựng' Trên Hancom Typing</span>
+      </h2>
+      <p>
+        <span data-lang="ko">한컴타자의 메뉴 중 <strong>[낱말연습]</strong>을 클릭합니다. 낱말연습도 자리연습처럼 8단계로 나뉘어 있습니다. 처음에는 1단계(기본자리 낱말)부터 시작하여 천천히 8단계까지 넘어갑니다.</span>
+        <span data-lang="my">Hancom Typing မီနူးထဲမှ <strong>[Word Practice (낱말연습)]</strong> ကို Click နှိပ်ပါ။ နေရာလေ့ကျင့်မှုကဲ့သို့ပင် အဆင့် ၈ ဆင့် ခွဲခြားထားပါသည်။ အစတွင် အဆင့် ၁ (အခြေခံစကားလုံးများ) မှစတင်၍ အဆင့် ၈ အထိ ဖြည်းဖြည်းချင်း လေ့ကျင့်ပါ။</span>
+        <span data-lang="vi">Nhấp vào menu <strong>[Luyện từ vựng (낱말연습)]</strong> trên Hancom Typing. Luyện từ cũng chia làm 8 bước. Hãy bắt đầu từ bước 1 (từ vựng ở hàng cơ bản) và từ từ tiến lên bước 8.</span>
+      </p>
+
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>🌟 낱말연습의 핵심 팁:</strong><br>
+          • 낱말이 화면 위에서 떨어지거나 나타날 때, 글자를 한 번에 다 치려고 급하게 서두르지 마세요.<br>
+          • '사과'라는 단어가 나오면 머릿속에서 'ㅅ ➔ ㅏ ➔ ㄱ ➔ ㅗ ➔ ㅏ'로 자음과 모음을 풀어서 천천히 칩니다.
+        </span>
+        <span data-lang="my">
+          <strong>🌟 စကားလုံးလေ့ကျင့်မှု အဓိက အကြံပြုချက်:</strong><br>
+          • စကားလုံးများ စခရင်ပေါ်မှ ကျလာချိန် သို့မဟုတ် ပေါ်လာချိန်တွင် တစ်ခါတည်း အမြန်ရိုက်ရန် မလောပါနှင့်။<br>
+          • '사과 (ပန်းသီး)' ဟုပေါ်လာပါက စိတ်ထဲတွင် 'ㅅ ➔ ㅏ ➔ ㄱ ➔ ㅗ ➔ ㅏ' ဟု ဗျည်းသရ ခွဲခြား၍ ဖြည်းဖြည်းချင်း ရိုက်ပါ။
+        </span>
+        <span data-lang="vi">
+          <strong>🌟 Mẹo cốt lõi khi luyện từ:</strong><br>
+          • Khi từ vựng xuất hiện hoặc rơi xuống trên màn hình, đừng vội vàng gõ hết cả từ trong một lần.<br>
+          • Ví dụ từ '사과', hãy tách ra trong đầu thành 'ㅅ ➔ ㅏ ➔ ㄱ ➔ ㅗ ➔ ㅏ' và gõ thật chậm rãi.
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="carewords">
+      <div class="badge">STEP 3: PRACTICAL WORDS</div>
+      <h2>
+        <span data-lang="ko">4. 요양보호 실무 빈출 단어 집중 타건</span>
+        <span data-lang="my">၄။ စောင့်ရှောက်ရေး လက်တွေ့တွင် အသုံးများသော ဝေါဟာရများ အထူးလေ့ကျင့်ခြင်း</span>
+        <span data-lang="vi">4. Tập Trung Gõ Từ Vựng Điều Dưỡng Thường Gặp</span>
+      </h2>
+      <p>
+        <span data-lang="ko">프로그램 연습을 넘어, 실제 요양보호 일지에 가장 많이 등장하는 단어들을 뽑았습니다. 메모장에 아래 단어들을 띄워놓고 5번씩 천천히 오타 없이 쳐봅니다.</span>
+        <span data-lang="my">ပရိုဂရမ်လေ့ကျင့်မှုအပြင်၊ လက်တွေ့စောင့်ရှောက်ရေးမှတ်တမ်းတွင် အများဆုံးပါဝင်လေ့ရှိသော စကားလုံးများကို ရွေးချယ်ထားပါသည်။ Notepad တွင် အောက်ပါစကားလုံးများကို ဖွင့်ထားပြီး ၅ ကြိမ်စီ အမှားမရှိ ဖြည်းဖြည်းချင်း ရိုက်ကြည့်ပါ။</span>
+        <span data-lang="vi">Vượt ra ngoài phần mềm, chúng tôi đã chọn ra những từ vựng xuất hiện nhiều nhất trong nhật ký điều dưỡng thực tế. Hãy mở Notepad và gõ chậm rãi mỗi từ 5 lần không mắc lỗi.</span>
+      </p>
+
+      <table style="margin-top:10px;">
+        <thead>
+          <tr>
+            <th style="width:50%"><span data-lang="ko">대상 어휘 (한국어)</span><span data-lang="my">လေ့ကျင့်ရမည့် ဝေါဟာရ (ကိုရီးယား)</span><span data-lang="vi">Từ vựng (Tiếng Hàn)</span></th>
+            <th style="width:50%"><span data-lang="ko">의미 (번역)</span><span data-lang="my">အဓိပ္ပာယ်</span><span data-lang="vi">Ý nghĩa (Dịch)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>어르신</strong> (eo-reu-sin)</td><td><span data-lang="ko">노인에 대한 높임말</span><span data-lang="my">သက်ကြီးရွယ်အို (ယဉ်ကျေးသောအသုံး)</span><span data-lang="vi">Người cao tuổi (Kính ngữ)</span></td></tr>
+          <tr><td><strong>식사</strong> (sik-sa)</td><td><span data-lang="ko">밥을 먹음</span><span data-lang="my">အစားအစာ / ထမင်းစားခြင်း</span><span data-lang="vi">Bữa ăn</span></td></tr>
+          <tr><td><strong>기저귀</strong> (gi-jeo-gwi)</td><td><span data-lang="ko">대소변을 받는 천/종이</span><span data-lang="my">သေးခံ / ဒိုင်ဘာ</span><span data-lang="vi">Tã / Bỉm</span></td></tr>
+          <tr><td><strong>휠체어</strong> (hwil-che-eo)</td><td><span data-lang="ko">바퀴 달린 의자</span><span data-lang="my">ဝှီးချဲ / ဘီးတပ်ကုလားထိုင်</span><span data-lang="vi">Xe lăn</span></td></tr>
+          <tr><td><strong>턱받침대</strong> (teok-bat-chim-dae)</td><td><span data-lang="ko">음식을 흘리지 않게 받치는 것</span><span data-lang="my">မေးအောက်ခံပြား / သွားရည်ခံ</span><span data-lang="vi">Yếm ăn dặm / Khay đỡ cằm</span></td></tr>
+          <tr><td><strong>약복용</strong> (yak-bok-yong)</td><td><span data-lang="ko">약을 먹음</span><span data-lang="my">ဆေးသောက်ခြင်း</span><span data-lang="vi">Uống thuốc</span></td></tr>
+          <tr><td><strong>체온계</strong> (che-on-gye)</td><td><span data-lang="ko">몸의 온도를 재는 기구</span><span data-lang="my">ကိုယ်အပူချိန်တိုင်းကိရိယာ / သာမိုမီတာ</span><span data-lang="vi">Nhiệt kế</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="lesson-card" id="accuracy">
+      <div class="badge">STEP 4: ACCURACY RULE</div>
+      <h2>
+        <span data-lang="ko">5. 속도 0타라도 좋다, 오타율 5% 이하 유지</span>
+        <span data-lang="my">၅။ မြန်နှုန်း ၀ ဖြစ်ပါစေ၊ အမှား ၅% အောက်သာ ရှိရမည်</span>
+        <span data-lang="vi">5. Tốc Độ 0 Cũng Được, Giữ Tỷ Lệ Lỗi Dưới 5%</span>
+      </h2>
+      <p>
+        <span data-lang="ko">낱말연습을 하다 보면 화면 위에서 단어가 내려오는 속도 때문에 마음이 조급해집니다. 치다가 틀리면 백스페이스(지우기)를 누르느라 리듬이 완전히 무너집니다.</span>
+        <span data-lang="my">စကားလုံးလေ့ကျင့်ရာတွင် စခရင်အပေါ်မှ ကျလာသော အမြန်နှုန်းကြောင့် စိတ်လောသွားတတ်ပါသည်။ မှားရိုက်မိ၍ Backspace ဖြင့် ပြန်ဖျက်နေရပါက စည်းချက် လုံးဝပျက်စီးသွားပါမည်။</span>
+        <span data-lang="vi">Khi luyện từ vựng, chữ rơi xuống nhanh dễ khiến bạn vội vàng. Nếu gõ sai và phải nhấn Backspace để xóa, nhịp gõ của bạn sẽ bị phá vỡ hoàn toàn.</span>
+      </p>
+
+      <div class="warn-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>🎯 강사의 특별 주문:</strong><br>
+          "빨리 쳐서 오타가 나는 것보다, 차라리 <strong>타수(속도)가 안 나와서 프로그램 게임에서 지는 것</strong>이 백 배 낫습니다. 천천히 쳐서라도 <strong>목표 타수 100타 및 Shift 오타율 5% 이하</strong>를 반드시 유지하세요."
+        </span>
+        <span data-lang="my">
+          <strong>🎯 ဆရာ၏ အထူးမှာကြားချက်:</strong><br>
+          "အမြန်ရိုက်ပြီး အမှားများနေခြင်းထက်၊ <strong>အမြန်နှုန်း မရ၍ ပရိုဂရမ်ဂိမ်းတွင် ရှုံးသွားခြင်းက</strong> အဆတစ်ရာ ပိုကောင်းပါသည်။ ဖြည်းဖြည်းရိုက်ရပါစေ <strong>ရည်မှန်းချက် အမြန်နှုန်း ၁၀၀ နှုန်းနှင့် Shift အမှား ၅% အောက်</strong> ကို မဖြစ်မနေ ထိန်းသိမ်းပါ။"
+        </span>
+        <span data-lang="vi">
+          <strong>🎯 Yêu cầu đặc biệt của Giảng viên:</strong><br>
+          "Gõ nhanh mà sai còn tệ hơn là <strong>gõ chậm đến mức thua trò chơi trong phần mềm</strong>. Hãy gõ chậm nhưng bắt buộc phải duy trì <strong>tốc độ mục tiêu 100 CPM và tỷ lệ lỗi Shift dưới 5%</strong>."
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 3차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၃) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 3 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 한컴타자에서 '낱말연습' 메뉴를 스스로 찾아 클릭할 수 있다.</span>
+                <span data-lang="my">၁။ Hancom Typing တွင် 'Word Practice (낱말연습)' မီနူးကို ကိုယ်တိုင်ရှာ၍ နှိပ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Tự tìm và nhấp vào menu 'Luyện từ vựng (낱말연습)' trong Hancom Typing.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. ㅃ, ㅉ, ㄸ, ㄲ, ㅆ를 칠 때 반드시 '오른손 새끼손가락'으로 Shift를 눌렀다.</span>
+                <span data-lang="my">၂။ ㅃ, ㅉ, ㄸ, ㄲ, ㅆ ရိုက်ရာတွင် မဖြစ်မနေ 'ညာလက်သန်း' ဖြင့် Shift ကို နှိပ်ခဲ့ခြင်း။</span>
+                <span data-lang="vi">2. Bắt buộc dùng 'ngón út phải' giữ Shift khi gõ ㅃ, ㅉ, ㄸ, ㄲ, ㅆ.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. ㅛ, ㅕ, ㅑ, ㅒ, ㅖ를 칠 때 반드시 '왼손 새끼손가락'으로 Shift를 눌렀다.</span>
+                <span data-lang="my">၃။ ㅛ, ㅕ, ㅑ, ㅒ, ㅖ ရိုက်ရာတွင် မဖြစ်မနေ 'ဘယ်လက်သန်း' ဖြင့် Shift ကို နှိပ်ခဲ့ခြင်း။</span>
+                <span data-lang="vi">3. Bắt buộc dùng 'ngón út trái' giữ Shift khi gõ ㅛ, ㅕ, ㅑ, ㅒ, ㅖ.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 요양보호 실무 단어 7개를 메모장에 오타 없이 5번씩 칠 수 있다.</span>
+                <span data-lang="my">၄။ စောင့်ရှောက်ရေး လက်တွေ့ဝါကျ ၇ ခုကို Notepad တွင် အမှားမရှိ ၅ ကြိမ်စီ ရိုက်နိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Gõ được 7 từ vựng điều dưỡng vào Notepad mỗi từ 5 lần không mắc lỗi.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">아래아 한글 실무 3차시: 표 내부 이동 & 텍스트 수정</span>
+    <span data-lang="my">Hangul လက်တွေ့ (၃) ကြိမ်မြောက်: ဇယားတွင်း သွားလာခြင်း & စာသားပြင်ဆင်ခြင်း</span>
+    <span data-lang="vi">Thực Hành Hangul Bài 3: Di Chuyển Trong Bảng & Sửa Văn Bản</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">3차시 강의 목차</span>
+        <span data-lang="my">၃ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 3</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#table" id="nav-table">
+        <span>📊</span>
+        <span data-lang="ko">2. 표(Table) 구조 이해</span>
+        <span data-lang="my">၂။ ဇယား ဖွဲ့စည်းပုံ</span>
+        <span data-lang="vi">2. Cấu Trúc Bảng</span>
+      </a>
+      <a href="#move" id="nav-move">
+        <span>🏃</span>
+        <span data-lang="ko">3. 표 안에서 커서 이동</span>
+        <span data-lang="my">၃။ ဇယားတွင်း သွားလာခြင်း</span>
+        <span data-lang="vi">3. Di Chuyển Trong Bảng</span>
+      </a>
+      <a href="#delete" id="nav-delete">
+        <span>🧹</span>
+        <span data-lang="ko">4. 지우기: 백스페이스 vs 딜리트</span>
+        <span data-lang="my">၄။ ဖျက်နည်း ၂ မျိုး</span>
+        <span data-lang="vi">4. Xóa: Backspace vs Delete</span>
+      </a>
+      <a href="#undo" id="nav-undo">
+        <span>↩️</span>
+        <span data-lang="ko">5. 실수 복구 (Ctrl+Z)</span>
+        <span data-lang="my">၅။ နောက်ပြန်ဆုတ်ခြင်း (Ctrl+Z)</span>
+        <span data-lang="vi">5. Hoàn Tác (Ctrl+Z)</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 3차시 점검 체크리스트</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (3/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 일지 표 내부 이동 및 텍스트 안전 수정</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: မှတ်တမ်းဇယားတွင်း သွားလာခြင်းနှင့် စာသားများ ဘေးကင်းစွာ ပြင်ဆင်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Di Chuyển Trong Bảng Nhật Ký & Sửa Chữ An Toàn</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">요양보호사 현장 실무에서 백지에 글을 쓰는 일은 거의 없습니다. 99%는 네모 반듯하게 그려진 <strong>'표(Table)'</strong> 양식 안의 빈칸을 채워 넣는 작업입니다. 3차시에서는 표 안을 자유롭게 돌아다니고, 표 선을 망가뜨리지 않게 글자를 안전하게 지우고 수정하는 방법을 완벽히 익힙니다.</span>
+        <span data-lang="my">စောင့်ရှောက်ရေး လက်တွေ့လုပ်ငန်းခွင်တွင် စာရွက်အလွတ်ပေါ်၌ စာရေးရခြင်းမျိုး ခဲယဉ်းပါသည်။ ၉၉% သည် လေးထောင့်ကျကျ ဆွဲထားသော <strong>'ဇယား (Table)'</strong> ဖောင်အတွင်းရှိ ကွက်လပ်များကို ဖြည့်စွက်ရခြင်း ဖြစ်ပါသည်။ ၃ ကြိမ်မြောက်တွင် ဇယားအတွင်း လွတ်လပ်စွာ သွားလာခြင်းနှင့် ဇယားမျဉ်းများ မပျက်စီးစေဘဲ စာသားများကို ဘေးကင်းစွာ ဖျက်ခြင်း/ပြင်ဆင်ခြင်းများကို ကျွမ်းကျင်အောင် လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">Trong thực tế điều dưỡng, bạn hiếm khi phải viết trên tờ giấy trắng tinh. 99% công việc là điền vào các ô trống trong một <strong>'Bảng biểu (Table)'</strong> vuông vắn. Bài 3 sẽ giúp bạn thành thạo cách di chuyển tự do trong bảng và cách xóa/sửa chữ an toàn mà không làm hỏng đường viền bảng.</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="table">
+      <div class="badge">STEP 1: TABLE CONCEPT</div>
+      <h2>
+        <span data-lang="ko">2. 표(Table)와 셀(Cell)의 구조 이해</span>
+        <span data-lang="my">၂။ ဇယား (Table) နှင့် အကွက် (Cell) ဖွဲ့စည်းပုံ</span>
+        <span data-lang="vi">2. Hiểu Cấu Trúc Bảng (Table) & Ô (Cell)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">한글의 '표'는 작은 네모 상자들이 모여 있는 아파트와 같습니다. 이 작은 네모 상자 하나하나를 <strong>'셀(Cell)'</strong>이라고 부릅니다.</span>
+        <span data-lang="my">Hangul ၏ 'ဇယား' သည် လေးထောင့်သေတ္တာငယ်များ စုဝေးနေသော တိုက်ခန်းနှင့် တူပါသည်။ ထိုလေးထောင့်သေတ္တာငယ် တစ်ခုစီကို <strong>'အကွက် (Cell)'</strong> ဟု ခေါ်ပါသည်။</span>
+        <span data-lang="vi">'Bảng' trong Hangul giống như một tòa chung cư tập hợp nhiều hộp vuông nhỏ. Mỗi hộp vuông nhỏ đó được gọi là <strong>'Ô (Cell)'</strong>.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🏢 셀 (Cell) = 방 한 칸</div>
+          <p>
+            <span data-lang="ko">표를 이루는 가장 작은 단위의 네모 칸입니다. 우리는 이 방 안에 들어가서 글씨를 씁니다.</span>
+            <span data-lang="my">ဇယားကို ဖွဲ့စည်းထားသော အသေးငယ်ဆုံး လေးထောင့်ကွက် ဖြစ်ပါသည်။ ဤအခန်းတွင်းသို့ ဝင်၍ စာရေးရပါမည်။</span>
+            <span data-lang="vi">Là đơn vị ô vuông nhỏ nhất cấu tạo nên bảng. Chúng ta sẽ vào căn phòng này để gõ chữ.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🏠 표 테두리 선 = 방의 벽</div>
+          <p>
+            <span data-lang="ko">셀을 구분하는 검은색 선들입니다. 실수로 이 벽을 지워버리면 양식이 엉망이 되므로 조심해야 합니다.</span>
+            <span data-lang="my">အကွက်များကို ခွဲခြားထားသော အမည်းရောင်မျဉ်းများ ဖြစ်ပါသည်။ အမှားအယွင်းဖြင့် ဤနံရံကို ဖျက်မိပါက ဖောင်တစ်ခုလုံး ပျက်စီးသွားမည်ဖြစ်၍ သတိထားရပါမည်။</span>
+            <span data-lang="vi">Là các đường viền đen ngăn cách các ô. Nếu vô tình xóa bức tường này, biểu mẫu sẽ bị hỏng nên phải thật cẩn thận.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="move">
+      <div class="badge">STEP 2: NAVIGATION</div>
+      <h2>
+        <span data-lang="ko">3. 표 안에서 커서 자유자재로 이동하기</span>
+        <span data-lang="my">၃။ ဇယားအတွင်း Cursor ကို လွတ်လပ်စွာ ရွှေ့ပြောင်းခြင်း</span>
+        <span data-lang="vi">3. Di Chuyển Con Trỏ Tự Do Trong Bảng</span>
+      </h2>
+      <p>
+        <span data-lang="ko">글씨를 쓰려면 먼저 내가 원하는 방(셀) 안에 <strong>'깜빡이는 커서( | )'</strong>를 넣어야 합니다. 마우스를 써도 되지만, 키보드 단축키를 쓰면 실무 속도가 3배 빨라집니다.</span>
+        <span data-lang="my">စာရေးရန်အတွက် ဦးစွာ မိမိလိုချင်သော အခန်း (အကွက်) အတွင်းသို့ <strong>'မှိတ်တုတ်မှိတ်တုတ် Cursor ( | )'</strong> ကို ထည့်ရပါမည်။ Mouse ကို သုံးနိုင်သော်လည်း၊ ကီးဘုတ် Shortcut သုံးပါက အလုပ်လုပ်နှုန်း ၃ ဆ ပိုမြန်လာပါမည်။</span>
+        <span data-lang="vi">Để gõ chữ, trước tiên phải đưa <strong>'con trỏ nhấp nháy ( | )'</strong> vào đúng căn phòng (ô) bạn muốn. Dùng chuột cũng được, nhưng dùng phím tắt trên bàn phím sẽ giúp tốc độ làm việc tăng gấp 3 lần.</span>
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:25%"><span data-lang="ko">이동 방법</span><span data-lang="my">ရွှေ့ပြောင်းနည်း</span><span data-lang="vi">Cách di chuyển</span></th>
+              <th style="width:75%"><span data-lang="ko">마우스/키보드 조작법 및 설명</span><span data-lang="my">Mouse/ကီးဘုတ် အသုံးပြုနည်းနှင့် ရှင်းလင်းချက်</span><span data-lang="vi">Cách thao tác và Giải thích</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><span data-lang="ko">마우스 클릭</span><span data-lang="my">Mouse ဖြင့် နှိပ်ခြင်း</span><span data-lang="vi">Nhấp chuột</span></strong></td>
+              <td>
+                <span data-lang="ko">원하는 네모 칸(셀) 안의 하얀 공간을 마우스 왼쪽 버튼으로 <strong>1번 콕 클릭</strong>합니다.</span>
+                <span data-lang="my">လိုချင်သော လေးထောင့်ကွက် (အကွက်) တွင်းရှိ အဖြူရောင်နေရာကို Mouse ဘယ်ဘက်ခလုတ်ဖြင့် <strong>တစ်ချက် နှိပ်ပါ</strong>။</span>
+                <span data-lang="vi">Dùng chuột trái <strong>nhấp 1 lần</strong> vào vùng trắng bên trong ô vuông (Cell) mong muốn.</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong><span data-lang="ko">방향키 이동<br>(← ↑ → ↓)</span><span data-lang="my">မြားခလုတ်များ<br>(← ↑ → ↓)</span><span data-lang="vi">Phím mũi tên<br>(← ↑ → ↓)</span></strong></td>
+              <td>
+                <span data-lang="ko">키보드 우측 아래의 <strong>방향 화살표</strong>를 누르면 커서가 상하좌우 옆 칸으로 쏙쏙 넘어갑니다.</span>
+                <span data-lang="my">ကီးဘုတ် ညာဘက်အောက်ရှိ <strong>မြားခလုတ်များ</strong>ကို နှိပ်ပါက Cursor သည် အထက်အောက်၊ ဘယ်ညာ ကွက်လပ်များသို့ အလွယ်တကူ ကူးသွားပါမည်။</span>
+                <span data-lang="vi">Bấm các <strong>phím mũi tên</strong> ở góc dưới bên phải bàn phím, con trỏ sẽ nhảy sang các ô bên cạnh (Lên/Xuống/Trái/Phải).</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong><span data-lang="ko">다음 칸 넘어가기</span><span data-lang="my">နောက်ကွက်သို့ ကူးခြင်း</span><span data-lang="vi">Nhảy sang ô tiếp</span></strong></td>
+              <td>
+                <span data-lang="ko">키보드 왼쪽 끝의 <strong>[Tab (탭)]</strong> 키를 누르면 무조건 <strong>오른쪽 다음 칸</strong>으로 커서가 즉시 뜁니다. 가장 많이 씁니다!</span>
+                <span data-lang="my">ကီးဘုတ် ဘယ်ဘက်အစွန်ဆုံးရှိ <strong>[Tab]</strong> ခလုတ်ကို နှိပ်ပါက Cursor သည် <strong>ညာဘက်ရှိ နောက်ကွက်</strong>သို့ ချက်ချင်း ခုန်ကူးသွားပါမည်။ အများဆုံးအသုံးပြုရသည်!</span>
+                <span data-lang="vi">Bấm phím <strong>[Tab]</strong> ở ngoài cùng bên trái bàn phím, con trỏ sẽ nhảy ngay sang <strong>ô tiếp theo bên phải</strong>. Đây là phím dùng nhiều nhất!</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong><span data-lang="ko">이전 칸 돌아가기</span><span data-lang="my">အရင်ကွက်သို့ ပြန်သွားခြင်း</span><span data-lang="vi">Quay lại ô trước</span></strong></td>
+              <td>
+                <span data-lang="ko"><strong>[Shift]</strong> 키를 누른 상태에서 <strong>[Tab]</strong> 키를 누르면 지나쳤던 <strong>왼쪽 이전 칸</strong>으로 다시 돌아옵니다.</span>
+                <span data-lang="my"><strong>[Shift]</strong> ကို ဖိထားလျက် <strong>[Tab]</strong> ကို နှိပ်ပါက ကျော်သွားခဲ့သော <strong>ဘယ်ဘက်ရှိ အရင်ကွက်</strong>သို့ ပြန်ရောက်လာပါမည်။</span>
+                <span data-lang="vi">Nhấn giữ <strong>[Shift]</strong> rồi bấm <strong>[Tab]</strong>, con trỏ sẽ quay ngược lại <strong>ô phía trước bên trái</strong> vừa đi qua.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="delete">
+      <div class="badge">STEP 3: DELETE KEYS</div>
+      <h2>
+        <span data-lang="ko">4. 지우기 2총사: 백스페이스(Backspace) vs 딜리트(Delete)</span>
+        <span data-lang="my">၄။ ဖျက်နည်း ၂ မျိုး: Backspace နှင့် Delete</span>
+        <span data-lang="vi">4. Hai Phím Xóa: Backspace vs Delete</span>
+      </h2>
+      <p>
+        <span data-lang="ko">글자를 잘못 쳤을 때 지우는 버튼은 두 개가 있습니다. 둘 다 지우는 것은 똑같지만, <strong>어느 방향(앞/뒤)</strong>을 지우느냐가 완전히 다릅니다. 이 차이를 모르면 애써 그려진 표의 테두리(벽)를 다 지워버리는 대참사가 일어납니다.</span>
+        <span data-lang="my">စာမှားရိုက်မိပါက ဖျက်ရန်ခလုတ် နှစ်ခုရှိပါသည်။ နှစ်ခုလုံးသည် ဖျက်ခြင်းတူညီသော်လည်း <strong>မည်သည့်ဘက် (ရှေ့/နောက်)</strong> ကို ဖျက်မည်မှာ လုံးဝကွာခြားပါသည်။ ဤကွာခြားချက်ကို မသိပါက ဆွဲထားသော ဇယားမျဉ်း (နံရံ) များကိုပါ အကုန်ဖျက်မိသည့် အမှားကြီးများ ဖြစ်ပေါ်နိုင်ပါသည်။</span>
+        <span data-lang="vi">Khi gõ sai chữ, có hai phím để xóa. Cả hai đều là xóa, nhưng <strong>hướng xóa (trước/sau)</strong> hoàn toàn khác nhau. Nếu không biết điểm khác biệt này, bạn sẽ gây ra thảm họa xóa nhầm cả đường viền (bức tường) của bảng.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">⬅️ 백스페이스 (Backspace)</div>
+          <p>
+            <span data-lang="ko">커서( | )의 <strong>앞(왼쪽)</strong>에 있는 글자를 지웁니다. 방금 친 글씨를 바로 취소하고 싶을 때 쓰는 가장 일반적인 지우개입니다.</span>
+            <span data-lang="my">Cursor ( | ) ၏ <strong>ရှေ့ (ဘယ်ဘက်)</strong> တွင်ရှိသော စာလုံးကို ဖျက်ပါသည်။ ယခုလေးတင် ရိုက်လိုက်သောစာကို ချက်ချင်းပြန်ဖျက်လိုလျှင် အများဆုံးသုံးသော ခဲဖျက်ဖြစ်ပါသည်။</span>
+            <span data-lang="vi">Xóa chữ nằm ở <strong>phía trước (bên trái)</strong> con trỏ ( | ). Đây là cục tẩy thông dụng nhất khi muốn xóa ngay chữ vừa gõ.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">➡️ 딜리트 (Delete 또는 Del)</div>
+          <p>
+            <span data-lang="ko">커서( | )의 <strong>뒤(오른쪽)</strong>에 있는 글자를 지웁니다. 중간에 끼어들어서 내 뒤에 있는 쓸데없는 글씨를 먹어 치울 때 씁니다.</span>
+            <span data-lang="my">Cursor ( | ) ၏ <strong>နောက် (ညာဘက်)</strong> တွင်ရှိသော စာလုံးကို ဖျက်ပါသည်။ ကြားတွင်ဝင်ရောက်၍ မိမိနောက်ရှိ မလိုအပ်သောစာများကို ဖျက်ပစ်လိုလျှင် သုံးသည်။</span>
+            <span data-lang="vi">Xóa chữ nằm ở <strong>phía sau (bên phải)</strong> con trỏ ( | ). Dùng khi chèn vào giữa và muốn 'ăn' chữ thừa ở phía sau mình.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="warn-box" style="margin-top:10px; border-left-color:var(--warn); background:var(--warn-soft);">
+        <span data-lang="ko">
+          <strong>⚠️ 표 안에서 지울 때 절대 주의사항!</strong><br>
+          표 안에서 글씨를 지우다가 무심코 백스페이스(Backspace)나 딜리트(Delete)를 더 누르게 되면, 글씨뿐만 아니라 <strong>방의 벽(표 테두리 선)까지 지워버립니다.</strong> 표 선이 사라지면 문서 양식이 다 깨져버리니 지울 때 항상 화면을 쳐다보면서 조금씩 누르세요!
+        </span>
+        <span data-lang="my">
+          <strong>⚠️ ဇယားအတွင်း ဖျက်ရာတွင် အထူးသတိပြုရန်!</strong><br>
+          ဇယားအတွင်း စာဖျက်နေစဉ် သတိလွတ်၍ Backspace သို့မဟုတ် Delete ကို ပိုနှိပ်မိပါက စာလုံးများသာမက <strong>အခန်းနံရံ (ဇယားမျဉ်း) ကိုပါ ဖျက်ပစ်မိပါမည်။</strong> ဇယားမျဉ်း ပျောက်သွားပါက ဖောင်တစ်ခုလုံး ပျက်စီးသွားမည်ဖြစ်၍ ဖျက်သည့်အခါ အမြဲတမ်း စခရင်ကိုကြည့်၍ နည်းနည်းချင်းသာ နှိပ်ပါ!
+        </span>
+        <span data-lang="vi">
+          <strong>⚠️ Chú ý tuyệt đối khi xóa chữ trong bảng!</strong><br>
+          Khi đang xóa chữ trong bảng, nếu bạn vô tình nhấn dư phím Backspace hoặc Delete, nó sẽ không chỉ xóa chữ mà còn <strong>xóa luôn cả bức tường (đường viền bảng)</strong>. Mất viền bảng thì biểu mẫu sẽ nát bét, nên khi xóa hãy luôn nhìn lên màn hình và nhấp từng chút một!
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="undo">
+      <div class="badge">STEP 4: UNDO (MAGIC KEY)</div>
+      <h2>
+        <span data-lang="ko">5. 실수 복구 마법의 단축키: 되돌리기 (Ctrl + Z)</span>
+        <span data-lang="my">၅။ အမှားကို ပြန်ပြင်ပေးမည့် မှော် Shortcut: နောက်ပြန်ဆုတ်ခြင်း (Ctrl + Z)</span>
+        <span data-lang="vi">5. Phím Tắt Phép Thuật Cứu Lỗi: Hoàn Tác (Ctrl + Z)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">실수로 표 선을 지워버렸거나, 애써 친 글씨를 다 날렸더라도 당황해서 마우스를 아무거나 누르지 마세요. 컴퓨터에는 시간을 과거로 돌려주는 마법의 단축키가 있습니다.</span>
+        <span data-lang="my">အမှားအယွင်းဖြင့် ဇယားမျဉ်းကို ဖျက်မိလျှင် သို့မဟုတ် ကြိုးစားရိုက်ထားသော စာများ အကုန်ပျောက်သွားလျှင် ထိတ်လန့်၍ Mouse ဖြင့် ဖြစ်သလို မနှိပ်ပါနှင့်။ ကွန်ပျူတာတွင် အချိန်ကို အတိတ်သို့ ပြန်လှည့်ပေးသော မှော် Shortcut ရှိပါသည်။</span>
+        <span data-lang="vi">Nếu lỡ tay xóa mất viền bảng, hay làm bay mất đoạn chữ vừa vất vả gõ xong, đừng hoảng hốt bấm chuột lung tung. Máy tính có một phím tắt phép thuật giúp quay ngược thời gian.</span>
+      </p>
+
+      <div class="tip-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>🚑 응급 복구 단축키 [Ctrl + Z]</strong><br>
+          • 키보드 왼쪽 구석의 <strong>[Ctrl (컨트롤)]</strong> 키를 왼손 새끼손가락으로 꾹 누른 상태에서, 검지로 <strong>[ Z (제트)]</strong> 키를 한 번 톡 칩니다.<br>
+          • 내가 <strong>방금 한 실수가 취소</strong>되고, 망치기 1초 전의 완벽했던 상태로 즉시 되돌아갑니다. 여러 번 누르면 계속 과거로 돌아갑니다.
+        </span>
+        <span data-lang="my">
+          <strong>🚑 အရေးပေါ် ဆယ်ယူရေး Shortcut [Ctrl + Z]</strong><br>
+          • ကီးဘုတ် ဘယ်ဘက်ထောင့်ရှိ <strong>[Ctrl]</strong> ခလုတ်ကို ဘယ်လက်သန်းဖြင့် ဖိထားလျက်၊ လက်ညှိုးဖြင့် <strong>[ Z ]</strong> ခလုတ်ကို တစ်ချက် နှိပ်ပါ။<br>
+          • <strong>ယခုလေးတင် မှားယွင်းခဲ့သည်များ ပျက်ပြယ်သွားပြီး</strong> အမှားမလုပ်မီ ၁ စက္ကန့်က အကောင်းပကတိ အခြေအနေသို့ ချက်ချင်း ပြန်ရောက်သွားပါမည်။ အကြိမ်ကြိမ်နှိပ်ပါက အတိတ်သို့ ဆက်တိုက် ပြန်ဆုတ်သွားမည်။
+        </span>
+        <span data-lang="vi">
+          <strong>🚑 Phím tắt cấp cứu [Ctrl + Z]</strong><br>
+          • Dùng ngón út tay trái nhấn giữ phím <strong>[Ctrl]</strong> ở góc trái bàn phím, rồi dùng ngón trỏ bấm phím <strong>[ Z ]</strong> một lần.<br>
+          • <strong>Lỗi bạn vừa gây ra sẽ bị hủy bỏ</strong>, và ngay lập tức quay trở lại trạng thái hoàn hảo 1 giây trước khi làm hỏng. Bấm nhiều lần sẽ tiếp tục quay lùi về quá khứ.
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 3차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၃) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 3 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 제공된 '요양일지_실습.hwp' 파일을 화면에 띄울 수 있다.</span>
+                <span data-lang="my">၁။ ပေးထားသော '요양일지_실습.hwp' ဖိုင်ကို စခရင်ပေါ်တွင် ဖွင့်နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Biết mở tệp '요양일지_실습.hwp' đã được cung cấp lên màn hình.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 마우스를 쓰지 않고 [Tab] 키와 화살표 키만으로 표 안의 여러 칸을 돌아다닐 수 있다.</span>
+                <span data-lang="my">၂။ Mouse မသုံးဘဲ [Tab] ခလုတ်နှင့် မြားခလုတ်များဖြင့်သာ ဇယားကွက်များအတွင်း သွားလာနိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Không dùng chuột, chỉ dùng phím [Tab] và mũi tên để đi lại qua các ô trong bảng.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 표 안의 글자를 [Backspace]와 [Delete]를 구분하여 안전하게 지울 수 있다.</span>
+                <span data-lang="my">၃။ ဇယားအတွင်းရှိ စာလုံးများကို [Backspace] နှင့် [Delete] ခွဲခြားသိရှိပြီး ဘေးကင်းစွာ ဖျက်နိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Phân biệt được [Backspace] và [Delete] để xóa chữ trong bảng an toàn.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 실수로 표 선을 지웠을 때, 당황하지 않고 [Ctrl + Z]를 눌러 다시 살려낼 수 있다.</span>
+                <span data-lang="my">၄။ အမှားအယွင်းဖြင့် ဇယားမျဉ်း ဖျက်မိသောအခါ၊ မထိတ်လန့်ဘဲ [Ctrl + Z] နှိပ်၍ ပြန်လည်ဆယ်ယူနိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Khi lỡ xóa nhầm viền bảng, không luống cuống mà bấm [Ctrl + Z] để khôi phục lại.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

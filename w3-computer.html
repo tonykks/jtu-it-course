@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">컴퓨터 기초 3차시: 파일과 폴더의 개념 & 윈도우 탐색기</span>
+    <span data-lang="my">ကွန်ပျူတာ အခြေခံ (၃) ကြိမ်မြောက်: ဖိုင်နှင့်ဖိုဒါ သဘောတရား & Windows Explorer</span>
+    <span data-lang="vi">Tin Học Cơ Bản Bài 3: Khái Niệm Tệp, Thư Mục & Windows Explorer</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">3차시 강의 목차</span>
+        <span data-lang="my">၃ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 3</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#concept" id="nav-concept">
+        <span>📁</span>
+        <span data-lang="ko">2. 파일과 폴더의 비유</span>
+        <span data-lang="my">၂။ ဖိုင်နှင့် ဖိုဒါ နှိုင်းယှဉ်ချက်</span>
+        <span data-lang="vi">2. Tệp & Thư Mục</span>
+      </a>
+      <a href="#explorer" id="nav-explorer">
+        <span>🔍</span>
+        <span data-lang="ko">3. 윈도우 탐색기 열기</span>
+        <span data-lang="my">၃။ Windows Explorer ဖွင့်ခြင်း</span>
+        <span data-lang="vi">3. Mở Windows Explorer</span>
+      </a>
+      <a href="#structure" id="nav-structure">
+        <span>🏢</span>
+        <span data-lang="ko">4. 내 PC 구조 이해</span>
+        <span data-lang="my">၄။ This PC ဖွဲ့စည်းပုံ</span>
+        <span data-lang="vi">4. Cấu Trúc This PC</span>
+      </a>
+      <a href="#create" id="nav-create">
+        <span>✏️</span>
+        <span data-lang="ko">5. 새 폴더 만들기</span>
+        <span data-lang="my">၅။ ဖိုဒါအသစ် ပြုလုပ်ခြင်း</span>
+        <span data-lang="vi">5. Tạo Thư Mục Mới</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 3차시 실습 점검</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (3/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 종이 서류와 서류철 만들기</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: စာရွက်စာတမ်းနှင့် ဖိုင်တွဲများ ပြုလုပ်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Tạo Tài Liệu Và Kẹp Hồ Sơ</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">우리가 책상 위를 깨끗하게 쓰기 위해 서류를 종류별로 서류철에 모아 두는 것처럼, 컴퓨터 안에서도 정보를 깔끔하게 정리하는 방법이 있습니다. 3차시에서는 <strong>'파일'</strong>과 <strong>'폴더'</strong>의 개념을 이해하고, 내 방(내 이름 폴더)을 직접 만들어보는 훈련을 합니다.</span>
+        <span data-lang="my">စားပွဲပေါ်တွင် ရှင်းလင်းနေစေရန် စာရွက်များကို ဖိုင်တွဲထဲတွင် အမျိုးအစားအလိုက် ခွဲခြားသိမ်းဆည်းသကဲ့သို့ ကွန်ပျူတာထဲတွင်လည်း သပ်ရပ်စွာ သိမ်းဆည်းနိုင်သော နည်းလမ်းရှိပါသည်။ ၃ ကြိမ်မြောက်တွင် <strong>'ဖိုင်'</strong> နှင့် <strong>'ဖိုဒါ'</strong> သဘောတရားကို နားလည်စေပြီး၊ မိမိကိုယ်ပိုင်အခန်း (မိမိအမည်ဖိုဒါ) ကို ပြုလုပ်လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">Giống như việc chúng ta dọn dẹp bàn làm việc bằng cách xếp giấy tờ vào các kẹp hồ sơ theo từng loại, máy tính cũng có cách để sắp xếp thông tin gọn gàng. Bài 3 sẽ giúp bạn hiểu khái niệm <strong>'Tệp (File)'</strong> và <strong>'Thư mục (Folder)'</strong>, và thực hành tự tạo căn phòng của riêng mình (Thư mục tên bạn).</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="concept">
+      <div class="badge">STEP 1: METAPHOR</div>
+      <h2>
+        <span data-lang="ko">2. 파일(File)과 폴더(Folder)의 완벽한 비유</span>
+        <span data-lang="my">၂။ ဖိုင်နှင့် ဖိုဒါ၏ နှိုင်းယှဉ်ချက်</span>
+        <span data-lang="vi">2. Tệp và Thư Mục - Phép Ẩn Dụ Hoàn Hảo</span>
+      </h2>
+      <p>
+        <span data-lang="ko">눈에 보이지 않는 컴퓨터 속 세상을 현실의 요양병원 사무실이라고 상상해 봅시다.</span>
+        <span data-lang="my">မျက်စိဖြင့်မမြင်ရသော ကွန်ပျူတာအတွင်းပိုင်းကို ပြင်ပဆေးရုံရုံးခန်းအဖြစ် စိတ်ကူးကြည့်ကြပါစို့။</span>
+        <span data-lang="vi">Hãy tưởng tượng thế giới vô hình trong máy tính giống như một văn phòng bệnh viện điều dưỡng ngoài đời thực.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📄 파일 (File) = 종이 서류 1장</div>
+          <p>
+            <span data-lang="ko">여러분이 오늘 작성한 <strong>'김순자 어르신 요양보호일지' 종이 1장</strong>입니다. 글씨, 사진, 음악 등 내용이 담긴 하나의 문서입니다.</span>
+            <span data-lang="my">သင်ယနေ့ရေးသားခဲ့သော <strong>'အဘွား Kim Sun-ja ၏ စောင့်ရှောက်မှုမှတ်တမ်း' စာရွက်တစ်ရွက်</strong> ဖြစ်ပါသည်။ စာသား၊ ဓာတ်ပုံ၊ သီချင်းစသည့် အကြောင်းအရာများ ပါဝင်သော စာရွက်စာတမ်းတစ်ခု ဖြစ်သည်။</span>
+            <span data-lang="vi">Đây là <strong>1 tờ giấy 'Nhật ký chăm sóc cụ Kim Sun-ja'</strong> mà bạn vừa viết hôm nay. Nó là một tài liệu chứa nội dung như chữ, ảnh, nhạc.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">📁 폴더 (Folder) = 황색 서류철</div>
+          <p>
+            <span data-lang="ko">종이 서류들이 흩어지지 않게 모아두는 <strong>'두꺼운 서류철'</strong>입니다. 폴더 안에는 폴더(하위 폴더)를 또 넣을 수 있습니다.</span>
+            <span data-lang="my">စာရွက်များ မပြန့်ကျဲစေရန် စုဆောင်းသိမ်းဆည်းထားသော <strong>'ဖိုင်တွဲအထူကြီး'</strong> ဖြစ်ပါသည်။ ဖိုဒါတစ်ခုအတွင်းတွင် နောက်ထပ်ဖိုဒါများ ထပ်ထည့်နိုင်ပါသည်။</span>
+            <span data-lang="vi">Là <strong>'kẹp hồ sơ dày'</strong> dùng để gom các tờ giấy lại cho khỏi thất lạc. Bên trong thư mục có thể chứa thêm các thư mục khác (thư mục con).</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="explorer">
+      <div class="badge">STEP 2: EXPLORER</div>
+      <h2>
+        <span data-lang="ko">3. 윈도우 탐색기(Explorer) 열기</span>
+        <span data-lang="my">၃။ Windows Explorer ဖွင့်ခြင်း</span>
+        <span data-lang="vi">3. Mở Windows Explorer</span>
+      </h2>
+      <p>
+        <span data-lang="ko">컴퓨터 안의 모든 서류와 서류철을 한눈에 볼 수 있는 '관리 프로그램'이 바로 <strong>윈도우 탐색기</strong>입니다.</span>
+        <span data-lang="my">ကွန်ပျူတာအတွင်းရှိ စာရွက်စာတမ်းများနှင့် ဖိုင်တွဲအားလုံးကို တစ်နေရာတည်းတွင် မြင်နိုင်သော 'စီမံခန့်ခွဲရေးပရိုဂရမ်' ကို <strong>Windows Explorer</strong> ဟုခေါ်ပါသည်။</span>
+        <span data-lang="vi">Chương trình quản lý giúp bạn nhìn thấy toàn bộ tài liệu và kẹp hồ sơ trong máy tính cùng một lúc được gọi là <strong>Windows Explorer</strong>.</span>
+      </p>
+
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>⌨️ 탐색기를 여는 가장 빠른 마법의 단축키:</strong><br>
+          키보드 왼쪽 아래의 <strong>[윈도우 창문 모양 키(Win)]</strong>를 누른 상태에서 <strong>알파벳 [ E ]</strong> 키를 톡 누릅니다. (Explorer의 첫 글자 E)<br>
+          노란색 서류철 모양의 창이 화면에 짠! 하고 나타납니다.
+        </span>
+        <span data-lang="my">
+          <strong>⌨️ Explorer ဖွင့်ရန် အမြန်ဆုံး Shortcut:</strong><br>
+          ကီးဘုတ် ဘယ်ဘက်အောက်ရှိ <strong>[Windows အိုင်ကွန်ခလုတ် (Win)]</strong> ကို ဖိထားပြီး <strong>အက္ခရာ [ E ]</strong> ကို တစ်ချက်နှိပ်ပါ။ (Explorer ၏ E)<br>
+          အဝါရောင်ဖိုင်တွဲပုံစံ ပြတင်းပေါက် ပေါ်လာပါမည်။
+        </span>
+        <span data-lang="vi">
+          <strong>⌨️ Phím tắt thần thánh mở nhanh Explorer:</strong><br>
+          Giữ phím <strong>[Hình cửa sổ Windows (Win)]</strong> ở góc dưới bên trái bàn phím rồi bấm phím <strong>chữ [ E ]</strong>. (E là chữ cái đầu của Explorer)<br>
+          Một cửa sổ hình kẹp hồ sơ màu vàng sẽ hiện ra ngay lập tức!
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="structure">
+      <div class="badge">STEP 3: PC STRUCTURE</div>
+      <h2>
+        <span data-lang="ko">4. 내 PC 구조 이해하기: 드라이브와 방</span>
+        <span data-lang="my">၄။ This PC ဖွဲ့စည်းပုံ နားလည်ခြင်း: Drive နှင့် အခန်းများ</span>
+        <span data-lang="vi">4. Hiểu Cấu Trúc This PC: Ổ Đĩa Và Các Căn Phòng</span>
+      </h2>
+      <p>
+        <span data-lang="ko">탐색기 왼쪽 목록을 보면 아파트 구조처럼 컴퓨터의 저장 공간이 나뉘어 있습니다.</span>
+        <span data-lang="my">Explorer ဘယ်ဘက်စာရင်းကို ကြည့်ပါက တိုက်ခန်းများကဲ့သို့ ကွန်ပျူတာ၏ သိမ်းဆည်းရန်နေရာများ ခွဲခြားထားသည်ကို တွေ့ရမည်။</span>
+        <span data-lang="vi">Nhìn vào danh sách bên trái của Explorer, bạn sẽ thấy không gian lưu trữ của máy tính được chia ra giống như cấu trúc một căn hộ.</span>
+      </p>
+
+      <table style="margin-top:10px;">
+        <thead>
+          <tr>
+            <th style="width:25%"><span data-lang="ko">위치 명칭</span><span data-lang="my">နေရာ အမည်</span><span data-lang="vi">Tên vị trí</span></th>
+            <th style="width:75%"><span data-lang="ko">역할 및 설명</span><span data-lang="my">လုပ်ဆောင်ချက်နှင့် ရှင်းလင်းချက်</span><span data-lang="vi">Vai trò & Mô tả</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span data-lang="ko">내 PC (This PC)</span><span data-lang="my">This PC</span><span data-lang="vi">This PC</span></strong></td>
+            <td>
+              <span data-lang="ko">컴퓨터라는 건물 전체를 의미합니다. 모든 저장 공간의 가장 꼭대기 출발점입니다.</span>
+              <span data-lang="my">ကွန်ပျူတာဟူသော အဆောက်အအုံတစ်ခုလုံးကို ဆိုလိုပါသည်။ သိမ်းဆည်းရာနေရာအားလုံး၏ အမြင့်ဆုံး အစမှတ်ဖြစ်ပါသည်။</span>
+              <span data-lang="vi">Tượng trưng cho toàn bộ tòa nhà máy tính. Là điểm xuất phát cao nhất của mọi không gian lưu trữ.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">로컬 디스크 (C:)</span><span data-lang="my">Local Disk (C:)</span><span data-lang="vi">Local Disk (C:)</span></strong></td>
+            <td>
+              <span data-lang="ko">가장 크고 중요한 창고(SSD/HDD)입니다. 윈도우 프로그램과 내 서류들이 모두 이곳에 보관됩니다.</span>
+              <span data-lang="my">အကြီးဆုံးနှင့် အရေးကြီးဆုံး ဂိုဒေါင် (SSD/HDD) ဖြစ်ပါသည်။ Windows ပရိုဂရမ်နှင့် မိမိဖိုင်များအားလုံး ဤနေရာတွင် သိမ်းဆည်းပါသည်။</span>
+              <span data-lang="vi">Kho lưu trữ lớn và quan trọng nhất (SSD/HDD). Nơi chứa chương trình Windows và mọi tài liệu của bạn.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">바탕화면 (Desktop)</span><span data-lang="my">Desktop</span><span data-lang="vi">Desktop</span></strong></td>
+            <td>
+              <span data-lang="ko">자주 쓰는 폴더를 빠르게 찾기 위해 모니터 첫 화면에 꺼내놓은 특별한 책상 위 공간입니다.</span>
+              <span data-lang="my">အမြဲသုံးသော ဖိုဒါများကို အလွယ်တကူ ရှာနိုင်ရန် စခရင် ပထမဆုံးမျက်နှာပြင်တွင် တင်ထားသော အထူးစားပွဲခုံနေရာ ဖြစ်ပါသည်။</span>
+              <span data-lang="vi">Không gian đặc biệt trên bàn làm việc, hiện ra đầu tiên trên màn hình để tìm nhanh các thư mục hay dùng.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">문서 (Documents)</span><span data-lang="my">Documents</span><span data-lang="vi">Documents</span></strong></td>
+            <td>
+              <span data-lang="ko">한글 파일, 엑셀 파일 등 개인 서류를 모아두기 위해 윈도우가 미리 만들어둔 기본 방입니다.</span>
+              <span data-lang="my">Hangul ဖိုင်၊ Excel ဖိုင် စသည့် ကိုယ်ပိုင်စာရွက်စာတမ်းများ စုဆောင်းရန် Windows မှ ကြိုတင်ပြုလုပ်ပေးထားသော အခြေခံအခန်း ဖြစ်ပါသည်။</span>
+              <span data-lang="vi">Căn phòng mặc định do Windows tạo sẵn để gom các tài liệu cá nhân như tệp Hangul, tệp Excel.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="lesson-card" id="create">
+      <div class="badge">STEP 4: CREATE FOLDER</div>
+      <h2>
+        <span data-lang="ko">5. 내 방(새 폴더) 만들고 이름 바꾸기</span>
+        <span data-lang="my">၅။ မိမိအခန်း (ဖိုဒါအသစ်) ပြုလုပ်ခြင်းနှင့် အမည်ပြောင်းခြင်း</span>
+        <span data-lang="vi">5. Tạo Căn Phòng Của Riêng Mình (Thư Mục Mới) & Đổi Tên</span>
+      </h2>
+      <p>
+        <span data-lang="ko">바탕화면에 나만의 서류철(폴더)을 직접 만들어 봅니다. 오늘부터 내가 작성한 모든 한글 문서는 이 폴더에 저장할 것입니다.</span>
+        <span data-lang="my">Desktop ပေါ်တွင် မိမိကိုယ်ပိုင် ဖိုင်တွဲ (ဖိုဒါ) ကို ပြုလုပ်ကြည့်ပါမည်။ ယနေ့မှစ၍ မိမိရေးသားသော Hangul ဖိုင်အားလုံးကို ဤဖိုဒါတွင် သိမ်းဆည်းပါမည်။</span>
+        <span data-lang="vi">Hãy tự tay tạo một kẹp hồ sơ (thư mục) riêng trên Desktop. Từ hôm nay, mọi tài liệu Hangul bạn viết sẽ được lưu vào thư mục này.</span>
+      </p>
+
+      <div class="warn-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>✨ 새 폴더 만들기 미션:</strong><br>
+          1. 마우스 조작법: 바탕화면 <strong>빈 곳에 마우스 오른쪽 버튼(우클릭)</strong>을 누릅니다.<br>
+          2. 메뉴가 뜨면 <strong>[새로 만들기] ➔ [폴더]</strong>를 순서대로 클릭합니다.<br>
+          3. '새 폴더'라는 이름이 파란색으로 선택되어 나타납니다.<br>
+          4. <strong>[단축키법]</strong>: 바탕화면 빈 곳을 좌클릭 한 번 한 뒤, <strong>Ctrl + Shift + N</strong> 키를 동시에 누르면 더 빨리 만들어집니다.
+        </span>
+        <span data-lang="my">
+          <strong>✨ ဖိုဒါအသစ် ပြုလုပ်ခြင်း မစ်ရှင်:</strong><br>
+          ၁။ Mouse အသုံးပြုနည်း: Desktop <strong>နေရာလွတ်တွင် Mouse ညာဘက်ခလုတ် (Right Click)</strong> ကို နှိပ်ပါ။<br>
+          ၂။ မီနူးပေါ်လာပါက <strong>[New] ➔ [Folder]</strong> ကို အစဉ်လိုက် Click နှိပ်ပါ။<br>
+          ၃။ 'New Folder' ဟူသောအမည် အပြာရောင်ဖြင့် ပေါ်လာပါမည်။<br>
+          ၄။ <strong>[Shortcut နည်း]</strong>: Desktop နေရာလွတ်ကို ဘယ်ဘက်ခလုတ် တစ်ချက်နှိပ်ပြီး၊ <strong>Ctrl + Shift + N</strong> ခလုတ်များကို တစ်ပြိုင်နက်နှိပ်ပါက ပိုမြန်မြန် ပြုလုပ်နိုင်ပါသည်။
+        </span>
+        <span data-lang="vi">
+          <strong>✨ Nhiệm vụ Tạo Thư mục mới:</strong><br>
+          1. Cách dùng chuột: <strong>Nhấp chuột phải</strong> vào vùng trống trên Desktop.<br>
+          2. Menu hiện ra, nhấp lần lượt <strong>[Mới (New)] ➔ [Thư mục (Folder)]</strong>.<br>
+          3. Tên 'New Folder' sẽ xuất hiện và được bôi xanh.<br>
+          4. <strong>[Cách dùng phím tắt]</strong>: Nhấp chuột trái 1 lần vào vùng trống trên Desktop, rồi nhấn cùng lúc <strong>Ctrl + Shift + N</strong> để tạo nhanh hơn.
+        </span>
+      </div>
+
+      <p style="margin-top:10px;">
+        <span data-lang="ko"><strong>✏️ 폴더 이름 내 이름으로 바꾸기 (단축키 F2):</strong><br>만들어진 폴더를 한 번 클릭(선택)하고, 키보드 맨 위의 <strong>[ F2 ]</strong> 키를 누릅니다. 이름을 쓸 수 있게 깜빡이면 본인의 이름(예: <code>김광수_요양일지</code>)을 적고 <strong>[Enter]</strong> 키를 누릅니다.</span>
+        <span data-lang="my"><strong>✏️ ဖိုဒါအမည်ကို မိမိအမည်သို့ ပြောင်းခြင်း (Shortcut F2):</strong><br>ပြုလုပ်ထားသော ဖိုဒါကို တစ်ချက် Click (ရွေးချယ်) ပြီး၊ ကီးဘုတ် အပေါ်ဆုံးရှိ <strong>[ F2 ]</strong> ခလုတ်ကို နှိပ်ပါ။ စာရိုက်၍ရအောင် မှိတ်တုတ်မှိတ်တုတ် ဖြစ်လာပါက မိမိအမည် (ဥပမာ: <code>Kim_မှတ်တမ်း</code>) ဟုရေးပြီး <strong>[Enter]</strong> ကို နှိပ်ပါ။</span>
+        <span data-lang="vi"><strong>✏️ Đổi tên thư mục thành tên mình (Phím tắt F2):</strong><br>Nhấp 1 lần (để chọn) thư mục vừa tạo, bấm phím <strong>[ F2 ]</strong> ở trên cùng bàn phím. Khi con trỏ nhấp nháy cho phép gõ chữ, hãy nhập tên bạn (VD: <code>KimKwangSoo_NhatKy</code>) rồi nhấn <strong>[Enter]</strong>.</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 3차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၃) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 3 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 한글 파일 1개는 종이 서류 1장이고, 폴더는 서류철임을 이해했다.</span>
+                <span data-lang="my">၁။ Hangul ဖိုင် ၁ ခုသည် စာရွက် ၁ ရွက်ဖြစ်ပြီး၊ ဖိုဒါသည် ဖိုင်တွဲဖြစ်ကြောင်း နားလည်ခြင်း။</span>
+                <span data-lang="vi">1. Hiểu rằng 1 tệp Hangul là 1 tờ giấy, còn Thư mục là kẹp hồ sơ.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 단축키 [Win + E]를 눌러 윈도우 탐색기(노란 폴더 창)를 열 수 있다.</span>
+                <span data-lang="my">၂။ Shortcut [Win + E] ကို နှိပ်၍ Windows Explorer ကို ဖွင့်နိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Bấm phím tắt [Win + E] để mở Windows Explorer (cửa sổ kẹp hồ sơ màu vàng).</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 바탕화면 빈 곳에 마우스 우클릭을 하여 [새 폴더]를 만들 수 있다.</span>
+                <span data-lang="my">၃။ Desktop နေရာလွတ်ကို Right Click နှိပ်၍ [New Folder] ပြုလုပ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Nhấp chuột phải vào vùng trống trên Desktop để tạo [Thư mục mới].</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 만들어진 폴더를 클릭하고 [F2] 키를 눌러 내 이름으로 바꿀 수 있다.</span>
+                <span data-lang="my">၄။ ပြုလုပ်ထားသော ဖိုဒါကို Click နှိပ်ပြီး [F2] ကိုနှိပ်၍ မိမိအမည် ပြောင်းနိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Nhấp vào thư mục đã tạo và bấm phím [F2] để đổi thành tên mình.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>
