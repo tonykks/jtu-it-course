@@ -97,6 +97,14 @@ background:var(--accent-soft);color:var(--accent) !important;font-size:12.5px;fo
 .lec-link span[data-lang]{display:none}
 html[data-cur-lang="ko"] .lec-link span[data-lang="ko"],html[data-cur-lang="my"] .lec-link span[data-lang="my"],html[data-cur-lang="vi"] .lec-link span[data-lang="vi"]{display:inline}
 .lec-soon{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:var(--line);color:var(--muted);font-size:12px}
+
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+.sec-head h2{flex:1 1 320px;min-width:0}
+.ext-links{display:flex;gap:8px;flex-wrap:wrap}
+.ext-link{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:999px;border:1px solid var(--accent);
+color:var(--accent) !important;font-size:13.5px;font-weight:600;text-decoration:none !important;white-space:nowrap}
+.ext-link:hover{background:var(--accent);color:#fff !important}
+html[data-cur-lang="ko"] .ext-link span[data-lang="ko"],html[data-cur-lang="my"] .ext-link span[data-lang="my"],html[data-cur-lang="vi"] .ext-link span[data-lang="vi"]{display:inline}
 </style>
 </head>
 <body>
@@ -247,11 +255,17 @@ html[data-cur-lang="ko"] .lec-link span[data-lang="ko"],html[data-cur-lang="my"]
 
     <section class="syllabus-sec" id="curri2">
       <div class="badge">CURRICULUM 2 (매주 2교시 / 총 6시간)</div>
-      <h2>
-        <span data-lang="ko">⌨️ 한글 타자 촉지법(Touch Typing) 및 한컴타자 단계별 훈련 교안</span>
-        <span data-lang="my">⌨️ ကိုရီးယား လက်ရိုက် (Touch Typing) နှင့် Hancom Typing အဆင့်ဆင့် လေ့ကျင့်မှု သင်ရိုး</span>
-        <span data-lang="vi">⌨️ Giáo Án 2: Luyện Gõ Hangul Chuẩn (Touch Typing) & Hancom Typing Từng Bước</span>
-      </h2>
+      <div class="sec-head">
+        <h2>
+          <span data-lang="ko">⌨️ 한글 타자 촉지법(Touch Typing) 및 한컴타자 단계별 훈련 교안</span>
+          <span data-lang="my">⌨️ ကိုရီးယား လက်ရိုက် (Touch Typing) နှင့် Hancom Typing အဆင့်ဆင့် လေ့ကျင့်မှု သင်ရိုး</span>
+          <span data-lang="vi">⌨️ Giáo Án 2: Luyện Gõ Hangul Chuẩn (Touch Typing) & Hancom Typing Từng Bước</span>
+        </h2>
+        <div class="ext-links">
+          <a class="ext-link" href="https://tonykks.github.io/hangul-key-start/" target="_blank" rel="noopener">⌨️ <span data-lang="ko">한글 글쇠·손가락 연습</span><span data-lang="my">ကိုရီးယား ကီး/လက်ချောင်း လေ့ကျင့်ခန်း</span><span data-lang="vi">Luyện phím &amp; ngón tay Hangul</span> ↗</a>
+          <a class="ext-link" href="https://tt.hancomtaja.com/ko/" target="_blank" rel="noopener">🖐️ <span data-lang="ko">한컴타자연습</span><span data-lang="my">Hancom Typing</span><span data-lang="vi">Hancom Typing</span> ↗</a>
+        </div>
+      </div>
       <div class="tablewrap">
         <table>
           <thead>
