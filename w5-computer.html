@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">컴퓨터 기초 5차시: 파일 종류와 저장 경로 추적</span>
+    <span data-lang="my">ကွန်ပျူတာ အခြေခံ (၅) ကြိမ်မြောက်: ဖိုင်အမျိုးအစားနှင့် လမ်းကြောင်းရှာဖွေခြင်း</span>
+    <span data-lang="vi">Tin Học Cơ Bản Bài 5: Phân Loại Tệp & Truy Vết Đường Dẫn</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">5차시 강의 목차</span>
+        <span data-lang="my">၅ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 5</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#extension" id="nav-extension">
+        <span>🏷️</span>
+        <span data-lang="ko">2. 파일 확장자 식별</span>
+        <span data-lang="my">၂။ ဖိုင်အမျိုးအစား ခွဲခြားခြင်း</span>
+        <span data-lang="vi">2. Nhận Diện Đuôi Tệp</span>
+      </a>
+      <a href="#properties" id="nav-properties">
+        <span>📊</span>
+        <span data-lang="ko">3. 파일 크기/날짜 확인</span>
+        <span data-lang="my">၃။ ဖိုင်အရွယ်အစား/ရက်စွဲ စစ်ဆေးခြင်း</span>
+        <span data-lang="vi">3. Kiểm Tra Kích Thước/Ngày</span>
+      </a>
+      <a href="#addressbar" id="nav-addressbar">
+        <span>🧭</span>
+        <span data-lang="ko">4. 주소표시줄 경로 추적</span>
+        <span data-lang="my">၄။ Address Bar မှ ရှာဖွေခြင်း</span>
+        <span data-lang="vi">4. Truy Vết Thanh Địa Chỉ</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">5. 5차시 실습 점검</span>
+        <span data-lang="my">၅။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">5. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (5/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 파일 종류 구분과 저장 경로(주소) 완벽 추적</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: ဖိုင်အမျိုးအစား ခွဲခြားခြင်းနှင့် လမ်းကြောင်း (လိပ်စာ) ရှာဖွေခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Phân Biệt Loại Tệp & Truy Vết Hoàn Hảo Đường Dẫn (Địa Chỉ) Lưu</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">컴퓨터에 파일이 많아지면 "이게 한글 문서인지, 사진인지?" 헷갈리기 쉽고, 저장해 둔 파일이 어디 있는지 찾지 못해 헤매게 됩니다. 마지막 5차시에서는 <strong>파일의 종류(확장자)</strong>를 구분하는 눈을 기르고, <strong>탐색기의 주소표시줄</strong>을 읽어 내 파일이 어느 방에 있는지 정확히 추적하는 능력을 마스터합니다.</span>
+        <span data-lang="my">ကွန်ပျူတာထဲတွင် ဖိုင်များများလာပါက "ဒါက Hangul ဖိုင်လား၊ ဓာတ်ပုံလား?" ဟု ရောထွေးလွယ်ပြီး၊ သိမ်းထားသောဖိုင်ကို ရှာမတွေ့ဘဲ ဖြစ်တတ်ပါသည်။ နောက်ဆုံး ၅ ကြိမ်မြောက်တွင် <strong>ဖိုင်အမျိုးအစား (Extension)</strong> ကို ခွဲခြားသိမြင်စေရန်နှင့် <strong>Explorer ၏ Address Bar</strong> ကိုဖတ်၍ မိမိဖိုင် မည်သည့်အခန်းတွင်ရှိကြောင်း အတိအကျ ရှာဖွေနိုင်စွမ်းကို ကျွမ်းကျင်အောင် သင်ယူပါမည်။</span>
+        <span data-lang="vi">Khi có nhiều tệp trong máy, bạn dễ nhầm lẫn "Đây là tài liệu Hangul hay bức ảnh?", và thường loay hoay không tìm thấy tệp đã lưu. Trong bài 5 cuối cùng này, bạn sẽ luyện mắt để phân biệt <strong>loại tệp (Đuôi tệp)</strong> và thành thạo kỹ năng đọc <strong>thanh địa chỉ của Explorer</strong> để truy vết chính xác tệp của mình đang ở phòng nào.</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="extension">
+      <div class="badge">STEP 1: FILE EXTENSIONS</div>
+      <h2>
+        <span data-lang="ko">2. 파일 종류(확장자)와 아이콘 식별하기</span>
+        <span data-lang="my">၂။ ဖိုင်အမျိုးအစား (Extension) နှင့် အိုင်ကွန် ခွဲခြားခြင်း</span>
+        <span data-lang="vi">2. Nhận Diện Loại Tệp (Đuôi Tệp) Và Biểu Tượng</span>
+      </h2>
+      <p>
+        <span data-lang="ko">모든 파일의 이름 끝에는 <code>.hwp</code>, <code>.jpg</code>와 같은 <strong>'확장자(꼬리표)'</strong>가 붙어 있습니다. 이 꼬리표를 보면 문서를 여는 프로그램을 알 수 있습니다.</span>
+        <span data-lang="my">ဖိုင်အမည်တိုင်း၏ အဆုံးတွင် <code>.hwp</code>, <code>.jpg</code> ကဲ့သို့သော <strong>'အမြီး (Extension)'</strong> များ ပါရှိပါသည်။ ထိုအမြီးကိုကြည့်၍ မည်သည့်ပရိုဂရမ်ဖြင့် ဖွင့်ရမည်ကို သိနိုင်ပါသည်။</span>
+        <span data-lang="vi">Mỗi tên tệp đều có một <strong>'Đuôi tệp (Phần mở rộng)'</strong> như <code>.hwp</code>, <code>.jpg</code> ở cuối. Nhìn vào đuôi này, máy tính biết phải dùng chương trình nào để mở.</span>
+      </p>
+
+      <table style="margin-top:10px;">
+        <thead>
+          <tr>
+            <th style="width:20%"><span data-lang="ko">확장자</span><span data-lang="my">အမြီး</span><span data-lang="vi">Đuôi tệp</span></th>
+            <th style="width:25%"><span data-lang="ko">파일 종류</span><span data-lang="my">ဖိုင်အမျိုးအစား</span><span data-lang="vi">Loại tệp</span></th>
+            <th style="width:55%"><span data-lang="ko">특징 설명</span><span data-lang="my">ရှင်းလင်းချက်</span><span data-lang="vi">Đặc điểm</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>.hwp / .hwpx</strong></td>
+            <td><span data-lang="ko">아래아 한글 문서</span><span data-lang="my">Hangul စာရွက်စာတမ်း</span><span data-lang="vi">Tài liệu Hangul</span></td>
+            <td><span data-lang="ko">파란색 <strong>'한'</strong> 아이콘. 한국에서 서류 작업 시 가장 많이 봅니다.</span><span data-lang="my">အပြာရောင် <strong>'한'</strong> အိုင်ကွန်။ ကိုရီးယားရုံးလုပ်ငန်းများတွင် အများဆုံးသုံးသည်။</span><span data-lang="vi">Biểu tượng chữ <strong>'한'</strong> màu xanh. Dùng nhiều nhất khi làm giấy tờ ở Hàn Quốc.</span></td>
+          </tr>
+          <tr>
+            <td><strong>.docx / .doc</strong></td>
+            <td><span data-lang="ko">워드 문서</span><span data-lang="my">Word စာရွက်စာတမ်း</span><span data-lang="vi">Tài liệu Word</span></td>
+            <td><span data-lang="ko">파란색 <strong>'W'</strong> 아이콘. 전 세계 공통 문서 파일입니다.</span><span data-lang="my">အပြာရောင် <strong>'W'</strong> အိုင်ကွန်။ ကမ္ဘာတစ်ဝန်းသုံး စာရွက်စာတမ်းဖိုင်။</span><span data-lang="vi">Biểu tượng chữ <strong>'W'</strong> màu xanh. Tệp tài liệu phổ biến toàn cầu.</span></td>
+          </tr>
+          <tr>
+            <td><strong>.pdf</strong></td>
+            <td><span data-lang="ko">PDF 문서</span><span data-lang="my">PDF ဖိုင်</span><span data-lang="vi">Tài liệu PDF</span></td>
+            <td><span data-lang="ko">빨간색 아이콘. 사진처럼 박제되어 <strong>글씨가 깨지지 않게 폰으로 보낼 때</strong> 씁니다.</span><span data-lang="my">အနီရောင် အိုင်ကွန်။ စာလုံးမပျက်စေရန် <strong>ဖုန်းဖြင့်ပို့ရာတွင်</strong> သုံးသည်။</span><span data-lang="vi">Biểu tượng màu đỏ. Dùng khi <strong>gửi qua điện thoại để không bị lỗi font</strong> (khóa như ảnh).</span></td>
+          </tr>
+          <tr>
+            <td><strong>.jpg / .png</strong></td>
+            <td><span data-lang="ko">사진(이미지)</span><span data-lang="my">ဓာတ်ပုံ (Image)</span><span data-lang="vi">Ảnh (Image)</span></td>
+            <td><span data-lang="ko">풍경이나 산 모양 아이콘. 스마트폰으로 찍은 사진 파일입니다.</span><span data-lang="my">တောင်/ရှုခင်းပုံ အိုင်ကွန်။ စမတ်ဖုန်းဖြင့် ရိုက်ထားသော ဓာတ်ပုံဖိုင်။</span><span data-lang="vi">Biểu tượng hình phong cảnh/ngọn núi. Là tệp ảnh chụp bằng điện thoại.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="lesson-card" id="properties">
+      <div class="badge">STEP 2: FILE PROPERTIES</div>
+      <h2>
+        <span data-lang="ko">3. 파일 크기와 수정한 날짜 확인하기</span>
+        <span data-lang="my">၃။ ဖိုင်အရွယ်အစားနှင့် ပြင်ဆင်ခဲ့သောရက်စွဲ စစ်ဆေးခြင်း</span>
+        <span data-lang="vi">3. Kiểm Tra Kích Thước Và Ngày Sửa Đổi Tệp</span>
+      </h2>
+      <p>
+        <span data-lang="ko">탐색기에서 파일 위쪽에 있는 <strong>보기 방식</strong>을 <strong>'자세히'</strong>로 바꾸면, 언제 만든 파일인지, 용량은 얼마나 큰지 표 형태로 한눈에 볼 수 있습니다. 파일이 너무 많을 때 날짜 순서대로 정렬해서 찾을 때 매우 유용합니다.</span>
+        <span data-lang="my">Explorer တွင် ဖိုင်အပေါ်ဘက်ရှိ <strong>View (보기)</strong> ကို <strong>'Details (자세히)'</strong> သို့ ပြောင်းလိုက်ပါက မည်သည့်အချိန်က ပြုလုပ်ခဲ့သည်၊ အရွယ်အစား မည်မျှရှိသည်ကို ဇယားပုံစံဖြင့် တစ်ချက်တည်း မြင်နိုင်ပါသည်။ ဖိုင်များလွန်းချိန်တွင် ရက်စွဲအလိုက် စီစဉ်ရှာဖွေရာ၌ အလွန်အသုံးဝင်ပါသည်။</span>
+        <span data-lang="vi">Nếu bạn đổi <strong>Chế độ xem</strong> ở phía trên Explorer thành <strong>'Chi tiết (자세히)'</strong>, bạn có thể xem tệp được tạo khi nào, dung lượng bao nhiêu dưới dạng bảng. Rất hữu ích khi có quá nhiều tệp và cần sắp xếp theo ngày để tìm.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📅 수정한 날짜 정렬</div>
+          <p>
+            <span data-lang="ko">탐색기의 <strong>[수정한 날짜]</strong> 글씨를 마우스로 한 번 클릭하면, 가장 최근에 작업한 파일이 맨 위로 올라옵니다. "어제 작업한 파일 어딨지?" 할 때 눌러보세요.</span>
+            <span data-lang="my">Explorer ၏ <strong>[Date modified (수정한 날짜)]</strong> စာတန်းကို Mouse ဖြင့် တစ်ချက်နှိပ်ပါက နောက်ဆုံးပြုလုပ်ထားသော ဖိုင်သည် အပေါ်ဆုံးသို့ ရောက်လာပါမည်။ "မနေ့ကဖိုင် ဘယ်ရောက်သွားလဲ" ဟုရှာဖွေရာတွင် သုံးပါ။</span>
+            <span data-lang="vi">Nhấp 1 lần vào chữ <strong>[Ngày sửa đổi (수정한 날짜)]</strong> trong Explorer, tệp làm việc gần nhất sẽ nhảy lên trên cùng. Dùng khi bạn thắc mắc "Tệp mình làm hôm qua đâu rồi?".</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">💾 파일 크기 단위 (KB, MB)</div>
+          <p>
+            <span data-lang="ko">컴퓨터 파일 무게의 단위입니다. 글씨만 있는 일지는 보통 수십 <strong>KB(킬로바이트)</strong>로 아주 가볍고, 사진이나 동영상이 들어가면 <strong>MB(메가바이트)</strong> 단위로 무거워집니다.</span>
+            <span data-lang="my">ကွန်ပျူတာဖိုင်များ၏ အလေးချိန်ယူနစ် ဖြစ်ပါသည်။ စာသားသာပါသော မှတ်တမ်းသည် အများအားဖြင့် <strong>KB (Kilobyte)</strong> ဆယ်ဂဏန်းခန့်သာရှိ၍ ပေါ့ပါးပြီး၊ ဓာတ်ပုံ/ဗီဒီယို ပါပါက <strong>MB (Megabyte)</strong> ဖြင့် ပိုလေးသွားပါသည်။</span>
+            <span data-lang="vi">Là đơn vị đo độ nặng của tệp. Nhật ký chỉ có chữ thường rất nhẹ, khoảng vài chục <strong>KB (Kilobyte)</strong>, nếu chứa ảnh hoặc video sẽ nặng lên mức <strong>MB (Megabyte)</strong>.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="addressbar">
+      <div class="badge">STEP 3: PATH TRACKING</div>
+      <h2>
+        <span data-lang="ko">4. 주소표시줄 경로 추적: 내 파일은 어느 방에?</span>
+        <span data-lang="my">၄။ Address Bar မှ ရှာဖွေခြင်း: ငါ့ဖိုင် ဘယ်အခန်းမှာလဲ?</span>
+        <span data-lang="vi">4. Truy Vết Bằng Thanh Địa Chỉ: Tệp Của Tôi Ở Phòng Nào?</span>
+      </h2>
+      <p>
+        <span data-lang="ko">탐색기 창의 맨 위를 보면 항상 <code>내 PC > 바탕 화면 > 김광수_요양일지 > 11월</code>과 같은 <strong>'경로(주소)'</strong>가 적혀 있습니다. 이것은 건물 안에서 방을 찾아 들어온 순서를 화살표로 보여주는 지도입니다.</span>
+        <span data-lang="my">Explorer ပြတင်းပေါက် အပေါ်ဆုံးကို ကြည့်ပါက အမြဲတမ်း <code>This PC > Desktop > Kim_မှတ်တမ်း > 11 လပိုင်း</code> ကဲ့သို့သော <strong>'လမ်းကြောင်း (လိပ်စာ)'</strong> ကို ရေးထားပါသည်။ ၎င်းမှာ အဆောက်အအုံအတွင်း အခန်းများသို့ ဝင်ရောက်လာသော အစီအစဉ်ကို မြားဖြင့် ပြသထားသည့် မြေပုံဖြစ်ပါသည်။</span>
+        <span data-lang="vi">Nhìn lên phần trên cùng của cửa sổ Explorer, luôn có <strong>'Đường dẫn (Địa chỉ)'</strong> như <code>This PC > Desktop > KimKwangSoo_NhatKy > Tháng 11</code>. Đây là bản đồ mũi tên chỉ ra thứ tự các căn phòng bạn đã đi qua trong tòa nhà.</span>
+      </p>
+
+      <div class="tip-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>🧭 경로(주소표시줄) 활용법:</strong><br>
+          1. <strong>현재 위치 파악</strong>: 주소 맨 오른쪽 끝에 적힌 이름이 바로 내가 지금 서 있는 '현재 방(폴더)'입니다.<br>
+          2. <strong>상위 폴더로 뒤로 가기</strong>: 주소표시줄에 적힌 중간 글자(예: '김광수_요양일지')를 <strong>클릭</strong>하면, 그 방으로 단숨에 뒤로 빠져나갑니다.<br>
+          3. 저장할 때 실수하지 않으려면 <strong>반드시 주소표시줄 끝이 '내 이름 폴더'인지 확인</strong>하는 습관을 들여야 합니다!
+        </span>
+        <span data-lang="my">
+          <strong>🧭 Address Bar အသုံးပြုနည်း:</strong><br>
+          ၁။ <strong>လက်ရှိနေရာကို သိရှိခြင်း</strong>: လိပ်စာ၏ ညာဘက်အစွန်ဆုံးတွင် ရေးထားသောအမည်သည် မိမိ လက်ရှိရောက်နေသော 'အခန်း (ဖိုဒါ)' ဖြစ်ပါသည်။<br>
+          ၂။ <strong>အထက်ဖိုဒါသို့ နောက်ပြန်ဆုတ်ခြင်း</strong>: လိပ်စာတွင်ရေးထားသော အလယ်စာသား (ဥပမာ 'Kim_မှတ်တမ်း') ကို <strong>Click နှိပ်ပါက</strong> ထိုအခန်းသို့ ချက်ချင်း နောက်ပြန်ရောက်သွားမည်။<br>
+          ၃။ Save လုပ်ရာတွင် အမှားမဖြစ်စေရန် <strong>လိပ်စာအဆုံးသည် 'မိမိအမည်ဖိုဒါ' ဖြစ်မဖြစ် အမြဲစစ်ဆေးသော</strong> အကျင့်လုပ်ရပါမည်!
+        </span>
+        <span data-lang="vi">
+          <strong>🧭 Cách dùng Đường dẫn (Thanh địa chỉ):</strong><br>
+          1. <strong>Nắm bắt vị trí hiện tại</strong>: Tên ghi ở ngoài cùng bên phải địa chỉ chính là 'Căn phòng (Thư mục) hiện tại' bạn đang đứng.<br>
+          2. <strong>Lùi về thư mục cha</strong>: Nếu <strong>nhấp vào</strong> chữ ở giữa trên thanh địa chỉ (VD: 'KimKwangSoo_NhatKy'), bạn sẽ lùi nhanh ra căn phòng đó.<br>
+          3. Để không lưu nhầm, phải tập thói quen <strong>luôn kiểm tra đuôi thanh địa chỉ có đúng là 'Thư mục tên mình' không</strong> trước khi bấm lưu!
+        </span>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">5. 5차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၅။ (၅) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">5. Bảng Kiểm Tra Thực Hành Bài 5 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 한글 파일(.hwp) 아이콘과 스마트폰용 사진(.jpg), 문서(.pdf) 아이콘을 구분할 수 있다.</span>
+                <span data-lang="my">၁။ Hangul ဖိုင် (.hwp) အိုင်ကွန်နှင့် ဓာတ်ပုံ (.jpg)၊ PDF (.pdf) အိုင်ကွန်များကို ခွဲခြားသိမြင်နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Phân biệt được biểu tượng tệp Hangul (.hwp), ảnh điện thoại (.jpg) và tài liệu (.pdf).</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 폴더 창의 보기를 '자세히'로 바꾸고 [수정한 날짜]를 눌러 최근 파일순으로 정렬할 수 있다.</span>
+                <span data-lang="my">၂။ ဖိုဒါ View ကို 'Details' ပြောင်းပြီး [Date modified] နှိပ်၍ နောက်ဆုံးပြုလုပ်သော ဖိုင်စဉ်အတိုင်း စီနိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Đổi chế độ xem thành 'Chi tiết' và nhấp [Ngày sửa đổi] để sắp xếp tệp làm việc gần nhất lên trên.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 탐색기 맨 위의 '주소표시줄'을 보고 현재 내가 컴퓨터 안의 어느 방에 있는지 설명할 수 있다.</span>
+                <span data-lang="my">၃။ Explorer အပေါ်ဆုံးရှိ 'Address Bar' ကိုကြည့်၍ မိမိ ကွန်ပျူတာ၏ မည်သည့်အခန်းတွင် ရှိနေကြောင်း ရှင်းပြနိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Nhìn vào 'Thanh địa chỉ' trên cùng Explorer và giải thích được mình đang ở phòng nào trong máy.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 주소표시줄 중간의 글자를 클릭하여 밖의 방(상위 폴더)으로 쉽게 빠져나올 수 있다.</span>
+                <span data-lang="my">၄။ Address Bar အလယ်ရှိ စာသားကို Click နှိပ်၍ အပြင်ဘက်အခန်း (အထက်ဖိုဒါ) သို့ အလွယ်တကူ ထွက်နိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Nhấp vào chữ ở giữa thanh địa chỉ để lùi ra căn phòng bên ngoài (thư mục cha) dễ dàng.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course5-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course5-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

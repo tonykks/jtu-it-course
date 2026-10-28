@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">아래아 한글 실무 2차시: 문서 열기와 저장 경로 마스터</span>
+    <span data-lang="my">Hangul လက်တွေ့ (၂) ကြိမ်မြောက်: ဖိုင်ဖွင့်လှစ်ခြင်းနှင့် လမ်းကြောင်းသိမ်းဆည်းခြင်း</span>
+    <span data-lang="vi">Thực Hành Hangul Bài 2: Mở Văn Bản & Làm Chủ Đường Dẫn Lưu Tệp</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">2차시 강의 목차</span>
+        <span data-lang="my">၂ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 2</span>
+      </div>
+
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#open" id="nav-open">
+        <span>📂</span>
+        <span data-lang="ko">2. 새 문서 vs 불러오기</span>
+        <span data-lang="my">၂။ စာရွက်သစ် vs ဖွင့်ခြင်း</span>
+        <span data-lang="vi">2. Văn Bản Mới vs Mở</span>
+      </a>
+      <a href="#save-as" id="nav-save-as">
+        <span>⚠️</span>
+        <span data-lang="ko">3. 저장 vs 다른 이름으로 저장</span>
+        <span data-lang="my">၃။ Save vs Save As</span>
+        <span data-lang="vi">3. Lưu vs Lưu Tên Mới</span>
+      </a>
+      <a href="#path" id="nav-path">
+        <span>📍</span>
+        <span data-lang="ko">4. 저장 폴더 경로 찾기 훈련</span>
+        <span data-lang="my">၄။ ဖိုင်လမ်းကြောင်း ရှာဖွေခြင်း</span>
+        <span data-lang="vi">4. Điều Hướng Thư Mục</span>
+      </a>
+      <a href="#pdf" id="nav-pdf">
+        <span>📱</span>
+        <span data-lang="ko">5. 스마트폰용 PDF 변환 저장</span>
+        <span data-lang="my">၅။ PDF အဖြစ် သိမ်းဆည်းခြင်း</span>
+        <span data-lang="vi">5. Lưu Dạng PDF Cho Điện Thoại</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 2차시 점검 체크리스트</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+
+    <!-- 섹션 1 -->
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (2/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 파일 잃어버리지 않는 '저장 경로' 마스터</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: ဖိုင်မပျောက်စေရန် 'သိမ်းဆည်းရာလမ်းကြောင်း' ကို ကျွမ်းကျင်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Làm Chủ 'Đường Dẫn Lưu Tệp' Để Không Mất Tài Liệu</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">"내가 방금 쓴 일지가 어디로 갔지?" 컴퓨터 초보자들이 가장 많이 겪는 문제입니다. 2차시에서는 요양보호 시설에서 매일 반복하게 될 <strong>'기존 양식 불러오기 ➔ 내 이름 폴더 찾아가기 ➔ 날짜별로 다른 이름으로 저장하기'</strong>라는 실무 3단계 공식을 머리가 아닌 손으로 완벽히 암기합니다.</span>
+        <span data-lang="my">"ငါရေးလိုက်တဲ့ မှတ်တမ်း ဘယ်ရောက်သွားလဲ?" ၎င်းမှာ ကွန်ပျူတာ စတင်သုံးသူများ အများဆုံးကြုံတွေ့ရသော ပြဿနာဖြစ်ပါသည်။ ၂ ကြိမ်မြောက်တွင် စောင့်ရှောက်ရေးဌာန၌ နေ့စဉ်ပြုလုပ်ရမည့် <strong>'မူရင်းဖောင်ကိုခေါ်ယူခြင်း ➔ မိမိအမည်ဖိုဒါသို့သွားခြင်း ➔ ရက်စွဲအလိုက် အမည်သစ်ဖြင့် သိမ်းဆည်းခြင်း'</strong> ဟူသော လက်တွေ့ ၃ ဆင့်ကို လက်ဖြင့် လုံးဝမှတ်မိအောင် လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">"Nhật ký tôi vừa gõ biến đâu mất rồi?" Đó là vấn đề người mới dùng máy tính hay gặp nhất. Bài 2 này sẽ rèn luyện cho đôi tay bạn ghi nhớ hoàn hảo công thức 3 bước thực tế mỗi ngày ở viện điều dưỡng: <strong>'Mở biểu mẫu có sẵn ➔ Tìm đến thư mục tên mình ➔ Lưu thành tệp mới theo ngày'</strong>.</span>
+      </p>
+    </section>
+
+    <!-- 섹션 2 -->
+    <section class="lesson-card" id="open">
+      <div class="badge">STEP 1: NEW vs OPEN</div>
+      <h2>
+        <span data-lang="ko">2. 새 문서 만들기 vs 문서 불러오기(열기)</span>
+        <span data-lang="my">၂။ စာရွက်သစ် ပြုလုပ်ခြင်း vs ဖိုင် ဖွင့်လှစ်ခြင်း</span>
+        <span data-lang="vi">2. Tạo Văn Bản Mới vs Mở Văn Bản Có Sẵn</span>
+      </h2>
+      <p>
+        <span data-lang="ko">한글 프로그램을 처음 열었을 때 나타나는 '빈 종이'에 글을 쓰는 것과, 이미 다른 사람이 만들어 놓은 표나 양식을 '불러오는' 것은 다릅니다. 실무에서는 99% <strong>'불러오기'</strong>를 사용합니다.</span>
+        <span data-lang="my">Hangul ကို စဖွင့်စဉ် ပေါ်လာသော 'စာရွက်အလွတ်' တွင် စာရေးခြင်းနှင့် အခြားသူ ပြုလုပ်ထားသော ဇယား/ဖောင်များကို 'ခေါ်ယူဖွင့်လှစ်ခြင်း' သည် မတူညီပါ။ လက်တွေ့လုပ်ငန်းခွင်တွင် ၉၉% သည် <strong>'ခေါ်ယူဖွင့်လှစ်ခြင်း (Open)'</strong> ကိုသာ အသုံးပြုပါသည်။</span>
+        <span data-lang="vi">Viết trên 'tờ giấy trắng' khi mới mở Hangul rất khác với việc 'mở' một bảng biểu do người khác tạo sẵn. Trong thực tế, 99% chúng ta sử dụng chức năng <strong>'Mở (Open)'</strong>.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📄 새 문서 (빈 종이)</div>
+          <p>
+            <span data-lang="ko">한글을 더블클릭하면 기본으로 열리는 하얀 백지입니다. 아무것도 없는 상태에서 처음부터 문서를 만들 때 씁니다. 단축키: <strong>Alt + N</strong></span>
+            <span data-lang="my">Hangul ဖွင့်လိုက်သည်နှင့် အလိုအလျောက် ပေါ်လာသော စာရွက်အလွတ် ဖြစ်ပါသည်။ ဘာမှမရှိသော အခြေအနေမှ စတင်ဖန်တီးလိုလျှင် သုံးသည်။ Shortcut: <strong>Alt + N</strong></span>
+            <span data-lang="vi">Là tờ giấy trắng hiện ra khi mở Hangul. Dùng khi tạo tài liệu từ con số không. Phím tắt: <strong>Alt + N</strong></span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">📂 불러오기 (파일 열기)</div>
+          <p>
+            <span data-lang="ko">이미 만들어진 '실습일지_양식' 같은 파일을 찾아 화면에 띄웁니다. 상단 메뉴 <strong>[파일] ➔ [불러오기]</strong>를 누르거나, 단축키 <strong>Ctrl + O (알파벳 오)</strong>를 누릅니다.</span>
+            <span data-lang="my">ပြုလုပ်ပြီးသား 'မှတ်တမ်းဖောင်' ကို ရှာဖွေဖွင့်လှစ်ခြင်း ဖြစ်ပါသည်။ အပေါ်မီနူး <strong>[File] ➔ [Open]</strong> ကို နှိပ်ပါ သို့မဟုတ် Shortcut <strong>Ctrl + O (အက္ခရာ အို)</strong> ကို နှိပ်ပါ။</span>
+            <span data-lang="vi">Mở tệp đã có sẵn như 'Biểu mẫu nhật ký'. Vào menu <strong>[Tệp] ➔ [Mở]</strong> hoặc bấm phím tắt <strong>Ctrl + O (Chữ O)</strong>.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">⏱️ 최근 작업 문서</div>
+          <p>
+            <span data-lang="ko">어제 열었던 파일을 쉽게 다시 찾고 싶을 때 씁니다. [파일] 메뉴를 누르면 맨 아래에 최근에 썼던 파일 이름들이 보입니다.</span>
+            <span data-lang="my">မနေ့က ဖွင့်ခဲ့သော ဖိုင်ကို အလွယ်တကူ ပြန်ရှာလိုလျှင် သုံးသည်။ [File] မီနူးအောက်ခြေတွင် မကြာသေးမီက ဖွင့်ခဲ့သော ဖိုင်အမည်များကို တွေ့ရမည်။</span>
+            <span data-lang="vi">Dùng khi muốn tìm lại tệp vừa mở hôm qua. Bấm menu [Tệp] sẽ thấy danh sách các tệp làm việc gần đây ở dưới cùng.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 3 -->
+    <section class="lesson-card" id="save-as">
+      <div class="badge">STEP 2: SAVE vs SAVE AS</div>
+      <h2>
+        <span data-lang="ko">3. [매우 중요] '저장' vs '다른 이름으로 저장' 차이점</span>
+        <span data-lang="my">၃။ [အလွန်အရေးကြီးသည်] 'Save' နှင့် 'Save As' ကွာခြားချက်</span>
+        <span data-lang="vi">3. [Rất Quan Trọng] Khác Biệt Giữa 'Lưu' & 'Lưu Thành Tệp Mới'</span>
+      </h2>
+      <p>
+        <span data-lang="ko">요양보호사 시설에서 공통으로 쓰는 <strong>'원본 양식(템플릿)'</strong> 파일을 열어 내용을 쓴 뒤, 무심코 [저장]을 눌러버리면 원래 깨끗했던 빈 양식 파일이 내가 쓴 글씨로 덮어쓰기되어 망가집니다. 이 실수를 막는 것이 오늘 수업의 핵심입니다.</span>
+        <span data-lang="my">စောင့်ရှောက်ရေးဌာနတွင် အများသုံးသော <strong>'မူရင်းဖောင်'</strong> ကိုဖွင့်၍ စာရေးပြီးနောက်၊ သတိလွတ်၍ [Save] ကိုနှိပ်လိုက်ပါက မူလဖောင်အလွတ်သည် မိမိစာများဖြင့် ဖုံးအုပ်ခံရပြီး ပျက်စီးသွားပါမည်။ ဤအမှားကို တားဆီးခြင်းသည် ယနေ့၏ အဓိကအချက်ဖြစ်ပါသည်။</span>
+        <span data-lang="vi">Nếu bạn mở tệp <strong>'Biểu mẫu gốc (Template)'</strong> của viện, gõ nội dung vào rồi lỡ tay bấm [Lưu], biểu mẫu gốc trống trơn sẽ bị ghi đè nội dung của bạn và hỏng mất. Tránh được lỗi này là cốt lõi của bài học hôm nay.</span>
+      </p>
+
+      <div class="warn-box" style="border-left-color:var(--warn); background:var(--warn-soft);">
+        <span data-lang="ko">
+          <strong>⛔ 저장 (Save) / 단축키 Ctrl + S:</strong><br>
+          • <strong>위험! 덮어쓰기</strong>: 현재 열려있는 원본 파일 위에 그대로 내용을 덮어버립니다.<br>
+          • <strong>언제 쓰나요?</strong> 이미 내 이름과 날짜로 만들어진 <strong>'내 파일'을 작업하다가 중간에 날아가지 않게 보관할 때</strong> 수시로 누릅니다.
+        </span>
+        <span data-lang="my">
+          <strong>⛔ Save / Shortcut Ctrl + S:</strong><br>
+          • <strong>အန္တရာယ်! မူရင်းပျက်စီးခြင်း</strong>: လက်ရှိ ဖွင့်ထားသော မူရင်းဖိုင်ပေါ်တွင် ထပ်ရေးလိုက်ခြင်းဖြစ်ပါသည်။<br>
+          • <strong>ဘယ်အချိန်သုံးလဲ?</strong> မိမိအမည်နှင့် ရက်စွဲဖြင့် ပြုလုပ်ပြီးသား <strong>'မိမိဖိုင်' ကို လုပ်ဆောင်နေစဉ် ပျက်မသွားစေရန်</strong> မကြာခဏ နှိပ်ရပါသည်။
+        </span>
+        <span data-lang="vi">
+          <strong>⛔ Lưu (Save) / Phím tắt Ctrl + S:</strong><br>
+          • <strong>Nguy hiểm! Ghi đè</strong>: Nó sẽ lưu đè nội dung mới lên chính tệp gốc đang mở.<br>
+          • <strong>Dùng khi nào?</strong> Bấm liên tục <strong>để bảo vệ dữ liệu khỏi mất khi đang làm việc trên 'Tệp của chính bạn'</strong> (đã được lưu tên riêng).
+        </span>
+      </div>
+
+      <div class="tip-box" style="margin-top:10px;">
+        <span data-lang="ko">
+          <strong>🌟 다른 이름으로 저장 (Save As) / 단축키 Alt + V:</strong><br>
+          • <strong>안전! 복사본 만들기</strong>: 원본 양식은 그대로 놔두고, 내가 쓴 내용만 <strong>'새로운 파일'</strong>로 따로 떼어내어 저장합니다.<br>
+          • <strong>언제 쓰나요?</strong> <strong>처음 원본 양식을 열었을 때 가장 먼저!</strong> 무조건 <code>날짜_이름_일지.hwp</code>로 이름을 바꿔 따로 저장하고 시작합니다.
+        </span>
+        <span data-lang="my">
+          <strong>🌟 Save As / Shortcut Alt + V:</strong><br>
+          • <strong>ဘေးကင်းသည်! ကော်ပီအသစ်လုပ်ခြင်း</strong>: မူရင်းဖောင်ကို ဒီအတိုင်းထားခဲ့ပြီး မိမိရေးထားသည်ကို <strong>'ဖိုင်အသစ်'</strong> အဖြစ် သီးသန့်သိမ်းဆည်းခြင်း ဖြစ်ပါသည်။<br>
+          • <strong>ဘယ်အချိန်သုံးလဲ?</strong> <strong>မူရင်းဖောင်ကို စဖွင့်သည်နှင့် ပထမဆုံး အသုံးပြုရမည်!</strong> မဖြစ်မနေ <code>ရက်စွဲ_အမည်_မှတ်တမ်း.hwp</code> အဖြစ် နာမည်ပြောင်းသိမ်းပြီးမှ စတင်ရပါမည်။
+        </span>
+        <span data-lang="vi">
+          <strong>🌟 Lưu thành tệp mới (Save As) / Phím tắt Alt + V:</strong><br>
+          • <strong>An toàn! Tạo bản sao</strong>: Giữ nguyên biểu mẫu gốc, chỉ lưu nội dung bạn viết thành một <strong>'Tệp hoàn toàn mới'</strong>.<br>
+          • <strong>Dùng khi nào?</strong> <strong>Ngay khi vừa mở biểu mẫu gốc ra!</strong> Bắt buộc phải lưu riêng thành <code>Ngày_Tên_NhậtKý.hwp</code> rồi mới bắt đầu gõ.
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 4 -->
+    <section class="lesson-card" id="path">
+      <div class="badge">STEP 3: PATH NAVIGATION</div>
+      <h2>
+        <span data-lang="ko">4. 저장 폴더 위치(경로) 찾아가기 훈련</span>
+        <span data-lang="my">၄။ သိမ်းဆည်းမည့် ဖိုဒါလမ်းကြောင်း ရှာဖွေခြင်း လေ့ကျင့်မှု</span>
+        <span data-lang="vi">4. Điều Hướng Thư Mục Lưu Tệp</span>
+      </h2>
+      <p>
+        <span data-lang="ko">파일 이름을 바꿨다면, 이제 <strong>'어느 방(폴더)'</strong>에 넣을지 정해줘야 합니다. 대충 저장하면 나중에 컴퓨터 전체를 뒤져야 합니다. '다른 이름으로 저장' 창이 뜨면 <strong>가장 왼쪽의 목록(트리)</strong>을 봅니다.</span>
+        <span data-lang="my">ဖိုင်အမည် ပြောင်းပြီးပါက <strong>'မည်သည့်အခန်း (ဖိုဒါ)'</strong> တွင် ထည့်မည်ကို သတ်မှတ်ပေးရပါမည်။ ဖြစ်သလိုသိမ်းပါက နောက်ပိုင်းတွင် ကွန်ပျူတာတစ်ခုလုံး လိုက်ရှာရတတ်သည်။ 'Save As' ဘောက်စ် ကျလာပါက <strong>အဘယ်ဘက်အစွန်ဆုံးရှိ စာရင်း (Tree)</strong> ကို ကြည့်ပါ။</span>
+        <span data-lang="vi">Đổi tên xong, bạn phải chỉ định <strong>'Lưu vào phòng (thư mục) nào'</strong>. Nếu lưu đại thì sau này phải lục tung cả máy. Khi hộp thoại 'Save As' hiện ra, hãy nhìn vào <strong>danh sách (cây thư mục) ngoài cùng bên trái</strong>.</span>
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:10%">순서</th>
+              <th style="width:90%">
+                <span data-lang="ko">저장 경로 찾아가기 행동 지침</span>
+                <span data-lang="my">လမ်းကြောင်း ရှာဖွေခြင်း ညွှန်ကြားချက်</span>
+                <span data-lang="vi">Hướng dẫn tìm đường dẫn lưu</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>
+                <span data-lang="ko">저장 창의 <strong>왼쪽 목록</strong>에서 마우스 휠을 굴려 <strong>[바탕 화면]</strong> 글자를 찾아 클릭합니다.</span>
+                <span data-lang="my">Save ဘောက်စ်၏ <strong>ဘယ်ဘက်စာရင်း</strong>တွင် Mouse ဖြင့် လှိမ့်၍ <strong>[Desktop]</strong> စာတန်းကိုရှာပြီး Click နှိပ်ပါ။</span>
+                <span data-lang="vi">Cuộn chuột ở <strong>danh sách bên trái</strong> của hộp thoại Lưu, tìm và nhấp vào chữ <strong>[Desktop]</strong>.</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>
+                <span data-lang="ko">가운데 넓은 화면(바탕화면 방 안)에서 컴퓨터 기초 시간에 만든 <strong>[내 이름 폴더]</strong>를 찾아 <strong>더블클릭</strong>하여 안으로 들어갑니다.</span>
+                <span data-lang="my">အလယ်ရှိ နေရာကျယ် (Desktop အခန်းတွင်း) တွင် ကွန်ပျူတာအခြေခံအချိန်က ပြုလုပ်ခဲ့သော <strong>[မိမိအမည်ဖိုဒါ]</strong> ကိုရှာပြီး <strong>Double Click</strong> နှိပ်၍ အထဲသို့ ဝင်ပါ။</span>
+                <span data-lang="vi">Ở vùng rộng giữa màn hình, tìm <strong>[Thư mục tên bạn]</strong> đã tạo ở giờ Tin học cơ bản, <strong>nhấp đúp</strong> để đi vào trong.</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>
+                <span data-lang="ko">창 맨 위에 있는 <strong>[주소 표시줄]</strong> 끝이 내 이름 폴더로 끝나는지 확인합니다.</span>
+                <span data-lang="my">ပြတင်းပေါက် အပေါ်ဆုံးရှိ <strong>[Address Bar]</strong> ၏ အဆုံးတွင် မိမိအမည်ဖိုဒါ ဖြစ်မဖြစ် စစ်ဆေးပါ။</span>
+                <span data-lang="vi">Nhìn lên <strong>[Thanh địa chỉ]</strong> trên cùng xem có đúng đuôi là Thư mục tên bạn hay không.</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>
+                <span data-lang="ko">아래쪽 파일 이름 칸에 <code>20261029_홍길동_일지</code>라고 적고 <strong>[저장]</strong> 버튼을 누릅니다.</span>
+                <span data-lang="my">အောက်ဘက်ရှိ ဖိုင်အမည် နေရာတွင် <code>20261029_အောင်အောင်_မှတ်တမ်း</code> ဟုရေးပြီး <strong>[Save]</strong> ခလုတ်ကို နှိပ်ပါ။</span>
+                <span data-lang="vi">Gõ <code>20261029_NguyenVanA_NhatKy</code> vào ô File name phía dưới và bấm nút <strong>[Lưu (Save)]</strong>.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 섹션 5 -->
+    <section class="lesson-card" id="pdf">
+      <div class="badge">STEP 4: SAVE AS PDF</div>
+      <h2>
+        <span data-lang="ko">5. 스마트폰 제출용 PDF 파일로 변환하여 저장하기</span>
+        <span data-lang="my">၅။ စမတ်ဖုန်းဖြင့် ပို့ရန် PDF ဖိုင်အဖြစ် ပြောင်းလဲသိမ်းဆည်းခြင်း</span>
+        <span data-lang="vi">5. Lưu Dạng PDF Để Gửi Qua Điện Thoại</span>
+      </h2>
+      <p>
+        <span data-lang="ko">작성한 일지를 시설장님께 카카오톡이나 스마트폰으로 바로 보내야 할 때, 한글(HWP) 파일로 보내면 상대방 폰에서 글씨가 깨지거나 안 열릴 수 있습니다. 이럴 때는 문서 모양이 사진처럼 고정되는 <strong>PDF 파일</strong>로 변환하여 저장합니다.</span>
+        <span data-lang="my">ရေးသားထားသော မှတ်တမ်းကို တာဝန်ခံထံ KakaoTalk သို့မဟုတ် စမတ်ဖုန်းဖြင့် ချက်ချင်းပို့ရမည့်အခါ၊ Hangul (HWP) ဖိုင်ဖြင့်ပို့ပါက တစ်ဖက်ဖုန်းတွင် စာလုံးများ ပျက်ခြင်း သို့မဟုတ် ဖွင့်မရခြင်း ဖြစ်နိုင်ပါသည်။ ထိုအခါ စာရွက်ပုံစံကို ဓာတ်ပုံကဲ့သို့ အသေဖြစ်စေသော <strong>PDF ဖိုင်</strong> အဖြစ် ပြောင်းလဲသိမ်းဆည်းရပါမည်။</span>
+        <span data-lang="vi">Khi cần gửi nhật ký đã viết cho quản lý qua Zalo/KakaoTalk, gửi tệp HWP có thể làm hỏng font chữ hoặc không mở được trên điện thoại người nhận. Khi đó, hãy lưu chuyển đổi sang <strong>tệp PDF</strong> để định dạng tài liệu bị khóa chặt như một bức ảnh.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📄 PDF로 저장하는 방법</div>
+          <p>
+            <span data-lang="ko">
+              1. 상단 메뉴에서 <strong>[파일] ➔ [PDF로 저장하기]</strong>를 클릭합니다.<br>
+              2. 앞서 배운 대로 저장 위치를 <strong>바탕화면 ➔ 내 폴더</strong>로 지정합니다.<br>
+              3. 파일 형식 칸이 'PDF 문서'로 되어 있는지 확인하고 저장 버튼을 누릅니다.
+            </span>
+            <span data-lang="my">
+              ၁။ အပေါ်မီနူးမှ <strong>[File] ➔ [Save as PDF]</strong> ကို Click နှိပ်ပါ။<br>
+              ၂။ ရှေ့တွင် သင်ခဲ့သည့်အတိုင်း သိမ်းဆည်းမည့်နေရာကို <strong>Desktop ➔ မိမိဖိုဒါ</strong> သို့ သတ်မှတ်ပါ။<br>
+              ၃။ ဖိုင်အမျိုးအစားနေရာတွင် 'PDF Document' ဖြစ်မဖြစ် စစ်ဆေးပြီး Save ကို နှိပ်ပါ။
+            </span>
+            <span data-lang="vi">
+              1. Bấm menu trên cùng <strong>[Tệp] ➔ [Lưu dưới dạng PDF]</strong>.<br>
+              2. Chỉ định vị trí lưu là <strong>Desktop ➔ Thư mục của tôi</strong> như đã học.<br>
+              3. Kiểm tra ô Loại tệp đã là 'PDF Document' chưa và bấm Lưu.
+            </span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 6 -->
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 2차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၂) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 2 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 단축키 Ctrl+O(알파벳 오)를 눌러서 강사가 지정한 '실습서식.hwp'를 열 수 있다.</span>
+                <span data-lang="my">၁။ Shortcut Ctrl+O ကို နှိပ်၍ ဆရာသတ်မှတ်ထားသော '실습서식.hwp' ကို ဖွင့်နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Biết bấm phím tắt Ctrl+O để mở tệp 'Biểu mẫu thực hành.hwp' giáo viên giao.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 파일 내용을 수정하기 전에 가장 먼저 '다른 이름으로 저장(Alt+V)'을 누를 수 있다.</span>
+                <span data-lang="my">၂။ ဖိုင်စာသားများ မပြင်ဆင်မီ ပထမဆုံး 'Save As (Alt+V)' ကို နှိပ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Biết thao tác đầu tiên trước khi sửa nội dung là bấm 'Lưu thành tệp mới (Alt+V)'.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 저장 창의 왼쪽 목록에서 [바탕화면]을 찾아 내 이름 폴더 안으로 들어갈 수 있다.</span>
+                <span data-lang="my">၃။ Save ဘောက်စ် ဘယ်ဘက်စာရင်းမှ [Desktop] ကိုရှာ၍ မိမိအမည်ဖိုဒါတွင်းသို့ ဝင်နိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Biết tìm [Desktop] ở danh sách bên trái và đi vào thư mục tên mình.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 파일 이름을 오늘 날짜와 내 이름(예: 20261029_이름_일지)으로 바꿔 저장할 수 있다.</span>
+                <span data-lang="my">၄။ ဖိုင်အမည်ကို ယနေ့ရက်စွဲနှင့် မိမိအမည် (ဥပမာ: 20261029_အမည်_မှတ်တမ်း) ပြောင်း၍ သိမ်းနိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Biết đổi tên tệp theo ngày và tên mình (VD: 20261029_Tên_NhậtKý) rồi lưu.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">5. 다 쓴 문서를 [파일] 메뉴에서 'PDF로 저장하기'를 눌러 복사본을 만들 수 있다.</span>
+                <span data-lang="my">၅။ ရေးပြီးသော စာရွက်ကို [File] မီနူးမှ 'Save as PDF' နှိပ်၍ ကော်ပီပွားနိုင်ခြင်း။</span>
+                <span data-lang="vi">5. Biết vào menu [Tệp] chọn 'Lưu dạng PDF' để tạo bản sao nộp qua điện thoại.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course2-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course2-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

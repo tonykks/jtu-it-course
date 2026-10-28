@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>아래아 한글 실무 1차시: 워드프로세서 기초 & 화면 익히기</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">아래아 한글 실무 1차시: 워드프로세서 기초 & 화면 익히기</span>
+    <span data-lang="my">Hangul လက်တွေ့ (၁) ကြိမ်မြောက်: Word Processor အခြေခံနှင့် မျက်နှာပြင် လေ့လာခြင်း</span>
+    <span data-lang="vi">Thực Hành Hangul Bài 1: Cơ Bản Về Word Processor & Làm Quen Màn Hình</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">1차시 강의 목차</span>
+        <span data-lang="my">သင်ခန်းစာ မာတိကာ</span>
+        <span data-lang="vi">NỘI DUNG BÀI 1</span>
+      </div>
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#wordprocessor" id="nav-wordprocessor">
+        <span>📝</span>
+        <span data-lang="ko">2. 워드프로세서의 이해</span>
+        <span data-lang="my">၂။ Word Processor အကြောင်း</span>
+        <span data-lang="vi">2. Hiểu Về Word Processor</span>
+      </a>
+      <a href="#history" id="nav-history">
+        <span>🇰🇷</span>
+        <span data-lang="ko">3. 아래아 한글의 역사와 변환</span>
+        <span data-lang="my">၃။ Hangul သမိုင်းကြောင်းနှင့် ဖိုင်ပြောင်းလဲခြင်း</span>
+        <span data-lang="vi">3. Lịch Sử & Chuyển Đổi Tệp Hangul</span>
+      </a>
+      <a href="#screen" id="nav-screen">
+        <span>🖥️</span>
+        <span data-lang="ko">4. 화면 구성과 기초 조작</span>
+        <span data-lang="my">၄။ မျက်နှာပြင် ဖွဲ့စည်းပုံနှင့် အခြေခံအသုံးပြုနည်း</span>
+        <span data-lang="vi">4. Cấu Trúc Màn Hình & Thao Tác</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">5. 1차시 실습 점검 체크</span>
+        <span data-lang="my">၅။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">5. Bảng Kiểm Tra Thực Hành</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="deck">
+    <!-- 섹션 1: 수업 개요 -->
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (1/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 요양보호사의 무기, '한글'과 친해지기</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: သက်ကြီးရွယ်အိုစောင့်ရှောက်ရေး လက်နက် 'Hangul' နှင့် ရင်းနှီးကျွမ်းဝင်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Làm Quen Với 'Hangul' - Công Cụ Của Điều Dưỡng Viên</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 + 10분 실습</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> မိနစ် ၅၀ သင်ကြားမှု + ၁၀ မိနစ် လက်တွေ့</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết + 10 phút thực hành</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">매주 3시간씩 진행되는 실무 교육의 마지막 3교시입니다. 앞서 배운 컴퓨터 다루는 법과 타자 실력을 바탕으로, 실제 한국의 요양병원과 공공기관에서 매일 사용하는 문서 작성 프로그램인 <strong>'아래아 한글(HWP)'</strong>의 개념을 이해하고, 프로그램을 열고 닫는 가장 기초적인 동작을 실습합니다.</span>
+        <span data-lang="my">အပတ်စဉ် ၃ နာရီကြာ သင်ကြားမည့် လက်တွေ့သင်တန်း၏ နောက်ဆုံး ၁ နာရီဖြစ်ပါသည်။ ရှေ့တွင်သင်ခဲ့သော ကွန်ပျူတာ အခြေခံနှင့် လက်ရိုက်စွမ်းရည်ကို အခြေခံ၍ ကိုရီးယားရှိ ဆေးရုံများနှင့် ဌာနဆိုင်ရာများတွင် နေ့စဉ်အသုံးပြုသော စာရွက်စာတမ်း ပရိုဂရမ်ဖြစ်သည့် <strong>'Hangul (HWP)'</strong> ၏ သဘောတရားကို နားလည်စေရန်နှင့် ပရိုဂရမ် ဖွင့်/ပိတ်နည်းကို လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">Đây là tiết học thứ 3 trong khối 3 giờ học thực hành mỗi tuần. Dựa trên kỹ năng máy tính và đánh máy đã học, chúng ta sẽ tìm hiểu khái niệm về <strong>'Hangul (HWP)'</strong> - phần mềm soạn thảo được sử dụng hàng ngày tại các bệnh viện và cơ quan công quyền Hàn Quốc, đồng thời thực hành các thao tác mở và đóng chương trình cơ bản nhất.</span>
+      </p>
+    </section>
+
+    <!-- 섹션 2: 워드프로세서의 이해 -->
+    <section class="lesson-card" id="wordprocessor">
+      <div class="badge">STEP 1: WORD PROCESSOR</div>
+      <h2>
+        <span data-lang="ko">2. 워드프로세서(Word Processor)란 무엇인가?</span>
+        <span data-lang="my">၂။ Word Processor ဆိုတာ ဘာလဲ?</span>
+        <span data-lang="vi">2. Word Processor Là Gì?</span>
+      </h2>
+      <p>
+        <span data-lang="ko"><strong>워드프로세서</strong>는 컴퓨터를 이용해 글을 쓰고, 표를 만들고, 사진을 넣어 인쇄할 수 있는 <strong>'디지털 타자기 겸 서류 공장'</strong>입니다. 목적에 따라 여러 종류가 있습니다.</span>
+        <span data-lang="my"><strong>Word Processor</strong> သည် ကွန်ပျူတာကို အသုံးပြု၍ စာရိုက်ခြင်း၊ ဇယားဆွဲခြင်း၊ ပုံထည့်ခြင်းနှင့် ပရင့်ထုတ်ခြင်းများ ပြုလုပ်နိုင်သော <strong>'ဒစ်ဂျစ်တယ် စာစီစာရိုက်စက်/စာရွက်စာတမ်း စက်ရုံ'</strong> ဖြစ်ပါသည်။ ရည်ရွယ်ချက်အပေါ် မူတည်၍ အမျိုးအစား အမျိုးမျိုး ရှိပါသည်။</span>
+        <span data-lang="vi"><strong>Word Processor (Trình xử lý văn bản)</strong> là một <strong>'máy đánh chữ kỹ thuật số kiêm nhà máy sản xuất tài liệu'</strong>, giúp bạn gõ văn bản, tạo bảng, chèn ảnh và in ấn trên máy tính. Có nhiều loại tùy theo mục đích sử dụng.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📝 메모장 (Notepad)</div>
+          <p>
+            <span data-lang="ko">가장 단순한 프로그램입니다. 글자 색이나 크기를 바꿀 수 없고 오직 '글씨'만 쓸 수 있습니다. (확장자: .txt)</span>
+            <span data-lang="my">အရှင်းလင်းဆုံး ပရိုဂရမ်ဖြစ်ပါသည်။ စာလုံးအရောင်နှင့် အရွယ်အစားကို ပြောင်းလဲ၍မရဘဲ 'စာသား' သီးသန့်သာ ရိုက်နိုင်ပါသည်။ (ဖိုင်အမျိုးအစား: .txt)</span>
+            <span data-lang="vi">Chương trình đơn giản nhất. Không thể đổi màu hay cỡ chữ, chỉ có thể gõ 'văn bản thô'. (Đuôi tệp: .txt)</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🌍 MS Word (워드)</div>
+          <p>
+            <span data-lang="ko">마이크로소프트에서 만들어 전 세계적으로 가장 많이 사용하는 표준 프로그램입니다. (확장자: .docx)</span>
+            <span data-lang="my">Microsoft မှ ဖန်တီးထားပြီး ကမ္ဘာတစ်ဝန်း အများဆုံးအသုံးပြုသော စံသတ်မှတ်ချက် ပရိုဂရမ်ဖြစ်ပါသည်။ (ဖိုင်အမျိုးအစား: .docx)</span>
+            <span data-lang="vi">Phần mềm tiêu chuẩn toàn cầu do Microsoft tạo ra, được sử dụng nhiều nhất trên thế giới. (Đuôi tệp: .docx)</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🇰🇷 아래아 한글 (HWP)</div>
+          <p>
+            <span data-lang="ko">한국에서 개발된 한국 고유의 프로그램으로, <strong>한국의 모든 관공서와 요양시설</strong>에서 100% 사용합니다. (확장자: .hwp, .hwpx)</span>
+            <span data-lang="my">ကိုရီးယားတွင် ဖန်တီးထားသော ကိုရီးယားကိုယ်ပိုင် ပရိုဂရမ်ဖြစ်ပြီး၊ <strong>ကိုရီးယား အစိုးရရုံးများနှင့် စောင့်ရှောက်ရေးဌာနများအားလုံးတွင်</strong> ၁၀၀% အသုံးပြုပါသည်။ (ဖိုင်အမျိုးအစား: .hwp, .hwpx)</span>
+            <span data-lang="vi">Phần mềm đặc trưng do Hàn Quốc phát triển, được sử dụng 100% tại <strong>tất cả cơ quan nhà nước và cơ sở điều dưỡng của Hàn Quốc</strong>. (Đuôi tệp: .hwp, .hwpx)</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 3: 역사와 호환성 -->
+    <section class="lesson-card" id="history">
+      <div class="badge">STEP 2: HISTORY & CONVERSION</div>
+      <h2>
+        <span data-lang="ko">3. 아래아 한글의 기원과 파일 변환</span>
+        <span data-lang="my">၃။ Hangul ၏ သမိုင်းကြောင်းနှင့် ဖိုင်ပြောင်းလဲခြင်း</span>
+        <span data-lang="vi">3. Lịch Sử Của Hangul & Việc Chuyển Đổi Tệp</span>
+      </h2>
+      
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>📅 1989년의 발명품:</strong><br>
+          아래아 한글은 1989년에 '이찬진'이라는 프로그래머에 의해 처음 개발되었습니다. 한국어의 원리(초성, 중성, 종성)를 컴퓨터에서 가장 완벽하게 표현할 수 있어 한국의 국민 프로그램이 되었습니다. 현재 실무에서는 주로 <strong>한글 2020</strong> 또는 <strong>한글 2022</strong> 버전을 사용합니다.
+        </span>
+        <span data-lang="my">
+          <strong>📅 ၁၉၈၉ ခုနှစ်၏ တီထွင်မှု:</strong><br>
+          Hangul ကို ၁၉၈၉ ခုနှစ်တွင် 'Lee Chan-jin' ဟူသော ပရိုဂရမ်မာမှ စတင်ဖန်တီးခဲ့ပါသည်။ ကိုရီးယားဘာသာစကား၏ သဘောတရား (ဗျည်း၊ သရ၊ အသတ်) ကို ကွန်ပျူတာပေါ်တွင် အကောင်းဆုံး ဖော်ပြနိုင်သဖြင့် ကိုရီးယား၏ အမျိုးသားပရိုဂရမ် ဖြစ်လာခဲ့သည်။ ယခု လက်တွေ့လုပ်ငန်းခွင်များတွင် <strong>Hangul 2020</strong> သို့မဟုတ် <strong>Hangul 2022</strong> ဗားရှင်းများကို အဓိက အသုံးပြုပါသည်။
+        </span>
+        <span data-lang="vi">
+          <strong>📅 Phát minh năm 1989:</strong><br>
+          Hangul được lập trình viên 'Lee Chan-jin' phát triển lần đầu vào năm 1989. Vì nó có thể thể hiện hoàn hảo nguyên lý của tiếng Hàn (âm đầu, âm giữa, âm cuối) trên máy tính nên đã trở thành phần mềm quốc dân của Hàn Quốc. Hiện tại trong thực tế công việc thường sử dụng phiên bản <strong>Hangul 2020</strong> hoặc <strong>Hangul 2022</strong>.
+        </span>
+      </div>
+
+      <div class="warn-box" style="margin-top:10px;">
+        <span data-lang="ko">
+          <strong>🔄 파일 변환 (호환성):</strong><br>
+          아래아 한글로 만든 문서(HWP)는 외국 컴퓨터나 스마트폰에서 안 열릴 수 있습니다. 이럴 때는 한글 프로그램 안에서 <strong>PDF 파일</strong>(.pdf)이나 <strong>워드 파일</strong>(.docx)로 변환하여 저장하면 전 세계 어디서든 똑같은 모양으로 볼 수 있습니다.
+        </span>
+        <span data-lang="my">
+          <strong>🔄 ဖိုင်အမျိုးအစား ပြောင်းလဲခြင်း (Compatibility):</strong><br>
+          Hangul ဖြင့် ပြုလုပ်ထားသော ဖိုင် (HWP) သည် နိုင်ငံခြား ကွန်ပျူတာ သို့မဟုတ် စမတ်ဖုန်းများတွင် ဖွင့်မရနိုင်ပါ။ ထိုအခါမျိုးတွင် Hangul ပရိုဂရမ်အတွင်းမှ <strong>PDF ဖိုင်</strong> (.pdf) သို့မဟုတ် <strong>Word ဖိုင်</strong> (.docx) အဖြစ် ပြောင်းလဲသိမ်းဆည်းပါက ကမ္ဘာပေါ်ရှိ မည်သည့်နေရာတွင်မဆို ပုံစံမပျက် ကြည့်ရှုနိုင်ပါသည်။
+        </span>
+        <span data-lang="vi">
+          <strong>🔄 Chuyển đổi tệp (Tính tương thích):</strong><br>
+          Tài liệu tạo bằng Hangul (HWP) có thể không mở được trên máy tính nước ngoài hoặc điện thoại thông minh. Khi đó, nếu bạn lưu chuyển đổi sang <strong>tệp PDF</strong> (.pdf) hoặc <strong>tệp Word</strong> (.docx) ngay trong chương trình Hangul, bạn có thể xem với nguyên vẹn định dạng ở bất cứ đâu trên thế giới.
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 4: 화면 구성과 종료 -->
+    <section class="lesson-card" id="screen">
+      <div class="badge">STEP 3: SCREEN & OPERATION</div>
+      <h2>
+        <span data-lang="ko">4. 한글 2020 화면 구성과 기초 조작 (열고 닫기)</span>
+        <span data-lang="my">၄။ Hangul 2020 မျက်နှာပြင် ဖွဲ့စည်းပုံနှင့် အခြေခံအသုံးပြုနည်း (ဖွင့်/ပိတ်)</span>
+        <span data-lang="vi">4. Cấu Trúc Màn Hình Hangul 2020 & Thao Tác Cơ Bản (Mở và Đóng)</span>
+      </h2>
+      
+      <table style="margin-bottom:15px;">
+        <thead>
+          <tr>
+            <th style="width:25%">
+              <span data-lang="ko">조작 순서</span>
+              <span data-lang="my">အသုံးပြုပုံ အဆင့်ဆင့်</span>
+              <span data-lang="vi">Trình tự thao tác</span>
+            </th>
+            <th style="width:75%">
+              <span data-lang="ko">상세 설명 및 행동 지침</span>
+              <span data-lang="my">အသေးစိတ် ရှင်းလင်းချက်နှင့် လမ်းညွှန်</span>
+              <span data-lang="vi">Mô tả chi tiết và Hướng dẫn</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span data-lang="ko">1. 프로그램 실행</span><span data-lang="my">၁. ပရိုဂရမ် ဖွင့်ခြင်း</span><span data-lang="vi">1. Chạy chương trình</span></strong></td>
+            <td>
+              <span data-lang="ko">바탕화면에서 파란색 바탕에 '한'이라고 적힌 <strong>[한글 2020]</strong> 아이콘을 마우스 왼쪽 버튼으로 <strong>더블클릭(빠르게 두 번)</strong>합니다.</span>
+              <span data-lang="my">Desktop ပေါ်ရှိ အပြာရောင်နောက်ခံတွင် '한' ဟုရေးထားသော <strong>[Hangul 2020]</strong> အိုင်ကွန်ကို Mouse ဘယ်ဘက်ခလုတ်ဖြင့် <strong>Double Click (မြန်မြန်နှစ်ချက်)</strong> နှိပ်ပါ။</span>
+              <span data-lang="vi">Trên Desktop, nhấp đúp (nhanh hai lần) chuột trái vào biểu tượng <strong>[Hangul 2020]</strong> có chữ '한' trên nền xanh dương.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">2. 화면과 커서 확인</span><span data-lang="my">၂. မျက်နှာပြင်နှင့် Cursor ကို စစ်ဆေးခြင်း</span><span data-lang="vi">2. Kiểm tra màn hình và con trỏ</span></strong></td>
+            <td>
+              <span data-lang="ko">하얀 종이(편집 화면) 위에 <strong>깜빡이는 세로 선( | )</strong>이 보입니다. 이것을 <strong>'커서(Cursor)'</strong>라고 부르며, 키보드를 치면 바로 이 위치에 글자가 찍힙니다. 커서가 없으면 화면 하얀 곳을 한 번 클릭하세요.</span>
+              <span data-lang="my">စာရွက်အဖြူ (စာရိုက်မည့်နေရာ) ပေါ်တွင် <strong>မှိတ်တုတ်မှိတ်တုတ်ဖြစ်နေသော ဒေါင်လိုက်မျဉ်း ( | )</strong> ကို တွေ့ရပါမည်။ ၎င်းကို <strong>'Cursor'</strong> ဟုခေါ်ပြီး၊ ကီးဘုတ်ကိုနှိပ်ပါက ထိုနေရာတွင် စာလုံးပေါ်လာပါမည်။ Cursor မရှိပါက အဖြူရောင်နေရာကို တစ်ချက် Click နှိပ်ပါ။</span>
+              <span data-lang="vi">Bạn sẽ thấy một <strong>đường dọc nhấp nháy ( | )</strong> trên tờ giấy trắng (màn hình soạn thảo). Cái này gọi là <strong>'Con trỏ (Cursor)'</strong>, chữ sẽ được gõ ra đúng tại vị trí này. Nếu không thấy con trỏ, hãy nhấp chuột một lần vào vùng màu trắng.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">3. 글자 입력해보기</span><span data-lang="my">၃. စာရိုက်ကြည့်ခြင်း</span><span data-lang="vi">3. Thử gõ chữ</span></strong></td>
+            <td>
+              <span data-lang="ko">앞 시간에 배운 타자 실력을 발휘하여 본인의 <strong>한국어 이름</strong>을 한 번 타이핑해 봅니다.</span>
+              <span data-lang="my">ရှေ့အချိန်တွင် သင်ယူခဲ့သော လက်ရိုက်စွမ်းရည်ကို အသုံးပြု၍ မိမိ၏ <strong>ကိုရီးယားအမည်</strong> ကို တစ်ကြိမ် ရိုက်ကြည့်ပါ။</span>
+              <span data-lang="vi">Sử dụng kỹ năng đánh máy đã học ở tiết trước, thử gõ <strong>tên tiếng Hàn</strong> của bạn một lần.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">4. 프로그램 종료</span><span data-lang="my">၄. ပရိုဂရမ် ပိတ်ခြင်း</span><span data-lang="vi">4. Đóng chương trình</span></strong></td>
+            <td>
+              <span data-lang="ko">프로그램을 끌 때는 화면 <strong>오른쪽 맨 위 구석에 있는 [ X ] 모양의 '닫기' 버튼</strong>을 누릅니다.</span>
+              <span data-lang="my">ပရိုဂရမ်ကို ပိတ်လိုပါက စခရင်၏ <strong>ညာဘက်အပေါ်ဆုံးထောင့်ရှိ [ X ] ပုံစံ 'Close' ခလုတ်</strong>ကို နှိပ်ပါ။</span>
+              <span data-lang="vi">Khi muốn tắt chương trình, nhấn vào <strong>nút 'Đóng' hình [ X ] ở góc trên cùng bên phải</strong> màn hình.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">5. '저장 안 함' 선택 (중요)</span><span data-lang="my">၅. '저장 안 함' (Save မလုပ်ပါ) ကို ရွေးချယ်ခြင်း (အရေးကြီးသည်)</span><span data-lang="vi">5. Chọn 'Không lưu' (Quan trọng)</span></strong></td>
+            <td>
+              <span data-lang="ko">글자를 하나라도 썼다면 "문서를 저장할까요?"라는 경고 창이 뜹니다. 오늘은 연습용이므로 가운데에 있는 <strong class="hl-red">[저장 안 함]</strong> 버튼을 마우스로 클릭하여 완전히 종료합니다.</span>
+              <span data-lang="my">စာတစ်လုံး라도 ရိုက်ထားပါက "ဖိုင်ကို သိမ်းမလား?" (문서를 저장할까요?) ဟူသော သတိပေးချက် တက်လာပါမည်။ ယနေ့သည် လေ့ကျင့်ရန်သာဖြစ်သဖြင့် အလယ်ရှိ <strong class="hl-red">[저장 안 함] (Don't Save)</strong> ခလုတ်ကို Mouse ဖြင့်နှိပ်၍ အပြီးသတ် ပိတ်လိုက်ပါ။</span>
+              <span data-lang="vi">Nếu bạn đã gõ dù chỉ một chữ, một hộp thoại cảnh báo "Bạn có muốn lưu tài liệu không?" sẽ hiện ra. Hôm nay chỉ là thực hành nghiệm, hãy nhấp chuột vào nút <strong class="hl-red">[저장 안 함] (Không lưu)</strong> ở giữa để thoát hoàn toàn.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 섹션 5: 실습 점검 체크리스트 -->
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">5. 1차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၅။ (၁) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">5. Bảng Kiểm Tra Thực Hành Bài 1 (Tự Đánh Giá)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">오늘 배운 한글 2020 기초 조작을 강사의 도움 없이 혼자 힘으로 수행할 수 있는지 체크해 봅니다.</span>
+        <span data-lang="my">ယနေ့ သင်ကြားခဲ့သော Hangul 2020 အခြေခံအသုံးပြုနည်းများကို ဆရာ၏ အကူအညီမပါဘဲ မိမိကိုယ်တိုင် ပြုလုပ်နိုင်ခြင်း ရှိမရှိ စစ်ဆေးပါ။</span>
+        <span data-lang="vi">Hãy tự kiểm tra xem bạn có thể tự mình thực hiện các thao tác Hangul 2020 cơ bản hôm nay mà không cần trợ giúp không.</span>
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 바탕화면에서 한글 2020 아이콘을 찾아 '더블클릭'으로 실행할 수 있다.</span>
+                <span data-lang="my">၁။ Desktop ပေါ်မှ Hangul 2020 အိုင်ကွန်ကို ရှာပြီး 'Double Click' ဖြင့် ဖွင့်နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Có thể tìm biểu tượng Hangul 2020 trên Desktop và 'nhấp đúp' để chạy.</span>
+              </td>
+              <td style="text-align:center">☑ 통과 (Pass)</td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 화면에 글자가 찍히는 위치인 '깜빡이는 커서( | )'를 찾을 수 있다.</span>
+                <span data-lang="my">၂။ စာရိုက်မည့်နေရာဖြစ်သော 'မှိတ်တုတ်မှိတ်တုတ် Cursor ( | )' ကို ရှာတွေ့နိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Có thể tìm thấy 'con trỏ nhấp nháy ( | )' báo vị trí gõ chữ trên màn hình.</span>
+              </td>
+              <td style="text-align:center">☑ 통과 (Pass)</td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 키보드를 사용해 본인의 이름이나 단어를 자유롭게 타이핑할 수 있다.</span>
+                <span data-lang="my">၃။ ကီးဘုတ်ကို အသုံးပြု၍ မိမိအမည် သို့မဟုတ် စကားလုံးများကို လွတ်လပ်စွာ ရိုက်နိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Có thể dùng bàn phím để gõ tên mình hoặc các từ một cách thoải mái.</span>
+              </td>
+              <td style="text-align:center">☑ 통과 (Pass)</td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 화면 오른쪽 위 구석에 있는 [ X ] 닫기 버튼을 찾아 누를 수 있다.</span>
+                <span data-lang="my">၄။ စခရင် ညာဘက်အပေါ်ထောင့်ရှိ [ X ] ပိတ်ခလုတ်ကို ရှာ၍ နှိပ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Có thể tìm và bấm nút đóng [ X ] ở góc trên bên phải màn hình.</span>
+              </td>
+              <td style="text-align:center">☑ 통과 (Pass)</td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">5. 저장 경고 창이 떴을 때 당황하지 않고 '저장 안 함'을 클릭해 종료할 수 있다.</span>
+                <span data-lang="my">၅။ သိမ်းဆည်းရန် သတိပေးချက် ပေါ်လာသောအခါ မထိတ်လန့်ဘဲ 'Don't Save' ကို နှိပ်၍ ပိတ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">5. Không bối rối khi hộp thoại cảnh báo lưu xuất hiện, biết chọn 'Không lưu' để đóng.</span>
+              </td>
+              <td style="text-align:center">☑ 통과 (Pass)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-hwp1-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-hwp1-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

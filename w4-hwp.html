@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">아래아 한글 실무 4차시: 일지 표 크기 조절과 셀 합치기/나누기</span>
+    <span data-lang="my">Hangul လက်တွေ့ (၄) ကြိမ်မြောက်: မှတ်တမ်းဇယား အရွယ်ညှိခြင်းနှင့် အကွက်ပေါင်း/ခွဲခြင်း</span>
+    <span data-lang="vi">Thực Hành Hangul Bài 4: Chỉnh Cỡ Bảng Nhật Ký & Gộp/Chia Ô</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">4차시 강의 목차</span>
+        <span data-lang="my">၄ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 4</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#resize" id="nav-resize">
+        <span>📏</span>
+        <span data-lang="ko">2. 마우스로 표 크기 조절</span>
+        <span data-lang="my">၂။ Mouse ဖြင့် ဇယားအရွယ်ညှိခြင်း</span>
+        <span data-lang="vi">2. Chỉnh Kích Thước Bảng</span>
+      </a>
+      <a href="#block" id="nav-block">
+        <span>⬛</span>
+        <span data-lang="ko">3. 셀 블록 지정(F5)</span>
+        <span data-lang="my">၃။ အကွက် ရွေးချယ်ခြင်း (F5)</span>
+        <span data-lang="vi">3. Bôi Đen Ô (F5)</span>
+      </a>
+      <a href="#merge" id="nav-merge">
+        <span>🔗</span>
+        <span data-lang="ko">4. 셀 합치기(M)</span>
+        <span data-lang="my">၄။ အကွက် ပေါင်းခြင်း (M)</span>
+        <span data-lang="vi">4. Gộp Ô (M)</span>
+      </a>
+      <a href="#split" id="nav-split">
+        <span>✂️</span>
+        <span data-lang="ko">5. 셀 나누기(S)</span>
+        <span data-lang="my">၅။ အကွက် ခွဲခြင်း (S)</span>
+        <span data-lang="vi">5. Chia Ô (S)</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 4차시 점검 체크리스트</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <!-- 섹션 1 -->
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (4/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 일지 표 내 맘대로 다루기 (크기/합치기/나누기)</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: မှတ်တမ်းဇယားကို စိတ်ကြိုက်ပြင်ဆင်ခြင်း (အရွယ်ညှိ/ပေါင်း/ခွဲ)</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Thao Tác Bảng Nhật Ký (Chỉnh kích thước/Gộp/Chia)</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">시설에서 준 일지 양식을 쓰다 보면 "여기는 글씨 쓸 칸이 너무 좁은데?" 혹은 "이 두 칸은 합쳐서 하나로 쓰고 싶다"는 상황이 발생합니다. 4차시에서는 그려져 있는 표의 벽(테두리)을 마우스로 밀어서 넓히고, 단축키를 이용해 방을 합치거나 쪼개는 <strong>마법의 표 편집 기술</strong>을 배웁니다.</span>
+        <span data-lang="my">ဌာနမှပေးသော ဖောင်ကိုသုံးရာတွင် "ဒီကွက်လပ်က စာရေးဖို့ အရမ်းကျဉ်းနေတယ်" သို့မဟုတ် "ဒီနှစ်ကွက်ကို ပေါင်းပြီး တစ်ကွက်တည်း သုံးချင်တယ်" ဟူသော အခြေအနေများ ကြုံလာရတတ်ပါသည်။ ၄ ကြိမ်မြောက်တွင် ဇယားနံရံကို Mouse ဖြင့် ဆွဲချဲ့နည်း၊ Shortcut ဖြင့် အခန်းများကို ပေါင်း/ခွဲနည်းစသည့် <strong>ဇယားပြင်ဆင်ခြင်း မှော်နည်းပညာများ</strong>ကို သင်ယူပါမည်။</span>
+        <span data-lang="vi">Khi dùng biểu mẫu của cơ sở, bạn sẽ gặp tình huống "Ô này hẹp quá để gõ chữ" hoặc "Mình muốn gộp 2 ô này làm một". Bài 4 sẽ dạy bạn <strong>kỹ thuật phép thuật chỉnh sửa bảng</strong>: dùng chuột kéo vách ngăn để nới rộng, và dùng phím tắt để gộp hoặc chia phòng (ô).</span>
+      </p>
+    </section>
+
+    <!-- 섹션 2 -->
+    <section class="lesson-card" id="resize">
+      <div class="badge">STEP 1: RESIZE TABLE</div>
+      <h2>
+        <span data-lang="ko">2. 마우스로 표 테두리(칸 폭/높이) 조절하기</span>
+        <span data-lang="my">၂။ Mouse ဖြင့် ဇယားနံရံ (အကျယ်/အမြင့်) ချိန်ညှိခြင်း</span>
+        <span data-lang="vi">2. Chỉnh Đường Viền Bảng (Chiều Rộng/Cao) Bằng Chuột</span>
+      </h2>
+      <p>
+        <span data-lang="ko">가장 직관적으로 칸을 넓히는 방법입니다. 마우스 커서의 모양 변화를 캐치하는 것이 핵심입니다.</span>
+        <span data-lang="my">အကွက်ကို အလွယ်ကူဆုံး ချဲ့နိုင်သော နည်းလမ်းဖြစ်ပါသည်။ Mouse ပုံစံပြောင်းသွားသည်ကို သတိပြုရန်မှာ အရေးကြီးပါသည်။</span>
+        <span data-lang="vi">Đây là cách nới rộng ô trực quan nhất. Điểm cốt lõi là phải bắt đúng khoảnh khắc con trỏ chuột đổi hình dạng.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">↔️ 칸 폭(가로) 넓히기/줄이기</div>
+          <p>
+            <span data-lang="ko">표 안의 세로 기둥(선)에 마우스를 천천히 올립니다. 커서가 <strong>좌우 화살표( ↔ ) 모양(또는 ┫┣ 모양)</strong>으로 바뀔 때, 마우스 왼쪽 버튼을 누른 채 옆으로 끌면 칸이 넓어지거나 좁아집니다.</span>
+            <span data-lang="my">ဇယားတွင်းရှိ ဒေါင်လိုက်မျဉ်းပေါ်သို့ Mouse ကို ဖြည်းဖြည်းတင်ပါ။ Cursor သည် <strong>ဘေးတိုက်မြား ( ↔ ) ပုံစံ</strong> ပြောင်းသွားသောအခါ ဘယ်ဘက်ခလုတ်ကို ဖိထားလျက် ဘေးသို့ဆွဲပါက အကွက် ကျယ်/ကျဉ်း သွားပါမည်။</span>
+            <span data-lang="vi">Rà chuột từ từ lên vách dọc của bảng. Khi con trỏ đổi thành hình <strong>mũi tên hai chiều ( ↔ )</strong>, nhấn giữ chuột trái và kéo sang ngang để thu hẹp hoặc nới rộng ô.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">↕️ 행 높이(세로) 늘이기/줄이기</div>
+          <p>
+            <span data-lang="ko">표 안의 가로 줄(선)에 마우스를 올립니다. 커서가 <strong>위아래 화살표( ↕ ) 모양(또는 ┻┳ 모양)</strong>으로 바뀔 때, 누른 채 위아래로 끌면 방의 높이가 변합니다. 글을 많이 써야 할 때 칸을 늘려줍니다.</span>
+            <span data-lang="my">ဇယားတွင်းရှိ အလျားလိုက်မျဉ်းပေါ်သို့ Mouse တင်ပါ။ Cursor သည် <strong>အထက်အောက်မြား ( ↕ ) ပုံစံ</strong> ပြောင်းသွားသောအခါ ဖိဆွဲပါက အခန်းအမြင့် ပြောင်းလဲမည်။ စာများများရေးရန် အကွက်ကို ချဲ့နိုင်သည်။</span>
+            <span data-lang="vi">Rà chuột lên vách ngang của bảng. Khi con trỏ đổi thành <strong>mũi tên lên xuống ( ↕ )</strong>, nhấn giữ và kéo lên xuống để đổi chiều cao. Kéo cho cao lên khi cần gõ nhiều chữ.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 3 -->
+    <section class="lesson-card" id="block">
+      <div class="badge">STEP 2: BLOCK SELECTION</div>
+      <h2>
+        <span data-lang="ko">3. 셀 블록 지정 단축키 (F5) 마스터</span>
+        <span data-lang="my">၃။ အကွက် ရွေးချယ်ခြင်း Shortcut (F5) ကျွမ်းကျင်ရန်</span>
+        <span data-lang="vi">3. Làm Chủ Phím Tắt Bôi Đen Ô (F5)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">방(셀)을 합치거나 나누려면, 먼저 "이 방을 바꿀 거야!"라고 컴퓨터에게 알려줘야 합니다. 이것을 <strong>블록 지정</strong>이라고 하며, 키보드 맨 위의 <strong>[ F5 ]</strong> 키 하나면 충분합니다.</span>
+        <span data-lang="my">အခန်း (အကွက်) များကို ပေါင်း/ခွဲလိုပါက ဦးစွာ "ဒီအခန်းကို ပြင်မယ်!" ဟု ကွန်ပျူတာအား အသိပေးရပါမည်။ ၎င်းကို <strong>ဘလောက်မှတ်ခြင်း</strong> ဟုခေါ်ပြီး ကီးဘုတ်အပေါ်ဆုံးရှိ <strong>[ F5 ]</strong> ခလုတ် တစ်ခုတည်းဖြင့် လုံလောက်ပါသည်။</span>
+        <span data-lang="vi">Để gộp hoặc chia phòng (ô), trước tiên bạn phải báo cho máy tính biết "Tôi muốn sửa ô này!". Việc này gọi là <strong>Bôi đen</strong>, chỉ cần dùng phím <strong>[ F5 ]</strong> ở trên cùng bàn phím là đủ.</span>
+      </p>
+
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>⬛ F5 키 사용법 3단계:</strong><br>
+          1. <strong>[F5] 1번 누르기:</strong> 커서가 있던 셀 한 칸 안에 <strong>회색 동그라미</strong>가 생기며 까맣게 선택됩니다.<br>
+          2. <strong>[F5] 2번 누르기:</strong> 동그라미가 <strong>빨간색</strong>으로 변합니다. 이제 여러 칸을 선택할 준비가 된 것입니다.<br>
+          3. <strong>방향키(←↑→↓) 누르기:</strong> 빨간 동그라미 상태에서 방향키를 누르면, 움직인 방향대로 여러 칸이 까맣게 같이 선택됩니다.
+        </span>
+        <span data-lang="my">
+          <strong>⬛ F5 ခလုတ် သုံးနည်း (၃) ဆင့်:</strong><br>
+          ၁။ <strong>[F5] ၁ ချက်နှိပ်ခြင်း:</strong> Cursor ရှိသောအကွက်တွင် <strong>မီးခိုးရောင်စက်ဝိုင်း</strong> ပေါ်လာပြီး အမည်းရောင်ဖြင့် ရွေးချယ်ခံရမည်။<br>
+          ၂။ <strong>[F5] ၂ ချက်နှိပ်ခြင်း:</strong> စက်ဝိုင်းသည် <strong>အနီရောင်</strong> ပြောင်းသွားပါမည်။ ယခု အကွက်များစွာ ရွေးချယ်ရန် အသင့်ဖြစ်ပြီ။<br>
+          ၃။ <strong>မြားခလုတ် (←↑→↓) နှိပ်ခြင်း:</strong> အနီရောင်စက်ဝိုင်း အခြေအနေတွင် မြားခလုတ်နှိပ်ပါက ရွေ့သွားသောဘက်ရှိ အကွက်များပါ အမည်းရောင်ဖြင့် တွဲ၍ ရွေးချယ်ခံရမည်။
+        </span>
+        <span data-lang="vi">
+          <strong>⬛ 3 Bước dùng phím F5:</strong><br>
+          1. <strong>Bấm [F5] 1 lần:</strong> Một <strong>vòng tròn xám</strong> hiện ra trong ô đang đứng và ô đó bị bôi đen.<br>
+          2. <strong>Bấm [F5] 2 lần:</strong> Vòng tròn chuyển sang <strong>màu Đỏ</strong>. Báo hiệu đã sẵn sàng chọn nhiều ô.<br>
+          3. <strong>Bấm phím mũi tên (←↑→↓):</strong> Khi vòng tròn đỏ, bấm mũi tên thì các ô theo hướng di chuyển sẽ bị bôi đen cùng.
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 4 -->
+    <section class="lesson-card" id="merge">
+      <div class="badge">STEP 3: MERGE CELLS (M)</div>
+      <h2>
+        <span data-lang="ko">4. 셀 합치기 단축키 (M)</span>
+        <span data-lang="my">၄။ အကွက် ပေါင်းခြင်း Shortcut (M)</span>
+        <span data-lang="vi">4. Phím Tắt Gộp Ô (M)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">두 개로 나뉜 칸을 벽을 허물어 하나의 큰 방으로 만드는 마법입니다. 비고란이나 제목 칸을 만들 때 자주 씁니다. 영어 <strong>Merge(병합)</strong>의 첫 글자 <strong>M</strong>을 기억하세요.</span>
+        <span data-lang="my">အခန်းနှစ်ခုကြားရှိ နံရံကိုဖျက်၍ အခန်းကြီးတစ်ခုအဖြစ် ပေါင်းစပ်သော မှော်နည်းပညာ ဖြစ်ပါသည်။ မှတ်ချက် သို့မဟုတ် ခေါင်းစဉ်ကွက် ပြုလုပ်ရာတွင် အမြဲသုံးသည်။ အင်္ဂလိပ်စကားလုံး <strong>Merge (ပေါင်းစပ်ခြင်း)</strong> ၏ <strong>M</strong> ကို မှတ်ထားပါ။</span>
+        <span data-lang="vi">Phép thuật đập bỏ bức tường giữa 2 ô để tạo thành một phòng lớn. Thường dùng khi tạo ô Ghi chú hoặc Tiêu đề. Hãy nhớ chữ <strong>M</strong> đầu tiên của từ <strong>Merge (Gộp)</strong> trong tiếng Anh.</span>
+      </p>
+
+      <div class="warn-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>🔗 셀 합치기(M) 실행 순서:</strong><br>
+          1. 합치고 싶은 첫 번째 칸에 마우스를 클릭해 커서를 둡니다.<br>
+          2. <strong>[F5] 키를 두 번</strong> 눌러 빨간 동그라미를 켭니다.<br>
+          3. 방향키를 눌러 합치고 싶은 칸들을 모두 까맣게(블록) 만듭니다.<br>
+          4. 그 상태에서 키보드 알파벳 <strong>[ M ]</strong> 키를 톡 누르면! 중간 벽이 허물어지고 하나로 뻥 뚫립니다.
+        </span>
+        <span data-lang="my">
+          <strong>🔗 အကွက် ပေါင်းခြင်း (M) အဆင့်ဆင့်:</strong><br>
+          ၁။ ပေါင်းလိုသော ပထမအကွက်တွင် Mouse Click နှိပ်၍ Cursor ထားပါ။<br>
+          ၂။ <strong>[F5] ကို နှစ်ချက်</strong> နှိပ်၍ အနီရောင်စက်ဝိုင်းကို ဖွင့်ပါ။<br>
+          ၃။ မြားခလုတ်ကိုနှိပ်၍ ပေါင်းလိုသောအကွက်များအားလုံးကို အမည်းရောင် (ဘလောက်) မှတ်ပါ။<br>
+          ၄။ ထိုအခြေအနေတွင် ကီးဘုတ်မှ အက္ခရာ <strong>[ M ]</strong> ကို တစ်ချက်နှိပ်လိုက်ပါက! ကြားနံရံများ ပျောက်သွားပြီး တစ်ကွက်တည်း ဖြစ်သွားမည်။
+        </span>
+        <span data-lang="vi">
+          <strong>🔗 Trình tự Gộp ô (M):</strong><br>
+          1. Nhấp chuột đặt con trỏ vào ô đầu tiên muốn gộp.<br>
+          2. Bấm phím <strong>[F5] hai lần</strong> để bật vòng tròn đỏ.<br>
+          3. Bấm phím mũi tên để bôi đen tất cả các ô muốn gộp.<br>
+          4. Ở trạng thái đó, bấm phím chữ <strong>[ M ]</strong>! Lập tức vách ngăn giữa sẽ biến mất và thông thành một ô.
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 5 -->
+    <section class="lesson-card" id="split">
+      <div class="badge">STEP 4: SPLIT CELLS (S)</div>
+      <h2>
+        <span data-lang="ko">5. 셀 나누기 단축키 (S)</span>
+        <span data-lang="my">၅။ အကွက် ခွဲခြင်း Shortcut (S)</span>
+        <span data-lang="vi">5. Phím Tắt Chia Ô (S)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">방이 하나인데, 2개의 방으로 쪼개서 각자 다른 글을 써야 할 때가 있습니다. 영어 <strong>Split(나누다)</strong>의 첫 글자 <strong>S</strong>를 누릅니다.</span>
+        <span data-lang="my">အခန်းတစ်ခုတည်းကို အခန်း ၂ ခုခွဲ၍ သီးခြားစာရေးရမည့်အခါမျိုး ရှိပါသည်။ အင်္ဂလိပ်စကားလုံး <strong>Split (ခွဲခြင်း)</strong> ၏ <strong>S</strong> ကို နှိပ်ရပါမည်။</span>
+        <span data-lang="vi">Có lúc bạn cần chia một ô thành 2 ô để viết 2 nội dung khác nhau. Hãy bấm chữ <strong>S</strong> đầu tiên của từ <strong>Split (Chia)</strong>.</span>
+      </p>
+
+      <div class="warn-box" style="border-left-color:var(--warn); background:var(--warn-soft);">
+        <span data-lang="ko">
+          <strong>✂️ 셀 나누기(S) 실행 순서:</strong><br>
+          1. 나누고 싶은 네모 칸 안에 커서를 둡니다.<br>
+          2. <strong>[F5] 키를 한 번</strong>만 눌러 까맣게(회색 동그라미) 만듭니다.<br>
+          3. 키보드 알파벳 <strong>[ S ]</strong> 키를 누릅니다.<br>
+          4. 화면에 '셀 나누기' 창이 뜹니다. <strong>[줄(가로방)]</strong>을 나눌지 <strong>[칸(세로방)]</strong>을 나눌지 체크하고 숫자를 적은 뒤 [나누기]를 누릅니다.
+        </span>
+        <span data-lang="my">
+          <strong>✂️ အကွက် ခွဲခြင်း (S) အဆင့်ဆင့်:</strong><br>
+          ၁။ ခွဲလိုသော အကွက်အတွင်း Cursor ကို ထားပါ။<br>
+          ၂။ <strong>[F5] ကို တစ်ချက်သာ</strong> နှိပ်၍ အမည်းရောင် (မီးခိုးစက်ဝိုင်း) မှတ်ပါ။<br>
+          ၃။ ကီးဘုတ်မှ အက္ခရာ <strong>[ S ]</strong> ကို နှိပ်ပါ။<br>
+          ၄။ စခရင်တွင် 'Cell Split' ဘောက်စ် ကျလာမည်။ <strong>[အလျားလိုက် (줄)]</strong> ခွဲမည်လား၊ <strong>[ဒေါင်လိုက် (칸)]</strong> ခွဲမည်လား အမှန်ခြစ်ပြီး ဂဏန်းရေးထည့်ကာ [ခွဲရန်] ကို နှိပ်ပါ။
+        </span>
+        <span data-lang="vi">
+          <strong>✂️ Trình tự Chia ô (S):</strong><br>
+          1. Đặt con trỏ vào ô muốn chia.<br>
+          2. Bấm phím <strong>[F5] MỘT lần</strong> để bôi đen (vòng tròn xám).<br>
+          3. Bấm phím chữ <strong>[ S ]</strong>.<br>
+          4. Hộp thoại 'Chia ô' hiện ra. Tích chọn muốn chia <strong>[Hàng ngang]</strong> hay <strong>[Cột dọc]</strong>, gõ số lượng ô muốn chia rồi bấm [Chia].
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 6 -->
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 4차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၄) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 4 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 마우스를 이용해 표의 특정 칸 폭을 늘이고 줄여볼 수 있다.</span>
+                <span data-lang="my">၁။ Mouse ကိုသုံး၍ ဇယားရှိ သတ်မှတ်ထားသောအကွက်၏ အကျယ်ကို ချဲ့/ချုံ့ နိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Biết dùng chuột nới rộng và thu hẹp chiều rộng một ô cụ thể trong bảng.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. F5 키를 두 번 누르고 방향키를 움직여 3개 이상의 칸을 까맣게 지정할 수 있다.</span>
+                <span data-lang="my">၂။ F5 ကို နှစ်ချက်နှိပ်ပြီး မြားခလုတ်ကိုသုံးကာ အကွက် ၃ ကွက်နှင့်အထက် အမည်းရောင်မှတ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Bấm F5 hai lần và dùng phím mũi tên bôi đen từ 3 ô trở lên.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. 블록 지정된 상태에서 [ M ] 키를 눌러 여러 칸을 하나의 방으로 합칠 수 있다.</span>
+                <span data-lang="my">၃။ ဘလောက်မှတ်ထားသောအခြေအနေတွင် [ M ] ကိုနှိပ်၍ အကွက်များကို အခန်းတစ်ခုတည်းအဖြစ် ပေါင်းနိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Khi đang bôi đen, bấm phím [ M ] để gộp các ô thành một phòng duy nhất.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 합쳐진 칸을 선택(F5 한 번)하고 [ S ] 키를 눌러 다시 2칸으로 쪼갤 수 있다.</span>
+                <span data-lang="my">၄။ ပေါင်းထားသောအကွက်ကို ရွေးချယ်၍ (F5 တစ်ချက်) [ S ] ကိုနှိပ်ကာ ၂ ကွက် ပြန်ခွဲနိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Bôi đen ô đã gộp (F5 một lần) rồi bấm [ S ] để chia lại thành 2 ô.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course4-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course4-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

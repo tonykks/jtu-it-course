@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">한글 타자 촉지법 6차시: 상황별 요양보호 실무 문장 사전</span>
+    <span data-lang="my">ကိုရီးယား လက်ရိုက် (၆) ကြိမ်မြောက်: အခြေအနေအလိုက် စောင့်ရှောက်ရေး လက်တွေ့ဝါကျများ</span>
+    <span data-lang="vi">Luyện Gõ Hangul Bài 6: Từ Điển Câu Điều Dưỡng Thực Tế Theo Tình Huống</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">6차시 강의 목차</span>
+        <span data-lang="my">၆ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 6</span>
+      </div>
+      
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#physical1" id="nav-physical1">
+        <span>🧼</span>
+        <span data-lang="ko">2. 신체활동 1 (세면/목욕)</span>
+        <span data-lang="my">၂။ ရုပ်ပိုင်းဆိုင်ရာ ၁ (မျက်နှာသစ်/ရေချိုး)</span>
+        <span data-lang="vi">2. Thể chất 1 (Rửa mặt/Tắm)</span>
+      </a>
+      <a href="#physical2" id="nav-physical2">
+        <span>🍚</span>
+        <span data-lang="ko">3. 신체활동 2 (식사/이동)</span>
+        <span data-lang="my">၃။ ရုပ်ပိုင်းဆိုင်ရာ ၂ (အစားအစာ/ရွှေ့ပြောင်း)</span>
+        <span data-lang="vi">3. Thể chất 2 (Ăn/Di chuyển)</span>
+      </a>
+      <a href="#cognition" id="nav-cognition">
+        <span>🧠</span>
+        <span data-lang="ko">4. 인지 및 의사소통</span>
+        <span data-lang="my">၄။ မှတ်ဉာဏ်နှင့် ဆက်သွယ်ရေး</span>
+        <span data-lang="vi">4. Nhận thức & Giao tiếp</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">5. 6차시 종합 타자 검정</span>
+        <span data-lang="my">၅။ ၆ ကြိမ်မြောက် စာမေးပွဲ</span>
+        <span data-lang="vi">5. Kiểm Tra Gõ Chữ Tuần 6</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="lesson-card" id="intro">
+      <div class="badge">FINAL EVALUATION (6/18)</div>
+      <h2>
+        <span data-lang="ko">1. 6차시 실전 타자 검정: 상황별 요양보호 실무 문장 사전</span>
+        <span data-lang="my">၁။ ၆ ကြိမ်မြောက် လက်တွေ့ လက်ရိုက်စာမေးပွဲ: အခြေအနေအလိုက် စောင့်ရှောက်ရေး လက်တွေ့ဝါကျများ</span>
+        <span data-lang="vi">1. Kiểm Tra Gõ Chữ Tuần 6: Từ Điển Câu Điều Dưỡng Thực Tế Theo Tình Huống</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">2교시 '상상력 기반 일지 창작' 시간에 유학생 여러분이 직접 한국어 문장을 지어내기 어려울 수 있습니다. 이 교안에 모아둔 <strong>실제 요양보호 현장에서 자주 쓰는 특이사항 문장들</strong>을 타자 연습하며 눈과 손에 익히고, 다음 시간 일지 작성 시 마음에 드는 문장을 골라 응용해 보세요.</span>
+        <span data-lang="my">၂ ချိန်မြောက် 'စိတ်ကူးဖြင့် မှတ်တမ်းဖန်တီးခြင်း' အချိန်တွင် နိုင်ငံခြားသားကျောင်းသားများအနေဖြင့် ကိုရီးယားဝါကျများကို ကိုယ်တိုင်ဖွဲ့စည်းရန် ခက်ခဲနိုင်ပါသည်။ ဤသင်ရိုးတွင် စုစည်းပေးထားသော <strong>လက်တွေ့လုပ်ငန်းခွင်တွင် အမြဲသုံးလေ့ရှိသည့် အထူးမှတ်ချက် ဝါကျများ</strong>ကို လက်ရိုက်လေ့ကျင့်ရင်း မျက်စိနှင့် လက်ကို ရင်းနှီးစေပြီး၊ နောက်အချိန် မှတ်တမ်းရေးရာတွင် မိမိနှစ်သက်ရာ ဝါကျကို ရွေးချယ်အသုံးပြုပါ။</span>
+        <span data-lang="vi">Trong tiết 2 'Sáng tạo nhật ký', các bạn du học sinh có thể sẽ gặp khó khăn khi tự nghĩ ra câu tiếng Hàn. Hãy luyện gõ <strong>những câu lưu ý đặc biệt thường dùng nhất trong thực tế</strong> được tổng hợp trong giáo án này để quen mắt quen tay, và chọn câu bạn thích để áp dụng vào tiết viết nhật ký tiếp theo.</span>
+      </p>
+    </section>
+
+    <section class="lesson-card" id="physical1">
+      <div class="badge">CATEGORY 1: HYGIENE</div>
+      <h2>
+        <span data-lang="ko">2. 신체활동지원 1 (세면, 구강청결, 옷갈아입기, 목욕)</span>
+        <span data-lang="my">၂။ ရုပ်ပိုင်းဆိုင်ရာ ကူညီမှု ၁ (မျက်နှာသစ်၊ ခံတွင်းသန့်ရှင်းရေး၊ အဝတ်လဲ၊ ရေချိုး)</span>
+        <span data-lang="vi">2. Hỗ trợ thể chất 1 (Rửa mặt, Răng miệng, Thay đồ, Tắm)</span>
+      </h2>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🧼 세면 도움 (Washing Face)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">오실 때 얼굴에 상처가 있어 소독하고 약 발라드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 도착했을 때 얼굴에 다친 곳이 있어서 소독 후 약을 발라주었습니다.)</span>
+            <span data-lang="my">လာစဉ် မျက်နှာ၌ ဒဏ်ရာပါသဖြင့် ဆေးထည့်ပေးခဲ့သည်။</span>
+            <span data-lang="vi">Khi đến có vết thương trên mặt nên đã sát trùng và bôi thuốc.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🪥 구강청결 도움 (Mouth Care)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">식사 후 양치할 수 있도록 세면장을 알려드리고 물품 준비해드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 밥을 먹은 뒤 양치질을 할 수 있게 장소를 안내하고 칫솔 등을 준비했습니다.)</span>
+            <span data-lang="my">စားပြီးနောက် သွားတိုက်ရန် နေရာပြသပြီး ပစ္စည်းများ ပြင်ဆင်ပေးခဲ့သည်။</span>
+            <span data-lang="vi">Sau bữa ăn đã chỉ chỗ rửa mặt và chuẩn bị đồ đánh răng.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">👕 옷 갈아입기 (Changing Clothes)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">계절에 맞지 않은 옷을 입고 오셔서 옳게 입혀드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 날씨에 안 맞는 옷을 입으셔서 알맞은 옷으로 다시 입혀드렸습니다.)</span>
+            <span data-lang="my">ရာသီဥတုနှင့် မကိုက်ညီသော အဝတ်ဝတ်လာသဖြင့် သင့်တော်ရာ လဲလှယ်ပေးခဲ့သည်။</span>
+            <span data-lang="vi">Mặc đồ không hợp thời tiết nên đã giúp thay đồ cho đúng.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🛁 목욕 도움 (Bathing)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">목욕 후 개운하다며 감사하다고 말씀해주심.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 샤워를 마친 후 기분이 상쾌하다며 고맙다고 하셨습니다.)</span>
+            <span data-lang="my">ရေချိုးပြီးနောက် လန်းဆန်းသွားပြီဟု ကျေးဇူးတင်စကား ဆိုခဲ့သည်။</span>
+            <span data-lang="vi">Sau khi tắm cụ bảo thấy sảng khoái và đã nói lời cảm ơn.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="physical2">
+      <div class="badge">CATEGORY 2: DAILY LIVING</div>
+      <h2>
+        <span data-lang="ko">3. 신체활동지원 2 (식사, 이동, 화장실)</span>
+        <span data-lang="my">၃။ ရုပ်ပိုင်းဆိုင်ရာ ကူညီမှု ၂ (အစားအစာ၊ ရွှေ့ပြောင်း၊ အိမ်သာ)</span>
+        <span data-lang="vi">3. Hỗ trợ thể chất 2 (Ăn uống, Di chuyển, Vệ sinh)</span>
+      </h2>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🍚 식사 도움 (Eating)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">잇몸이 아파서 틀니를 사용할 수 없어 음식을 잘게 다져드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 이가 아파서 틀니를 못 끼셔서, 밥을 씹기 편하게 작게 잘라드렸습니다.)</span>
+            <span data-lang="my">သွားဖုံးနာ၍ သွားတုမသုံးနိုင်သဖြင့် အစာကို သေးသေးနုပ်နုပ် စင်းပေးခဲ့သည်။</span>
+            <span data-lang="vi">Đau nướu không dùng được răng giả nên đã băm nhỏ thức ăn.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🚶 이동 도움 (Moving)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">화장실을 가실 때 낙상의 위험이 있어 지켜보며 도움드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 화장실 가실 때 넘어질까 봐 옆에서 지켜보고 부축했습니다.)</span>
+            <span data-lang="my">အိမ်သာသွားစဉ် ချော်လဲမည်စိုးသဖြင့် စောင့်ကြည့်ကူညီခဲ့သည်။</span>
+            <span data-lang="vi">Có nguy cơ té ngã khi đi vệ sinh nên đã theo dõi và giúp đỡ.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🚽 화장실 이용 (Toilet)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">변비가 있어서 수분 섭취를 충분히 할 수 있도록 도움드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 똥을 잘 못 누셔서 물을 많이 마실 수 있게 도와주었습니다.)</span>
+            <span data-lang="my">ဝမ်းချုပ်သဖြင့် ရေများများသောက်ရန် ကူညီခဲ့သည်။</span>
+            <span data-lang="vi">Bị táo bón nên đã giúp cụ uống đủ nước.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="cognition">
+      <div class="badge">CATEGORY 3: COGNITION & COMMUNICATION</div>
+      <h2>
+        <span data-lang="ko">4. 인지관리 및 의사소통 도움</span>
+        <span data-lang="my">၄။ မှတ်ဉာဏ်ထိန်းသိမ်းမှုနှင့် ဆက်သွယ်ရေး ကူညီမှု</span>
+        <span data-lang="vi">4. Quản Lý Nhận Thức & Hỗ Trợ Giao Tiếp</span>
+      </h2>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🧠 인지 관리 (Cognition)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">문 앞에 서서 집에 데려다 달라고 하셔서 같은 질문에 반복해서 대답해드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 치매로 인해 계속 집에 가겠다고 하셔서 안심시켜 드렸습니다.)</span>
+            <span data-lang="my">တံခါးဝတွင်ရပ်၍ အိမ်ပြန်ပို့ရန်ပြောနေသဖြင့် မေးခွန်းတူကို ထပ်ခါတလဲလဲ ဖြေပေးခဲ့သည်။</span>
+            <span data-lang="vi">Cụ đứng trước cửa đòi về nhà nên đã kiên nhẫn trả lời lặp đi lặp lại một câu hỏi.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🗣️ 의사소통 (Communication)</div>
+          <p style="font-weight:700; color:#1e3a8a; margin-bottom: 5px;">옆의 어르신 행동에 역정을 내셔서 들어드리고 분위기 전환을 위해 산책시켜드림.</p>
+          <p style="font-size: 13.5px;">
+            <span data-lang="ko">(의미: 다른 환자 때문에 화가 나셔서, 이야기를 들어주고 기분을 풀어주려 산책했습니다.)</span>
+            <span data-lang="my">ဘေးလူနာ၏အပြုအမူကြောင့် ဒေါသထွက်နေသဖြင့် စကားနားထောင်ပေးပြီး စိတ်ပြေစေရန် လမ်းလျှောက်ထွက်ခဲ့သည်။</span>
+            <span data-lang="vi">Cụ bực tức với hành động của người bên cạnh nên đã lắng nghe và đưa đi dạo để đổi không khí.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" id="quiz">
+      <div class="badge">FINAL TYPING TEST</div>
+      <h2>
+        <span data-lang="ko">5. 6차시 종합 타자 검정 (목표: 200타 달성)</span>
+        <span data-lang="my">၅။ ၆ ကြိမ်မြောက် အလုံးစုံ လက်ရိုက်စာမေးပွဲ (ရည်မှန်းချက်: ၂၀၀ နှုန်း)</span>
+        <span data-lang="vi">5. Kiểm Tra Đánh Máy Tổng Hợp Tuần 6 (Mục tiêu: Đạt 200 CPM)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">위의 문장들 중 가장 마음에 드는 3문장을 골라 메모장이나 한컴타자에 직접 쳐보며 타자 검정을 진행합니다. <strong>최종 목표는 정확도 90% 이상, 200타 달성</strong>입니다.</span>
+        <span data-lang="my">အထက်ပါ ဝါကျများအနက် အနှစ်သက်ဆုံး ၃ ကြောင်းကို ရွေးချယ်၍ Notepad သို့မဟုတ် Hancom Typing တွင် ကိုယ်တိုင်ရိုက်နှိပ်ကာ စာမေးပွဲဖြေဆိုပါ။ <strong>နောက်ဆုံးရည်မှန်းချက်မှာ တိကျမှု ၉၀% အထက်နှင့် အမြန်နှုန်း ၂၀၀ ရရှိရန်</strong> ဖြစ်ပါသည်။</span>
+        <span data-lang="vi">Hãy chọn 3 câu bạn tâm đắc nhất ở trên và tự gõ vào Notepad hoặc Hancom Typing để kiểm tra. <strong>Mục tiêu cuối cùng là đạt độ chính xác >90% và tốc độ 200 CPM</strong>.</span>
+      </p>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course6-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course6-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

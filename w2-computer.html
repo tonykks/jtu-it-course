@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">컴퓨터 기초 2차시: 윈도우10 바탕화면과 창 제어</span>
+    <span data-lang="my">ကွန်ပျူတာ အခြေခံ (၂) ကြိမ်မြောက်: Windows 10 Desktop နှင့် Window ထိန်းချုပ်ခြင်း</span>
+    <span data-lang="vi">Tin Học Cơ Bản Bài 2: Desktop Windows 10 & Điều Khiển Cửa Sổ</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">2차시 강의 목차</span>
+        <span data-lang="my">၂ ကြိမ်မြောက် မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 2</span>
+      </div>
+
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 및 목표</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học</span>
+      </a>
+      <a href="#desktop" id="nav-desktop">
+        <span>🖥️</span>
+        <span data-lang="ko">2. 바탕화면 구조 이해</span>
+        <span data-lang="my">၂။ Desktop ဖွဲ့စည်းပုံ</span>
+        <span data-lang="vi">2. Cấu Trúc Desktop</span>
+      </a>
+      <a href="#buttons" id="nav-buttons">
+        <span>🎛️</span>
+        <span data-lang="ko">3. 창 조절 3대 버튼</span>
+        <span data-lang="my">၃။ Window ခလုတ် ၃ ခု</span>
+        <span data-lang="vi">3. 3 Nút Cửa Sổ</span>
+      </a>
+      <a href="#control" id="nav-control">
+        <span>🔄</span>
+        <span data-lang="ko">4. 창 이동과 크기 조절</span>
+        <span data-lang="my">၄။ ပြတင်းပေါက် ရွှေ့ခြင်း/အရွယ်ညှိခြင်း</span>
+        <span data-lang="vi">4. Di Chuyển & Kích Thước</span>
+      </a>
+      <a href="#taskbar" id="nav-taskbar">
+        <span>🚥</span>
+        <span data-lang="ko">5. 작업표시줄 화면 전환</span>
+        <span data-lang="my">၅။ Taskbar ဖြင့် ပရိုဂရမ်ပြောင်းခြင်း</span>
+        <span data-lang="vi">5. Chuyển Đổi Trên Taskbar</span>
+      </a>
+      <a href="#quiz" id="nav-quiz">
+        <span>✅</span>
+        <span data-lang="ko">6. 2차시 점검 체크리스트</span>
+        <span data-lang="my">၆။ လက်တွေ့စစ်ဆေးချက်</span>
+        <span data-lang="vi">6. Kiểm Tra Thực Hành</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+
+    <!-- 섹션 1 -->
+    <section class="lesson-card" id="intro">
+      <div class="badge">LESSON OVERVIEW (2/18)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 목표: 윈도우 창(Window) 마음대로 다루기</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: Window ပြတင်းပေါက်များကို စိတ်ကြိုက်ထိန်းချုပ်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Điều Khiển Cửa Sổ (Window) Theo Ý Muốn</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 50분 강의 및 실습 (10분 휴식)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> ၅၀ မိနစ် သင်ကြားမှုနှင့် လက်တွေ့ (၁၀ မိနစ် နားချိန်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 50 phút lý thuyết & thực hành (10 phút giải lao)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👥 대상:</strong> 미얀마, 베트남 유학생</span>
+          <span data-lang="my"><strong>👥 သင်တန်းသား:</strong> မြန်မာ၊ ဗီယက်နမ် ကျောင်းသားများ</span>
+          <span data-lang="vi"><strong>👥 Đối tượng:</strong> Du học sinh Myanmar & Việt Nam</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</span>
+          <span data-lang="my"><strong>👨‍🏫 သင်ကြားသူ:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+          <span data-lang="vi"><strong>👨‍🏫 Giảng viên:</strong> Kim Hae-soon / Kim Kwang-soo</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">스마트폰은 보통 한 화면에 하나의 앱만 가득 찹니다. 하지만 컴퓨터(Windows)는 이름 그대로 여러 개의 '창(Windows)'을 동시에 열어놓고 작업할 수 있습니다. 2차시에서는 바탕화면의 구조를 이해하고, 창을 내 마음대로 줄이고 늘이고 옮기는 방법을 배웁니다.</span>
+        <span data-lang="my">စမတ်ဖုန်းသည် များသောအားဖြင့် စခရင်တစ်ခုတွင် App တစ်ခုသာ ဖွင့်နိုင်သော်လည်း ကွန်ပျူတာ (Windows) သည် အမည်နှင့်အညီ 'ပြတင်းပေါက် (Windows)' များစွာကို တစ်ပြိုင်နက် ဖွင့်၍ အလုပ်လုပ်နိုင်ပါသည်။ ယနေ့တွင် Desktop ဖွဲ့စည်းပုံနှင့် ပြတင်းပေါက်များကို မိမိစိတ်ကြိုက် ချုံ့/ချဲ့/ရွှေ့နည်းများကို သင်ယူပါမည်။</span>
+        <span data-lang="vi">Điện thoại thông minh thường chỉ mở một ứng dụng lấp đầy màn hình. Nhưng máy tính (Windows) đúng như tên gọi, cho phép mở nhiều 'cửa sổ (Windows)' cùng lúc. Bài học này giúp bạn hiểu cấu trúc Desktop và cách thu nhỏ, phóng to, di chuyển cửa sổ theo ý muốn.</span>
+      </p>
+    </section>
+
+    <!-- 섹션 2 -->
+    <section class="lesson-card" id="desktop">
+      <div class="badge">STEP 1: DESKTOP</div>
+      <h2>
+        <span data-lang="ko">2. 바탕화면(Desktop) 구조 이해</span>
+        <span data-lang="my">၂။ Desktop မျက်နှာပြင် ဖွဲ့စည်းပုံ</span>
+        <span data-lang="vi">2. Cấu Trúc Màn Hình Chính (Desktop)</span>
+      </h2>
+      <p>
+        <span data-lang="ko">컴퓨터를 켜면 가장 먼저 나오는 화면을 <strong>'바탕화면(Desktop)'</strong>이라고 부릅니다. 진짜 책상 위처럼 아이콘(물건)들이 놓여 있습니다.</span>
+        <span data-lang="my">ကွန်ပျူတာဖွင့်လိုက်သည်နှင့် ပထမဆုံး မြင်ရသော မျက်နှာပြင်ကို <strong>'Desktop'</strong> ဟု ခေါ်ပါသည်။ စားပွဲခုံပေါ်တွင် ပစ္စည်းများ တင်ထားသကဲ့သို့ အိုင်ကွန်များ (Icons) ရှိနေပါသည်။</span>
+        <span data-lang="vi">Màn hình hiện ra đầu tiên khi bật máy gọi là <strong>'Desktop (Bàn làm việc)'</strong>. Trên đó có các biểu tượng (Icon) giống như đồ vật đặt trên bàn.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">🖼️ 아이콘 (Icon)</div>
+          <p>
+            <span data-lang="ko">바탕화면에 있는 작은 그림들입니다. 더블클릭하면 프로그램이 열립니다. (예: 내 PC, 휴지통, 한글 2020)</span>
+            <span data-lang="my">Desktop ပေါ်ရှိ ပုံငယ်လေးများ ဖြစ်ပါသည်။ Double Click နှိပ်ပါက ပရိုဂရမ် ပွင့်လာပါမည်။ (ဥပမာ- This PC, Recycle Bin, Hangul)</span>
+            <span data-lang="vi">Các hình ảnh nhỏ trên màn hình. Nhấp đúp để mở chương trình. (VD: This PC, Thùng rác, Hangul 2020)</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🚥 작업표시줄 (Taskbar)</div>
+          <p>
+            <span data-lang="ko">화면 맨 아래에 있는 긴 띠입니다. 현재 열려있는 프로그램들이 표시되며, 클릭해서 빠르게 화면을 바꿀 수 있습니다.</span>
+            <span data-lang="my">စခရင် အောက်ခြေရှိ မျဉ်းရှည်ကြီး ဖြစ်ပါသည်။ လက်ရှိဖွင့်ထားသော ပရိုဂရမ်များကို ပြသပေးပြီး၊ Click နှိပ်၍ အလွယ်တကူ ပြောင်းလဲနိုင်ပါသည်။</span>
+            <span data-lang="vi">Thanh dài ở dưới cùng màn hình. Hiển thị các chương trình đang mở, nhấp vào để chuyển đổi nhanh chóng.</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">🔔 알림 영역 (System Tray)</div>
+          <p>
+            <span data-lang="ko">작업표시줄의 오른쪽 끝부분입니다. 시계, 스피커 볼륨, 그리고 <strong>인터넷 연결 상태(와이파이 아이콘)</strong>를 확인할 수 있습니다.</span>
+            <span data-lang="my">Taskbar ၏ ညာဘက်အစွန်ဆုံး အပိုင်းဖြစ်ပါသည်။ နာရီ၊ အသံချဲ့စက်နှင့် <strong>အင်တာနက်ချိတ်ဆက်မှု (WiFi အိုင်ကွန်)</strong> ကို စစ်ဆေးနိုင်ပါသည်။</span>
+            <span data-lang="vi">Phần ngoài cùng bên phải của Taskbar. Có thể xem đồng hồ, âm lượng và <strong>trạng thái kết nối Internet (Biểu tượng WiFi)</strong>.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 3 -->
+    <section class="lesson-card" id="buttons">
+      <div class="badge">STEP 2: WINDOW BUTTONS</div>
+      <h2>
+        <span data-lang="ko">3. 창 조절 3대 버튼 완벽 마스터</span>
+        <span data-lang="my">၃။ Window ပြတင်းပေါက် ထိန်းချုပ်ခလုတ် ၃ ခု</span>
+        <span data-lang="vi">3. Làm Chủ 3 Nút Điều Khiển Cửa Sổ</span>
+      </h2>
+      <p>
+        <span data-lang="ko">모든 윈도우 창의 <strong>오른쪽 맨 위</strong>에는 항상 3개의 버튼이 있습니다. 이 버튼들만 알면 컴퓨터 화면을 자유롭게 다룰 수 있습니다.</span>
+        <span data-lang="my">Window ပြတင်းပေါက်တိုင်း၏ <strong>ညာဘက်အပေါ်ထောင့်</strong>တွင် အမြဲတမ်း ခလုတ် ၃ ခု ရှိပါသည်။ ဤခလုတ်များကို သိပါက စခရင်ကို လွတ်လပ်စွာ ထိန်းချုပ်နိုင်ပါသည်။</span>
+        <span data-lang="vi">Mọi cửa sổ Windows đều có 3 nút ở <strong>góc trên cùng bên phải</strong>. Nắm rõ 3 nút này là bạn có thể điều khiển màn hình tự do.</span>
+      </p>
+
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>1️⃣ 최소화 [ _ ] 버튼:</strong><br>
+          • 창을 끄는 것이 아니라, <strong>작업표시줄 아래로 잠시 숨기는 버튼</strong>입니다. 다시 보고 싶으면 작업표시줄에서 아이콘을 클릭하면 됩니다.
+        </span>
+        <span data-lang="my">
+          <strong>1️⃣ Minimize [ _ ] ခလုတ်:</strong><br>
+          • ပရိုဂရမ်ကို အပြီးပိတ်ခြင်းမဟုတ်ဘဲ <strong>Taskbar အောက်သို့ ခေတ္တဝှက်ထားသော ခလုတ်</strong> ဖြစ်ပါသည်။ ပြန်ကြည့်လိုပါက Taskbar မှ အိုင်ကွန်ကို နှိပ်ပါ။
+        </span>
+        <span data-lang="vi">
+          <strong>1️⃣ Nút Thu nhỏ [ _ ]:</strong><br>
+          • Không phải đóng hẳn, mà là <strong>tạm thời giấu cửa sổ xuống Taskbar</strong>. Muốn xem lại chỉ cần nhấp vào biểu tượng trên Taskbar.
+        </span>
+      </div>
+
+      <div class="tip-box" style="border-left-color:var(--primary); background:var(--shift-bg);">
+        <span data-lang="ko">
+          <strong>2️⃣ 최대화 [ □ ] / 이전 크기 복원 [ ❐ ] 버튼:</strong><br>
+          • <strong>[ □ ]</strong>: 창을 화면 가득 차게 <strong>가장 크게(전체 화면)</strong> 만듭니다.<br>
+          • <strong>[ ❐ ]</strong>: 화면에 꽉 찬 창을 <strong>원래의 작은 크기로 되돌립니다</strong>.
+        </span>
+        <span data-lang="my">
+          <strong>2️⃣ Maximize [ □ ] / Restore [ ❐ ] ခလုတ်:</strong><br>
+          • <strong>[ □ ]</strong>: ပြတင်းပေါက်ကို စခရင်အပြည့်ဖြစ်အောင် <strong>အကြီးဆုံးချဲ့သည်</strong>။<br>
+          • <strong>[ ❐ ]</strong>: စခရင်အပြည့်ဖြစ်နေသော ပြတင်းပေါက်ကို <strong>မူလအရွယ်အစားသို့ ပြန်ပြောင်းသည်</strong>။
+        </span>
+        <span data-lang="vi">
+          <strong>2️⃣ Nút Phóng to [ □ ] / Khôi phục kích thước [ ❐ ]:</strong><br>
+          • <strong>[ □ ]</strong>: Làm cửa sổ <strong>to nhất (toàn màn hình)</strong>.<br>
+          • <strong>[ ❐ ]</strong>: Đưa cửa sổ toàn màn hình <strong>thu lại kích thước nhỏ ban đầu</strong>.
+        </span>
+      </div>
+
+      <div class="warn-box">
+        <span data-lang="ko">
+          <strong>3️⃣ 닫기 [ X ] 버튼:</strong><br>
+          • 창을 <strong>완전히 종료</strong>하는 버튼입니다. 작업하던 내용을 끝낼 때만 누르세요.
+        </span>
+        <span data-lang="my">
+          <strong>3️⃣ Close [ X ] ခလုတ်:</strong><br>
+          • ပရိုဂရမ်ကို <strong>အပြီးသတ် ပိတ်လိုက်သော ခလုတ်</strong> ဖြစ်ပါသည်။ အလုပ်လုပ်ပြီးစီးမှသာ နှိပ်ပါ။
+        </span>
+        <span data-lang="vi">
+          <strong>3️⃣ Nút Đóng [ X ]:</strong><br>
+          • Là nút <strong>kết thúc hoàn toàn</strong> cửa sổ. Chỉ bấm khi đã làm xong việc.
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 4 -->
+    <section class="lesson-card" id="control">
+      <div class="badge">STEP 3: MOVE & RESIZE</div>
+      <h2>
+        <span data-lang="ko">4. 창 이동하기와 크기 자유 조절하기</span>
+        <span data-lang="my">၄။ ပြတင်းပေါက် ရွှေ့ခြင်းနှင့် အရွယ်အစား စိတ်ကြိုက်ချိန်ညှိခြင်း</span>
+        <span data-lang="vi">4. Di Chuyển & Chỉnh Kích Thước Cửa Sổ Tự Do</span>
+      </h2>
+      <p>
+        <span data-lang="ko">창이 최대화(화면 가득 참) 상태가 아닐 때만 창을 이리저리 옮기거나 크기를 바꿀 수 있습니다. 마우스 <strong>드래그 앤 드롭(누른 채 끌기)</strong> 기술이 필요합니다.</span>
+        <span data-lang="my">ပြတင်းပေါက်သည် အကြီးဆုံး (Maximize) အခြေအနေ မဟုတ်မှသာ ရွှေ့ပြောင်းခြင်း၊ အရွယ်ညှိခြင်းများ ပြုလုပ်နိုင်ပါသည်။ Mouse <strong>Drag & Drop (ဖိဆွဲခြင်း)</strong> နည်းပညာ လိုအပ်ပါသည်။</span>
+        <span data-lang="vi">Bạn chỉ có thể di chuyển hoặc chỉnh kích thước khi cửa sổ không ở trạng thái Phóng to (toàn màn hình). Cần dùng kỹ năng <strong>Kéo và Thả (Drag & Drop)</strong> chuột.</span>
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:25%"><span data-lang="ko">동작</span><span data-lang="my">လုပ်ဆောင်ချက်</span><span data-lang="vi">Thao tác</span></th>
+            <th style="width:75%"><span data-lang="ko">마우스 조작 방법</span><span data-lang="my">Mouse အသုံးပြုနည်း</span><span data-lang="vi">Cách dùng chuột</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span data-lang="ko">창 이동하기</span><span data-lang="my">ပြတင်းပေါက် ရွှေ့ခြင်း</span><span data-lang="vi">Di chuyển cửa sổ</span></strong></td>
+            <td>
+              <span data-lang="ko">창의 맨 위 빈 공간(제목 표시줄)을 <strong>마우스 왼쪽 버튼으로 누른 채(손 떼지 말고)</strong> 원하는 곳으로 끌고 가서 놓습니다.</span>
+              <span data-lang="my">ပြတင်းပေါက် အပေါ်ဆုံးရှိ နေရာလွတ် (Title bar) ကို <strong>ဘယ်ဘက်ခလုတ်ဖိထားလျက်</strong> လိုချင်သောနေရာသို့ ဆွဲရွှေ့ပြီး လွှတ်ပါ။</span>
+              <span data-lang="vi"><strong>Nhấn giữ chuột trái</strong> vào vùng trống trên cùng của cửa sổ (Thanh tiêu đề) rồi kéo đến nơi mong muốn và thả ra.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">창 넓이 조절</span><span data-lang="my">ပြတင်းပေါက် အကျယ်ညှိခြင်း</span><span data-lang="vi">Chỉnh chiều rộng</span></strong></td>
+            <td>
+              <span data-lang="ko">창의 왼쪽이나 오른쪽 테두리에 마우스를 올리면 마우스 포인터가 <strong>양옆 화살표(↔)</strong>로 바뀝니다. 그때 누른 채로 양옆으로 끕니다.</span>
+              <span data-lang="my">ပြတင်းပေါက် ဘယ်/ညာ အစွန်းသို့ Mouse တင်လိုက်ပါက <strong>ဘေးတိုက်မြား (↔)</strong> ပေါ်လာမည်။ ထိုအခါ ဖိထားပြီး ဘေးသို့ဆွဲပါ။</span>
+              <span data-lang="vi">Đưa chuột ra mép trái/phải cửa sổ, khi chuột đổi thành <strong>mũi tên ngang (↔)</strong> thì nhấn giữ và kéo sang hai bên.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong><span data-lang="ko">창 대각선 조절</span><span data-lang="my">ပြတင်းပေါက် ဒေါင့်ဖြတ်ညှိခြင်း</span><span data-lang="vi">Chỉnh cả góc</span></strong></td>
+            <td>
+              <span data-lang="ko">창의 모서리(구석)에 마우스를 올리면 <strong>대각선 화살표(⤡)</strong>로 바뀝니다. 누른 채 끌면 가로와 세로 크기가 동시에 바뀝니다.</span>
+              <span data-lang="my">ပြတင်းပေါက် ထောင့်သို့ Mouse တင်လိုက်ပါက <strong>ဒေါင့်ဖြတ်မြား (⤡)</strong> ပေါ်လာမည်။ ဖိဆွဲပါက အလျားနှင့် အနံ နှစ်ခုလုံး တစ်ပြိုင်နက် ပြောင်းလဲမည်။</span>
+              <span data-lang="vi">Đưa chuột vào góc cửa sổ để hiện <strong>mũi tên chéo (⤡)</strong>. Kéo để chỉnh đồng thời cả chiều ngang và chiều dọc.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 섹션 5 -->
+    <section class="lesson-card" id="taskbar">
+      <div class="badge">STEP 4: MULTITASKING</div>
+      <h2>
+        <span data-lang="ko">5. 여러 창 겹쳤을 때 작업표시줄에서 전환하기</span>
+        <span data-lang="my">၅။ ပြတင်းပေါက်များ ထပ်နေချိန် Taskbar မှ ပြောင်းလဲအသုံးပြုခြင်း</span>
+        <span data-lang="vi">5. Chuyển Đổi Trên Taskbar Khi Mở Nhiều Cửa Sổ</span>
+      </h2>
+      <p>
+        <span data-lang="ko">인터넷 창과 한글 2020 창을 동시에 열면, 나중에 열린 창이 앞을 가려 먼저 열었던 창이 안 보이게 됩니다. 이때 <strong>화면 맨 아래 작업표시줄</strong>을 이용합니다.</span>
+        <span data-lang="my">အင်တာနက်နှင့် Hangul ပြတင်းပေါက်များကို တစ်ပြိုင်နက် ဖွင့်ထားပါက နောက်မှဖွင့်သော ဖိုင်က အုပ်သွားတတ်ပါသည်။ ထိုအခါ <strong>စခရင်အောက်ခြေရှိ Taskbar</strong> ကို အသုံးပြုရပါမည်။</span>
+        <span data-lang="vi">Khi mở cả trình duyệt web và Hangul 2020, cửa sổ mở sau sẽ che khuất cửa sổ trước. Lúc này hãy dùng <strong>Taskbar ở dưới cùng màn hình</strong>.</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">👁️ 숨겨진 창 앞으로 꺼내기</div>
+          <p>
+            <span data-lang="ko">작업표시줄에 보이는 프로그램 아이콘을 <strong>한 번만 좌클릭</strong>하면, 그 창이 화면 맨 앞으로 튀어나와 작업할 수 있는 상태(활성화)가 됩니다. 여러 번 누르면 창이 최소화되었다가 다시 나타납니다.</span>
+            <span data-lang="my">Taskbar ပေါ်ရှိ အိုင်ကွန်ကို <strong>ဘယ်ဘက်ခလုတ် တစ်ချက်သာ နှိပ်ပါက</strong> ထိုပြတင်းပေါက်သည် အရှေ့ဆုံးသို့ ရောက်လာပါမည် (Active ဖြစ်မည်)။ ထပ်ခါထပ်ခါ နှိပ်ပါက Minimize ဖြစ်သွားလိုက်၊ ပြန်ပေါ်လာလိုက် ဖြစ်မည်။</span>
+            <span data-lang="vi">Chỉ cần <strong>nhấp chuột trái 1 lần</strong> vào biểu tượng trên Taskbar, cửa sổ đó sẽ nhảy lên trên cùng để bạn làm việc (kích hoạt). Bấm nhiều lần cửa sổ sẽ thu nhỏ rồi lại hiện lên.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 6 -->
+    <section class="lesson-card" id="quiz">
+      <div class="badge">HANDS-ON CHECKLIST</div>
+      <h2>
+        <span data-lang="ko">6. 2차시 실습 점검 체크리스트 (스스로 해보기)</span>
+        <span data-lang="my">၆။ (၂) ကြိမ်မြောက် လက်တွေ့ စစ်ဆေးချက် စာရင်း</span>
+        <span data-lang="vi">6. Bảng Kiểm Tra Thực Hành Bài 2 (Tự Đánh Giá)</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70%">
+                <span data-lang="ko">실습 확인 과제 (Tasks)</span>
+                <span data-lang="my">လက်တွေ့ လုပ်ဆောင်ရမည့် အချက်များ</span>
+                <span data-lang="vi">Nhiệm vụ thực hành</span>
+              </th>
+              <th style="width:30%; text-align:center">
+                <span data-lang="ko">성공 여부</span>
+                <span data-lang="my">ပြီးမြောက်မှု</span>
+                <span data-lang="vi">Kết quả</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="ko">1. 한글 2020 창을 열고, 오른쪽 위 [ _ ] 버튼을 눌러 창을 숨길 수 있다.</span>
+                <span data-lang="my">၁။ Hangul 2020 ကို ဖွင့်ပြီး ညာဘက်အပေါ် [ _ ] ကို နှိပ်၍ ခေတ္တဝှက်ထားနိုင်ခြင်း။</span>
+                <span data-lang="vi">1. Mở cửa sổ Hangul 2020 và bấm nút [ _ ] để giấu cửa sổ đi.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">2. 화면 맨 아래 작업표시줄에서 한글 아이콘을 다시 클릭해 화면으로 꺼낼 수 있다.</span>
+                <span data-lang="my">၂။ Taskbar ပေါ်ရှိ အိုင်ကွန်ကို ပြန်နှိပ်၍ စခရင်ပေါ် ပြန်ခေါ်နိုင်ခြင်း။</span>
+                <span data-lang="vi">2. Bấm lại vào biểu tượng trên Taskbar để gọi cửa sổ hiện lên màn hình.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">3. [ □ ] 버튼을 눌러 화면을 가득 채우고, [ ❐ ] 버튼을 눌러 다시 작게 만들 수 있다.</span>
+                <span data-lang="my">၃။ [ □ ] ကို နှိပ်၍ စခရင်အပြည့်ချဲ့ပြီး [ ❐ ] ကို နှိပ်၍ မူလအတိုင်း ပြန်ထားနိုင်ခြင်း။</span>
+                <span data-lang="vi">3. Bấm [ □ ] để phóng to toàn màn hình, và bấm [ ❐ ] để thu nhỏ lại.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">4. 창의 맨 위를 잡고 끌어서(드래그) 화면의 다른 곳으로 이동시킬 수 있다.</span>
+                <span data-lang="my">၄။ ပြတင်းပေါက် အပေါ်ပိုင်းကို ဖိဆွဲ၍ အခြားနေရာသို့ ရွှေ့ပြောင်းနိုင်ခြင်း။</span>
+                <span data-lang="vi">4. Kéo thanh tiêu đề trên cùng để di chuyển cửa sổ sang nơi khác.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="ko">5. 화면 오른쪽 아래 인터넷(와이파이) 아이콘을 찾아 연결 상태를 확인할 수 있다.</span>
+                <span data-lang="my">၅။ ညာဘက်အောက်ခြေရှိ အင်တာနက် (WiFi) အိုင်ကွန်ကို ရှာ၍ ချိတ်ဆက်မှု စစ်ဆေးနိုင်ခြင်း။</span>
+                <span data-lang="vi">5. Tìm được biểu tượng WiFi ở góc dưới bên phải để kiểm tra kết nối mạng.</span>
+              </td>
+              <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course2-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-course2-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

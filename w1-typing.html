@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>한글 타자 촉지법 1차시 강의지도안 (자체 웹앱 실습)</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">한글 타자 촉지법 1차시: 자체 웹앱 기반 글쇠·손가락 기초 실습</span>
+    <span data-lang="my">ကိုရီးယား လက်ရိုက် (၁) ကြိမ်မြောက်: အခြေခံ ခလုတ်နှင့် လက်ချောင်း လေ့ကျင့်ခန်း</span>
+    <span data-lang="vi">Luyện Gõ Hangul Bài 1: Luyện Tập Cơ Bản Phím & Ngón Tay</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">수업 목차</span>
+        <span data-lang="my">မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI 1</span>
+      </div>
+      <a href="#intro" id="nav-intro" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">1. 수업 개요 & 교육 철학</span>
+        <span data-lang="my">၁။ သင်ရိုးရည်ရွယ်ချက်</span>
+        <span data-lang="vi">1. Mục Tiêu & Nguyên Tắc</span>
+      </a>
+      <a href="#ui-guide" id="nav-ui-guide">
+        <span>🖥️</span>
+        <span data-lang="ko">2. 타자 프로그램 화면 안내</span>
+        <span data-lang="my">၂။ ပရိုဂရမ် မျက်နှာပြင်</span>
+        <span data-lang="vi">2. Giao Diện Phần Mềm</span>
+      </a>
+      <a href="#rhythm" id="nav-rhythm">
+        <span>🎵</span>
+        <span data-lang="ko">3. '쿵-짝' 리듬 & 발성 원칙</span>
+        <span data-lang="my">၃။ “Kung-Jjak” စည်းချက်</span>
+        <span data-lang="vi">3. Nhịp Gõ & Đọc To</span>
+      </a>
+      <a href="#step10" id="nav-step10">
+        <span>⌨️</span>
+        <span data-lang="ko">4. 10개 세트 순차 실습 지침</span>
+        <span data-lang="my">၄။ အတွဲ (၁၀) တွဲ လေ့ကျင့်မှု</span>
+        <span data-lang="vi">4. Luyện 10 Bộ Phím</span>
+      </a>
+      <a href="#exceptions" id="nav-exceptions">
+        <span>⚠️</span>
+        <span data-lang="ko">5. 특이 글쇠 (ㅠ 및 Shift) 지도</span>
+        <span data-lang="my">၅။ အထူးခလုတ် (ㅠ နှင့် Shift)</span>
+        <span data-lang="vi">5. Phím Đặc Biệt (ㅠ & Shift)</span>
+      </a>
+      <a href="#export" id="nav-export">
+        <span>💾</span>
+        <span data-lang="ko">6. 결과 TXT 저장 & 과제 안내</span>
+        <span data-lang="my">၆။ TXT သိမ်းဆည်းခြင်း</span>
+        <span data-lang="vi">6. Lưu Kết Quả & Bài Tập</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="deck">
+    <!-- 섹션 1 -->
+    <section class="lesson-card" id="intro">
+      <div class="badge">TYPING LESSON 1 (1/6)</div>
+      <h2>
+        <span data-lang="ko">1. 수업 개요 및 교육 철학: 기본자리 촉지법</span>
+        <span data-lang="my">၁။ သင်ရိုးရည်ရွယ်ချက်နှင့် အခြေခံစည်းမျဉ်း: Touch Typing စနစ်</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học & Phương Pháp: Kỹ Thuật Gõ Chạm (Touch Typing)</span>
+      </h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span data-lang="ko"><strong>⏱️ 소요 시간:</strong> 총 60분 (강의 15분 + 실습 40분 + 저장 5분)</span>
+          <span data-lang="my"><strong>⏱️ ကြာချိန်:</strong> မိနစ် ၆၀ (ရှင်းပြ ၁၅ မိနစ် + လေ့ကျင့် ၄၀ မိနစ် + သိမ်းဆည်း ၅ မိနစ်)</span>
+          <span data-lang="vi"><strong>⏱️ Thời lượng:</strong> 60 phút (Lý thuyết 15p + Luyện tập 40p + Lưu bài 5p)</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>🎯 핵심 목표:</strong> 1차시에 한글 자모음 전체(10세트) 운지 위치 마스터</span>
+          <span data-lang="my"><strong>🎯 ရည်မှန်းချက်:</strong> ၁ ကြိမ်မြောက်တွင် ကိုရီးယား ဗျည်း/သရ အားလုံး (အတွဲ ၁၀ တွဲ) နေရာမှတ်မိခြင်း</span>
+          <span data-lang="vi"><strong>🎯 Mục tiêu:</strong> Nắm vững vị trí 10 bộ phím (nguyên âm, phụ âm, âm đôi) ngay trong buổi 1</span>
+        </div>
+        <div class="meta-item">
+          <span data-lang="ko"><strong>🛠️ 실습 도구:</strong> 자체 개발 한글 글쇠·손가락 기초 연습 웹앱</span>
+          <span data-lang="my"><strong>🛠️ အသုံးပြုမည့်ဆော့ဖ်ဝဲ:</strong> ကိုယ်တိုင်တီထွင်ထားသော Hangul Typing Web App</span>
+          <span data-lang="vi"><strong>🛠️ Công cụ:</strong> Ứng dụng web Luyện tập Phím & Ngón tay Tiếng Hàn</span>
+        </div>
+      </div>
+      <p>
+        <span data-lang="ko">대부분의 초보자가 오타가 많이 나는 이유는 손 전체가 자판 위아래로 헤매기 때문입니다. 키보드를 내려다보지 않고, <strong>양손 검지를 기준 돌기(F, J)에 고정한 상태에서 손가락의 뻗는 각도와 거리 감각만으로 입력하는 촉지법(Touch Typing)</strong>을 첫 시간부터 몸의 근육 기억으로 완성합니다.</span>
+        <span data-lang="my">စတင်လေ့ကျင့်သူများ အမှားများရခြင်းမှာ လက်တစ်ပြင်လုံး အထက်အောက် ရွေ့လျားနေသောကြောင့် ဖြစ်ပါသည်။ ကီးဘုတ်ကို ငုံ့မကြည့်ဘဲ <strong>လက်ညှိုးနှစ်ဖက်ကို F နှင့် J အဖုများတွင် အမြဲထားကာ လက်ချောင်းဆန့်ထုတ်သည့် အကွာအဝေးဖြင့်သာ ရိုက်နှိပ်သည့် Touch Typing စနစ်</strong>ကို ပထမဆုံးအချိန်မှစ၍ ခန္ဓာကိုယ်၌ စွဲမြဲအောင် လေ့ကျင့်ပါမည်။</span>
+        <span data-lang="vi">Nguyên nhân người mới hay gõ sai là do cả bàn tay di chuyển lung tung trên bàn phím. Phương pháp cốt lõi là không nhìn bàn phím, <strong>luôn cố định 2 ngón trỏ vào gờ F và J, chỉ dùng góc duỗi và khoảng cách ngón tay để gõ (Touch Typing)</strong> ngay từ buổi đầu tiên.</span>
+      </p>
+    </section>
+
+    <!-- 섹션 2 -->
+    <section class="lesson-card" id="ui-guide">
+      <div class="badge">STEP 1: WEB APP INTERFACE</div>
+      <h2>
+        <span data-lang="ko">2. 타자 연습 프로그램 화면 구성 및 버튼 안내</span>
+        <span data-lang="my">၂။ Typing Program မျက်နှာပြင်နှင့် ခလုတ်များ အသုံးပြုပုံ</span>
+        <span data-lang="vi">2. Cấu Trúc Giao Diện Ứng Dụng Luyện Gõ</span>
+      </h2>
+      <p>
+        <span data-lang="ko">학생들이 컴퓨터 바탕화면의 브라우저를 열고 연습 프로그램을 시작하면 만나는 5대 화면 영역입니다:</span>
+        <span data-lang="my">ကျောင်းသားများ ပရိုဂရမ်ဖွင့်လှစ်သည့်အခါ တွေ့မြင်ရမည့် အဓိက အစိတ်အပိုင်း (၅) မျိုး:</span>
+        <span data-lang="vi">5 khu vực chính trên giao diện phần mềm học viên cần nắm rõ:</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">1️⃣ 상단 바 (헤더)</div>
+          <p>
+            <span data-lang="ko">• <strong>언어 버튼:</strong> [한국어 / မြန်မာ / Tiếng Việt] 즉시 전환<br>• <strong>배경 음악:</strong> track1~3 선택 후 [▶ 재생 / ■ 정지]<br>• <strong>종료 버튼:</strong> [연습 종료 (TXT 저장)]으로 과제 파일 내려받기</span>
+            <span data-lang="my">• <strong>ဘာသာစကား:</strong> [한국어 / မြန်မာ / Tiếng Việt] ချက်ချင်းပြောင်းနိုင်သည်<br>• <strong>တေးဂီတ:</strong> track1~3 ရွေး၍ [▶ ဖွင့် / ■ ရပ်]<br>• <strong>အပြီးသတ်:</strong> [လေ့ကျင့်မှုပြီးဆုံး (TXT သိမ်းရန်)] ဖြင့် ဖိုင်ဒေါင်းလုဒ်လုပ်ခြင်း</span>
+            <span data-lang="vi">• <strong>Ngôn ngữ:</strong> Chuyển đổi linh hoạt [한국어 / မြန်မာ / Tiếng Việt]<br>• <strong>Nhạc nền:</strong> Chọn bài và bấm [▶ Phát / ■ Dừng]<br>• <strong>Kết thúc:</strong> Bấm [Tải TXT] để xuất báo cáo kết quả nộp bài</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">2️⃣ 세트 및 목표 글쇠 선택</div>
+          <p>
+            <span data-lang="ko">• <strong>1단계 세트 선택:</strong> 총 10개 세트 버튼 중 현재 진도 클릭<br>• <strong>2단계 목표 글쇠 선택:</strong> 해당 세트의 글쇠(예: ㄹ ➔ ㅇ ➔ ㄴ ➔ ㅁ)를 순서대로 클릭</span>
+            <span data-lang="my">• <strong>အဆင့် ၁ အတွဲရွေးချယ်ခြင်း:</strong> အတွဲ ၁၀ တွဲအနက် သင်ယူမည့်အတွဲကို နှိပ်ပါ<br>• <strong>အဆင့် ၂ ခလုတ်ရွေးချယ်ခြင်း:</strong> သက်ဆိုင်ရာ ခလုတ် (ဥပမာ: ㄹ ➔ ㅇ ➔ ㄴ ➔ ㅁ) ကို အစဉ်လိုက် နှိပ်ပါ</span>
+            <span data-lang="vi">• <strong>Bước 1 Chọn bộ:</strong> Bấm chọn 1 trong 10 bộ luyện tập theo tiến độ<br>• <strong>Bước 2 Chọn phím:</strong> Bấm phím mục tiêu cụ thể (VD: ㄹ ➔ ㅇ ➔ ㄴ ➔ ㅁ)</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">3️⃣ 목표 상태 및 오답 알림 카드</div>
+          <p>
+            <span data-lang="ko">• <strong>노란색 큰 배지:</strong> 지금 쳐야 할 글자(예: <b>ㅏ</b>)와 물리 키(Key: K)<br>• <strong>담당 손가락 표시:</strong> 오른손 중지 등 지정 손가락 안내<br>• <strong>진행 및 오답:</strong> 현재 줄 진행(0/20) 및 세트 누적 오답 카운트</span>
+            <span data-lang="my">• <strong>အဝါရောင် အိုင်ကွန်:</strong> ရိုက်ရမည့်စာလုံး (ဥပမာ <b>ㅏ</b>) နှင့် ကီးဘုတ်ခလုတ် (Key: K)<br>• <strong>တာဝန်ကျလက်ချောင်း:</strong> ညာ လက်ခလယ် စသည်ဖြင့် လမ်းညွှန်ပြသခြင်း<br>• <strong>တိုးတက်မှုနှင့် အမှား:</strong> လက်ရှိစာကြောင်း (0/20) နှင့် စုစုပေါင်း အမှားအရေအတွက်</span>
+            <span data-lang="vi">• <strong>Biểu tượng vàng:</strong> Phím mục tiêu cần gõ (VD: <b>ㅏ</b>) và tên phím (Key: K)<br>• <strong>Ngón tay phụ trách:</strong> Hiển thị rõ ngón tay (VD: Ngón giữa phải)<br>• <strong>Tiến độ & Lỗi:</strong> Đếm số lần gõ (0/20) và thống kê lỗi sai</span>
+          </p>
+        </div>
+        <div class="action-card">
+          <div class="act-title">4️⃣ 20칸 결과 격자 (자동 줄바꿈)</div>
+          <p>
+            <span data-lang="ko">• <strong>Enter 키 누르지 않음:</strong> 20번 입력하면 자동으로 다음 줄로 이동<br>• <strong>오답 처리:</strong> 오답 입력 시 비프음이 울리고 글자색이 <span class="hl-red">빨간색</span>으로 표시되며 각 줄 우측에 누적 오답(-1) 기록</span>
+            <span data-lang="my">• <strong>Enter နှိပ်ရန်မလိုပါ:</strong> အကြိမ် ၂၀ ပြည့်တိုင်း အလိုအလျောက် စာကြောင်းဆင်းပါသည်<br>• <strong>အမှားစနစ်:</strong> မှားရိုက်ပါက အသံမြည်ပြီး စာလုံးအရောင် <span class="hl-red">အနီရောင်</span> ပြောင်းကာ ညာဘက်တွင် အမှားအရေအတွက် (-1) မှတ်တမ်းတင်သည်</span>
+            <span data-lang="vi">• <strong>Không cần nhấn Enter:</strong> Sau 20 lần gõ, hệ thống tự động xuống dòng mới<br>• <strong>Xử lý lỗi:</strong> Gõ sai sẽ phát âm thanh cảnh báo, chữ hiện <span class="hl-red">màu đỏ</span> và dòng bên phải ghi nhận số lỗi (-1)</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 3 -->
+    <section class="lesson-card" id="rhythm">
+      <div class="badge">STEP 2: RHYTHM & VOICE</div>
+      <h2>
+        <span data-lang="ko">3. '쿵-짝' 리듬과 소리 내어 말하기 (발성 훈련)</span>
+        <span data-lang="my">၃။ “Kung-Jjak” စည်းချက်နှင့် အသံထွက်ရွတ်ဆိုခြင်း လေ့ကျင့်ခန်း</span>
+        <span data-lang="vi">3. Phương Pháp Nhịp Gõ "Kung-Jjak" & Đọc To Thành Tiếng</span>
+      </h2>
+      <p>
+        <span data-lang="ko">기계적인 무작위 연타를 방지하고 손가락이 기본자리로 정확히 복귀하도록 <strong>2박자 '쿵-짝' 메트로놈 리듬</strong>을 반 전체가 소리 내어 맞춥니다:</span>
+        <span data-lang="my">စဉ်းစားခြင်းမရှိဘဲ အတင်းရိုက်နှိပ်ခြင်းကို ကာကွယ်ရန်နှင့် လက်ချောင်းများ မူလနေရာသို့ အမြဲပြန်ရောက်စေရန် <strong>အသံထွက်၍ (၂) ချက်စည်းချက်</strong> ဖြင့် တစ်တန်းလုံး ညီတူလေ့ကျင့်ပါ:</span>
+        <span data-lang="vi">Để tránh gõ loạn xạ và đảm bảo ngón tay luôn hồi vị về hàng cơ bản, cả lớp cùng hô nhịp <strong>2 phách "Kung - Jjak"</strong>:</span>
+      </p>
+
+      <div class="tip-box">
+        <span data-lang="ko">
+          <strong>🎵 쿵-짝 2박자 운지 공식:</strong><br>
+          • <strong>[쿵 (1박자)]:</strong> 지정된 담당 손가락으로 목표 글쇠를 정확히 누른다.<br>
+          • <strong>[짝 (2박자)]:</strong> 즉시 손가락 힘을 빼고 기본자리(F/J)로 돌아와 여덟 손가락이 제자리에 얹혀 있는지 확인한다.<br>
+          • <strong>[음성 발성]:</strong> 글쇠를 누를 때마다 화면에 안내된 소리를 입으로 외친다! (예: <strong>"리을 - 짝!"</strong>, <strong>"아 - 짝!"</strong>, <strong>"기역 - 짝!"</strong>)
+        </span>
+        <span data-lang="my">
+          <strong>🎵 “Kung-Jjak” (၂) ချက် စည်းချက် လေ့ကျင့်ပုံ:</strong><br>
+          • <strong>[Kung (၁ ချက်)]:</strong> သတ်မှတ်ထားသော လက်ချောင်းဖြင့် ခလုတ်ကို တိကျစွာ နှိပ်ပါ။<br>
+          • <strong>[Jjak (၂ ချက်)]:</strong> ချက်ချင်း လက်ကိုဖြေလျှော့၍ အခြေခံနေရာ (F/J) သို့ ပြန်လာပြီး လက် ၈ ချောင်းစလုံး မူလနေရာတွင် ရှိမရှိ စစ်ဆေးပါ။<br>
+          • <strong>[အသံထွက်ရွတ်ဆိုခြင်း]:</strong> ခလုတ်နှိပ်တိုင်း စခရင်ရှိ အသံအတိုင်း ကျယ်ကျယ်ရွတ်ပါ! (ဥပမာ: <strong>"ရီအွလ် - 짝!"</strong>, <strong>"အာ - 짝!"</strong>)
+        </span>
+        <span data-lang="vi">
+          <strong>🎵 Công thức nhịp 2 phách "Kung - Jjak":</strong><br>
+          • <strong>[Kung (Nhịp 1)]:</strong> Dùng đúng ngón tay quy định nhấn dứt khoát vào phím mục tiêu.<br>
+          • <strong>[Jjak (Nhịp 2)]:</strong> Thả tay ngay lập tức, thu về hàng cơ bản (F/J) và kiểm tra lại 8 ngón tay.<br>
+          • <strong>[Đọc to thành tiếng]:</strong> Mỗi lần gõ đều đọc to âm thanh trên màn hình! (VD: <strong>"Ri-eul - 짝!"</strong>, <strong>"A - 짝!"</strong>, <strong>"Gi-yeok - 짝!"</strong>)
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 4 -->
+    <section class="lesson-card" id="step10">
+      <div class="badge">STEP 3: 10 SETS WALKTHROUGH</div>
+      <h2>
+        <span data-lang="ko">4. 10개 세트 순차 실습 지침 및 손가락 배정</span>
+        <span data-lang="my">၄။ အတွဲ (၁၀) တွဲ အစီအစဉ်အတိုင်း လေ့ကျင့်နည်းနှင့် လက်ချောင်းလမ်းညွှန်</span>
+        <span data-lang="vi">4. Hướng Dẫn Chi Tiết 10 Bộ Luyện Tập & Phân Bổ Ngón Tay</span>
+      </h2>
+      <p>
+        <span data-lang="ko">학생들은 강사의 구령과 진행에 맞춰 1세트부터 10세트까지 각 글쇠당 <strong>최소 1줄(20회) 이상</strong> 오류 없이 칠 수 있을 때까지 순서대로 실습합니다[cite: 23].</span>
+        <span data-lang="my">ကျောင်းသားများသည် ဆရာ၏ ညွှန်ကြားချက်အတိုင်း အတွဲ ၁ မှ ၁၀ အထိ ခလုတ်တစ်ခုလျှင် <strong>အနည်းဆုံး ၁ ကြောင်း (အကြိမ် ၂၀)</strong> အမှားမရှိ ရိုက်နိုင်သည်အထိ အစဉ်လိုက် လေ့ကျင့်ရမည်[cite: 23]။</span>
+        <span data-lang="vi">Học viên thực hành tuần tự từ Bộ 1 đến Bộ 10, mỗi phím gõ <strong>ít nhất 1 dòng (20 lần)</strong> chính xác trước khi chuyển sang phím tiếp theo[cite: 23].</span>
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:12%">세트 (Set)</th>
+              <th style="width:25%">세트 명칭 및 범위</th>
+              <th style="width:38%">글쇠 구성 및 담당 손가락</th>
+              <th style="width:25%">핵심 지도 요령</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1세트</strong></td>
+              <td><strong>기본자리 왼손</strong></td>
+              <td>ㄹ(검지 L1), ㅇ(중지 L2), ㄴ(약지 L3), ㅁ(새끼 L4)</td>
+              <td>F 돌기 기준 손가락 얹기, 검지부터 새끼까지 1줄씩[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>2세트</strong></td>
+              <td><strong>기본자리 오른손</strong></td>
+              <td>ㅓ(검지 R1), ㅏ(중지 R2), ㅣ(약지 R3), ;(새끼 R4)</td>
+              <td>J 돌기 기준 손가락 얹기, 문장부호 세미콜론(;) 포함[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>3세트</strong></td>
+              <td><strong>윗자리 왼손</strong></td>
+              <td>ㄱ(검지 R키), ㄷ(중지 E키), ㅈ(약지 W키), ㅂ(새끼 Q키)</td>
+              <td>손 전체가 올라가지 않고 해당 손가락만 위로 뻗기[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>4세트</strong></td>
+              <td><strong>윗자리 오른손</strong></td>
+              <td>ㅕ(검지 U키), ㅑ(중지 I키), ㅐ(약지 O키), ㅔ(새끼 P키)</td>
+              <td>손가락 뻗어 치고 '짝'에 기본자리(ㅓㅏㅣ;) 복귀[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>5세트</strong></td>
+              <td><strong>아랫자리 왼손</strong></td>
+              <td>ㅍ(검지 V키), ㅊ(중지 C키), ㅌ(약지 X키), ㅋ(새끼 Z키)</td>
+              <td>손가락을 아래로 자연스럽게 오므려 치기[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>6세트</strong></td>
+              <td><strong>아랫자리 오른손</strong></td>
+              <td>ㅡ(검지 M키), ,(중지 ,키), .(약지 .키), /(새끼 /키)</td>
+              <td>모음 ㅡ 및 쉼표, 마침표, 슬래시 운지법[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>7세트</strong></td>
+              <td><strong>가운데자리 왼쪽 열</strong></td>
+              <td>ㅎ(G키), ㅅ(T키), ㅠ(B키) ➔ <span class="hl-blue">모두 왼손 검지(L1)</span></td>
+              <td><strong>[중요] ㅠ(B)는 왼손 검지로 입력!</strong> (F 돌기로 복귀)[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>8세트</strong></td>
+              <td><strong>가운데자리 오른쪽 열</strong></td>
+              <td>ㅗ(H키), ㅛ(Y키), ㅜ(N키) ➔ <span class="hl-blue">모두 오른손 검지(R1)</span></td>
+              <td>모두 오른손 검지로 치고 J 돌기로 복귀[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>9세트</strong></td>
+              <td><strong>Shift ＋ 왼손 윗자리</strong></td>
+              <td>ㅃ(Q), ㅉ(W), ㄸ(E), ㄲ(R), ㅆ(T) + <span class="hl-red">오른쪽 Shift 필수</span></td>
+              <td><strong>반대쪽 오른손 새끼로 Right Shift 누른 채 입력!</strong>[cite: 23]</td>
+            </tr>
+            <tr>
+              <td><strong>10세트</strong></td>
+              <td><strong>Shift ＋ 오른손 윗자리</strong></td>
+              <td>ㅛ(Y), ㅕ(U), ㅑ(I), ㅒ(O), ㅖ(P) + <span class="hl-red">왼쪽 Shift 필수</span></td>
+              <td><strong>반대쪽 왼손 새끼로 Left Shift 누른 채 입력!</strong>[cite: 23]</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 섹션 5 -->
+    <section class="lesson-card" id="exceptions">
+      <div class="badge">STEP 4: SPECIAL RULES</div>
+      <h2>
+        <span data-lang="ko">5. 특이 글쇠 지도: ㅠ(B) 예외 및 Shift 반대손 원칙</span>
+        <span data-lang="my">၅။ အထူးစည်းမျဉ်း လမ်းညွှန်ချက်: ㅠ(B) နှင့် Shift အသုံးပြုနည်း</span>
+        <span data-lang="vi">5. Quy Tắc Đặc Biệt: Ngoại Lệ Phím ㅠ(B) & Nguyên Tắc Dùng Shift Ngược Bên</span>
+      </h2>
+
+      <div class="warn-box">
+        <span data-lang="ko">
+          <strong>⚠️ 1) ㅠ(B) 글쇠의 왼손 검지 예외:</strong><br>
+          • 모음 ㅠ는 한글 자모음 분류상 모음이지만, 키보드 B 글쇠는 왼쪽에 치우쳐 있어 대한민국 표준 두벌식 자판 및 한컴타자 공식 기준에 따라 <strong>【왼손 검지】</strong>로 입력합니다[cite: 23]. 오른손으로 치면 오타가 발생하거나 자세가 흐트러집니다.
+        </span>
+        <span data-lang="my">
+          <strong>⚠️ ၁) "ㅠ(B)" ခလုတ်အတွက် ဘယ်လက်ညှိုး ခြွင်းချက် စည်းမျဉ်း:</strong><br>
+          • "ㅠ" သည် သရဖြစ်သော်လည်း ကီးဘုတ် B ခလုတ်သည် ဘယ်ဘက်သို့ ရောက်နေသဖြင့် ကိုရီးယားစံစနစ်အရ <strong>【ဘယ် လက်ညှိုး】</strong> ဖြင့်သာ ရိုက်နှိပ်ရပါမည်[cite: 23]။ ညာလက်ဖြင့် ရိုက်ပါက အမှားဖြစ်နိုင်ပါသည်။
+        </span>
+        <span data-lang="vi">
+          <strong>⚠️ 1) Ngoại lệ phím nguyên âm ㅠ(B) dùng ngón trỏ trái:</strong><br>
+          • Tuy là nguyên âm nhưng phím B nằm lệch sang bên trái, theo chuẩn bàn phím Hàn Quốc (Dubeolsik) và Hancom, bắt buộc phải dùng <strong>【Ngón trỏ trái】</strong> để gõ[cite: 23]. Nếu dùng tay phải sẽ sai tư thế.
+        </span>
+      </div>
+
+      <div class="warn-box" style="margin-top:10px;">
+        <span data-lang="ko">
+          <strong>⚠️ 2) 된소리·이중모음의 '반대손 Shift' 철칙:</strong><br>
+          • <strong>왼손 글자(ㅃㅉㄸㄲㅆ)를 칠 때 (9세트):</strong> 반드시 <strong>오른쪽 새끼손가락으로 [Right Shift]</strong>를 누른 상태에서 왼손으로 목표 키를 누릅니다[cite: 23].<br>
+          • <strong>오른손 글자(ㅛㅕㅑㅒㅖ)를 칠 때 (10세트):</strong> 반드시 <strong>왼쪽 새끼손가락으로 [Left Shift]</strong>를 누른 상태에서 오른손으로 목표 키를 누릅니다[cite: 23].<br>
+          • 같은 손으로 Shift와 글쇠를 동시에 누르면 손목이 뒤틀리므로 프로그램에서 오답 처리됩니다[cite: 23].
+        </span>
+        <span data-lang="my">
+          <strong>⚠️ ၂) Shift ခလုတ်ကို ဆန့်ကျင်ဘက်လက်ဖြင့် နှိပ်ရမည့် စည်းမျဉ်း:</strong><br>
+          • <strong>ဘယ်လက်စာလုံးများ (ㅃㅉㄸㄲㅆ) ရိုက်သည့်အခါ (အတွဲ ၉):</strong> <strong>ညာ လက်သန်းဖြင့် [Right Shift]</strong> ကို ဖိထားပြီးမှ ဘယ်လက်ဖြင့် ရိုက်ပါ[cite: 23]။<br>
+          • <strong>ညာလက်စာလုံးများ (ㅛㅕㅑㅒㅖ) ရိုက်သည့်အခါ (အတွဲ ၁၀):</strong> <strong>ဘယ် လက်သန်းဖြင့် [Left Shift]</strong> ကို ဖိထားပြီးမှ ညာလက်ဖြင့် ရိုက်ပါ[cite: 23]။<br>
+          • လက်တစ်ဖက်တည်းဖြင့် Shift နှင့် ခလုတ်ကို တွဲနှိပ်ပါက စနစ်မှ အမှားအဖြစ် သတ်မှတ်ပါသည်[cite: 23]။
+        </span>
+        <span data-lang="vi">
+          <strong>⚠️ 2) Nguyên tắc bất di bất dịch: Dùng Shift ngược bên:</strong><br>
+          • <strong>Khi gõ phím bên tay trái (ㅃㅉㄸㄲㅆ - Bộ 9):</strong> Bắt buộc dùng <strong>ngón út phải giữ [Right Shift]</strong> rồi tay trái mới nhấn phím chữ[cite: 23].<br>
+          • <strong>Khi gõ phím bên tay phải (ㅛㅕㅑㅒㅖ - Bộ 10):</strong> Bắt buộc dùng <strong>ngón út trái giữ [Left Shift]</strong> rồi tay phải mới nhấn phím chữ[cite: 23].<br>
+          • Dùng cùng một tay vừa giữ Shift vừa nhấn chữ sẽ làm lệch cổ tay và hệ thống sẽ báo lỗi[cite: 23].
+        </span>
+      </div>
+    </section>
+
+    <!-- 섹션 6 -->
+    <section class="lesson-card" id="export">
+      <div class="badge">STEP 5: RESULT & HOMEWORK</div>
+      <h2>
+        <span data-lang="ko">6. 연습 종료 및 과제 파일 TXT 다운로드 가이드</span>
+        <span data-lang="my">၆။ လေ့ကျင့်မှု ပြီးဆုံးခြင်းနှင့် အိမ်စာ TXT ဖိုင် သိမ်းဆည်းခြင်း</span>
+        <span data-lang="vi">6. Kết Thúc Luyện Tập & Xuất File Báo Cáo TXT Nộp Bài</span>
+      </h2>
+      <p>
+        <span data-lang="ko">수업 종료 5분 전, 학생들은 상단 우측의 <strong>[연습 종료 (TXT 저장)]</strong> 버튼을 클릭합니다[cite: 23]. 프로그램이 당일 연습한 모든 세트의 입력 내용과 오답 수를 정리하여 <code>YYYYMMDD_HHMM.txt</code> 형식으로 자동 다운로드합니다[cite: 23].</span>
+        <span data-lang="my">အတန်းမပြီးမီ ၅ မိနစ်အလိုတွင် ညာဘက်အပေါ်ရှိ <strong>[လေ့ကျင့်မှုပြီးဆုံး (TXT သိမ်းရန်)]</strong> ခလုတ်ကို နှိပ်ပါ[cite: 23]။ စနစ်မှ ယနေ့လေ့ကျင့်ခဲ့သော မှတ်တမ်းနှင့် အမှားများကို <code>YYYYMMDD_HHMM.txt</code> ဖိုင်အဖြစ် အလိုအလျောက် ထုတ်ပေးပါသည်[cite: 23]။</span>
+        <span data-lang="vi">Trước khi hết giờ 5 phút, học viên bấm nút <strong>[Tải TXT]</strong> ở góc trên bên phải[cite: 23]. Hệ thống sẽ tự động tổng hợp toàn bộ kết quả gõ và số lỗi thành tệp văn bản <code>YYYYMMDD_HHMM.txt</code>[cite: 23].</span>
+      </p>
+
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="act-title">📁 USB 저장 과제 미션</div>
+          <p>
+            <span data-lang="ko">1. 컴퓨터 [다운로드] 폴더에서 방금 저장된 텍스트 파일을 찾습니다.<br>2. 컴퓨터 기초 시간에 배운 대로 과제용 USB를 꽂고 USB 안으로 복사합니다.<br>3. 집에서 이 웹앱 파일을 열어 매일 30분씩 연습하고 TXT 파일을 누적해 옵니다.</span>
+            <span data-lang="my">၁။ [Downloads] ဖိုဒါထဲမှ ဒေါင်းလုဒ်လုပ်ထားသော Text ဖိုင်ကို ရှာပါ။<br>၂။ အတန်းထဲတွင် သင်ကြားခဲ့သည့်အတိုင်း USB ထိုးသွင်းပြီး USB ထဲသို့ ကော်ပီကူးထည့်ပါ။<br>၃။ အိမ်တွင် ဤဆော့ဖ်ဝဲလ်ဖြင့် နေ့စဉ် မိနစ် ၃၀ လေ့ကျင့်ပြီး TXT ဖိုင်အသစ်များ စုစည်းလာခဲ့ပါ။</span>
+            <span data-lang="vi">1. Vào thư mục [Downloads] tìm tệp văn bản vừa tải về.<br>2. Cắm USB cá nhân vào máy tính và sao chép tệp kết quả vào USB.<br>3. Mang USB về nhà mở tệp web này luyện tập mỗi ngày 30 phút để nộp vào buổi sau.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-typing1-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ saved = localStorage.getItem('tl-typing1-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+
+<!-- return-to-index -->
+<style>
+.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
+padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
+font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.back-home:hover{background:#1561c4}
+@media print{.back-home{display:none}}
+</style>
+<a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
+</body>
+</html>

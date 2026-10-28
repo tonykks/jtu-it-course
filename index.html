@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>외국인 유학생을 위한 IT 실무 교육</title>
+<style>
+:root{
+  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
+  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
+  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
+  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --barh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
+  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
+  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
+  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
+.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
+.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
+.lang-btn.active{background:#fff;color:var(--bar)}
+.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
+.mode:hover{background:rgba(255,255,255,.12)}
+.mode svg{width:20px;height:20px}
+.mode .sun{display:none}
+html.is-dark .mode .sun{display:block}
+html.is-dark .mode .moon{display:none}
+
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
+aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
+aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
+aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
+aside a:hover{background:rgba(255,255,255,.08)}
+aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
+
+main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
+.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
+.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
+.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
+.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+
+.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.diagram-wrap svg{width:100%;max-width:680px;height:auto}
+.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+
+.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
+.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--fold);color:var(--ink);font-weight:700}
+.hl-blue{color:var(--primary);font-weight:700}
+.hl-red{color:var(--warn);font-weight:700}
+
+footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
+
+[data-lang]{display:none}
+html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
+html[data-cur-lang="my"] [data-lang="my"]{display:block}
+html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
+span[data-lang]{display:none}
+html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
+html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
+html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
+  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
+  .topbar h1{font-size:15px}
+}
+
+.lec-link{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;border-radius:999px;
+background:var(--accent-soft);color:var(--accent) !important;font-size:12.5px;font-weight:600;text-decoration:none !important;white-space:nowrap}
+.lec-link:hover{background:var(--accent);color:#fff !important}
+.lec-link span[data-lang]{display:none}
+html[data-cur-lang="ko"] .lec-link span[data-lang="ko"],html[data-cur-lang="my"] .lec-link span[data-lang="my"],html[data-cur-lang="vi"] .lec-link span[data-lang="vi"]{display:inline}
+.lec-soon{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:var(--line);color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="top-title">
+    <span data-lang="ko">외국인 유학생을 위한 IT 실무 교육</span>
+    <span data-lang="my">နိုင်ငံခြားသားကျောင်းသားများအတွက် လက်တွေ့ IT ပညာပေးသင်တန်း</span>
+    <span data-lang="vi">Đào Tạo IT Thực Hành Cho Du Học Sinh Nước Ngoài</span>
+  </h1>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('my')">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+  </div>
+  <button class="mode" id="mode" type="button" aria-label="화면 모드 전환">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</header>
+
+<div class="shell">
+  <aside>
+    <nav>
+      <div class="label">
+        <span data-lang="ko">강의 목차</span>
+        <span data-lang="my">မာတိကာ</span>
+        <span data-lang="vi">MỤC LỤC BÀI HỌC</span>
+      </div>
+      
+      <a href="#overview" id="nav-overview" aria-current="location">
+        <span>📌</span>
+        <span data-lang="ko">과정 개요</span>
+        <span data-lang="my">သင်တန်းမိတ်ဆက်</span>
+        <span data-lang="vi">Tổng Quan Khóa Học</span>
+      </a>
+      <a href="#curri1" id="nav-curri1">
+        <span>🖥️</span>
+        <span data-lang="ko">1. 컴퓨터 기초 (6주)</span>
+        <span data-lang="my">၁။ ကွန်ပျူတာ အခြေခံ</span>
+        <span data-lang="vi">1. Tin Học Cơ Bản (6T)</span>
+      </a>
+      <a href="#curri2" id="nav-curri2">
+        <span>⌨️</span>
+        <span data-lang="ko">2. 한글 타자 촉지법 (6주)</span>
+        <span data-lang="my">၂။ ကိုရီးယား လက်ရိုက်</span>
+        <span data-lang="vi">2. Luyện Gõ Hangul (6T)</span>
+      </a>
+      <a href="#curri3" id="nav-curri3">
+        <span>📄</span>
+        <span data-lang="ko">3. 아래아 한글 실무 (6주)</span>
+        <span data-lang="my">၃။ HWP စာရွက်စာတမ်း</span>
+        <span data-lang="vi">3. HWP Soạn Thảo (6T)</span>
+      </a>
+      <a href="#week6" id="nav-week6">
+        <span>🏆</span>
+        <span data-lang="ko">6차시 종합평가 안내</span>
+        <span data-lang="my">၆ ပတ်မြောက် စာမေးပွဲ</span>
+        <span data-lang="vi">Đánh Giá Tuần 6</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="deck">
+    
+    <section class="intro-card" id="overview">
+      <div class="badge">
+        <span data-lang="ko">교육과정 안내</span>
+        <span data-lang="my">သင်တန်း အချက်အလက်</span>
+        <span data-lang="vi">Thông Tin Đào Tạo</span>
+      </div>
+      <h2>
+        <span data-lang="ko">제주관광대학교 외국인 유학생 IT 실무 집중과정</span>
+        <span data-lang="my">Jeju Tourism University နိုင်ငံခြားသားကျောင်းသားများ IT လက်တွေ့အထူးသင်တန်း</span>
+        <span data-lang="vi">Khóa Học IT Thực Hành Cho Du Học Sinh - Đại Học Du Lịch Jeju</span>
+      </h2>
+      <p>
+        <span data-lang="ko">스마트폰에 익숙한 20대 초중반 외국인 유학생을 위해, 컴퓨터 기초, 한글 타자 촉지법, 아래아 한글 실무를 매주 1시간씩 연계하여 6주간(총 18시간) 완전히 몸에 익히도록 설계된 맞춤형 실습 교안입니다.</span>
+        <span data-lang="my">စမတ်ဖုန်းကို အသုံးပြုတတ်သော နိုင်ငံခြားသားကျောင်းသားများအတွက် ကွန်ပျူတာအခြေခံ၊ ကိုရီးယားကီးဘုတ်လက်ရိုက်နှင့် Hangul စာရွက်စာတမ်းကို တစ်ပတ်လျှင် ၃ နာရီဖြင့် ၆ ပတ် (စုစုပေါင်း ၁၈ နာရီ) လက်တွေ့လေ့ကျင့်ပေးသော သင်ရိုးဖြစ်ပါသည်။</span>
+        <span data-lang="vi">Chương trình đào tạo thực hành trong 6 tuần (tổng cộng 18 giờ, mỗi buổi 3 giờ gồm: 1 giờ Tin học cơ bản + 1 giờ Luyện gõ phím + 1 giờ Soạn thảo HWP) giúp học viên làm chủ kỹ năng vi tính văn phòng.</span>
+      </p>
+      <div class="meta-grid">
+        <div class="meta-item"><strong>👥 대상:</strong> 미얀마, 베트남 외국인 유학생 (TOPIK 3급 이상)</div>
+        <div class="meta-item"><strong>⏱️ 시수:</strong> 6주 × 3시간 (총 18시간)</div>
+        <div class="meta-item"><strong>👨‍🏫 강사:</strong> 김해순 / 김광수</div>
+        <div class="meta-item"><strong>🎯 최종목표:</strong> 폴더 생성, 일지 모사 및 창작, 그리고 USB 백업 자립</div>
+      </div>
+    </section>
+
+    <section class="syllabus-sec" id="curri1">
+      <div class="badge">CURRICULUM 1 (매주 1교시 / 총 6시간)</div>
+      <h2>
+        <span data-lang="ko">🖥️ 컴퓨터 기초 지식 및 윈도우10 파일/폴더 관리 교안</span>
+        <span data-lang="my">🖥️ ကွန်ပျူတာ အခြေခံနှင့် Windows 10 ဖိုင်/ဖိုဒါ စီမံခန့်ခွဲမှု သင်ရိုး</span>
+        <span data-lang="vi">🖥️ Giáo Án 1: Tin Học Cơ Bản & Quản Lý Tệp/Thư Mục Windows 10</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:12%"><span data-lang="ko">주차</span><span data-lang="my">ရက်သတ္တပတ်</span><span data-lang="vi">Tuần</span></th>
+              <th style="width:28%"><span data-lang="ko">핵심 주제</span><span data-lang="my">အဓိက ခေါင်းစဉ်</span><span data-lang="vi">Chủ đề cốt lõi</span></th>
+              <th style="width:40%"><span data-lang="ko">세부 지도 내용 및 반복 실습</span><span data-lang="my">အသေးစိတ် သင်ကြားမှုနှင့် လေ့ကျင့်ခန်း</span><span data-lang="vi">Nội dung chi tiết & Thực hành</span></th>
+              <th style="width:20%"><span data-lang="ko">실습 평가 기준</span><span data-lang="my">အကဲဖြတ် စံနှုန်း</span><span data-lang="vi">Tiêu chuẩn đánh giá</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1주차</strong><br><a class="lec-link" href="w1-computer.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>H/W & S/W 차이, 컴퓨터 시작/종료, 마우스 기초 & USB 연결</td>
+              <td>• 본체 전원 켜기 vs 윈도우 시작메뉴 '시스템 종료'<br>• 마우스 쥐는 법, 좌클릭, 우클릭, 더블클릭, 휠<br>• [과제용 USB 안내]: 포트 꽂기, '안전하게 제거'</td>
+              <td>정상 시스템 종료 및 마우스 조작, USB 안전 제거</td>
+            </tr>
+            <tr>
+              <td><strong>2주차</strong><br><a class="lec-link" href="w2-computer.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>윈도우10 바탕화면과 창(Window) 제어</td>
+              <td>• 바탕화면 구조(작업표시줄, 인터넷 연결 상태 확인)<br>• 창 조절 3대 버튼: 최소화, 최대화, 닫기, 이전 크기<br>• 여러 창 겹쳤을 때 활성화하기, 프로그램 전환</td>
+              <td>창 크기 자유 조절 및 인터넷 연결 상태 확인</td>
+            </tr>
+            <tr>
+              <td><strong>3주차</strong><br><span class="lec-soon">준비 중</span></td>
+              <td>파일과 폴더의 개념과 윈도우 탐색기 기초</td>
+              <td>• '파일(종이 서류)'과 '폴더(서류철/방)'의 물리적 비유<br>• 윈도우 탐색기(Win + E) 실행, 내 PC 구조 이해<br>• 새 폴더 만들기(Ctrl+Shift+N), 폴더 이름 바꾸기(F2)</td>
+              <td>바탕화면에 본인 이름 폴더 만들기 자립</td>
+            </tr>
+            <tr>
+              <td><strong>4주차</strong><br><a class="lec-link" href="w4-computer.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>계층형 폴더 트리 구축과 파일 이동/복사/삭제</td>
+              <td>• [문서] ➔ [요양보호일지] ➔ [10월], [11월] 폴더 트리 생성<br>• 파일 복사(Ctrl+C), 잘라내기(Ctrl+X), 붙여넣기(Ctrl+V)<br>• 파일 삭제(Delete)와 휴지통 복원, 비우기</td>
+              <td>하위 2단계 폴더 트리 생성 및 파일 이동</td>
+            </tr>
+            <tr>
+              <td><strong>5주차</strong><br><a class="lec-link" href="w5-computer.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>파일 종류(확장자), 크기 확인 및 저장 위치(경로) 찾기</td>
+              <td>• 문서(.hwp, .docx), 그림(.jpg, .png), PDF(.pdf) 아이콘 식별<br>• 파일 크기와 수정한 날짜 확인<br>• [경로 훈련]: 주소표시줄 읽기 및 추적법</td>
+              <td>주소표시줄 경로 확인 및 파일 종류 구분</td>
+            </tr>
+            <tr>
+              <td><strong>6주차</strong><br><a class="lec-link" href="w6-computer.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>외장 저장장치(USB) 폴더 백업 및 안전 제거 종합실습</td>
+              <td>• 6차시 종합평가를 위한 폴더 생성 및 USB 인식<br>• 작성 완료된 최종 결과물 폴더 통째로 USB로 복사<br>• 작업표시줄 '하드웨어 안전하게 제거' 및 과제 담아가기</td>
+              <td>USB 폴더 백업 및 안전 분리 100% 성공</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="syllabus-sec" id="curri2">
+      <div class="badge">CURRICULUM 2 (매주 2교시 / 총 6시간)</div>
+      <h2>
+        <span data-lang="ko">⌨️ 한글 타자 촉지법(Touch Typing) 및 한컴타자 단계별 훈련 교안</span>
+        <span data-lang="my">⌨️ ကိုရီးယား လက်ရိုက် (Touch Typing) နှင့် Hancom Typing အဆင့်ဆင့် လေ့ကျင့်မှု သင်ရိုး</span>
+        <span data-lang="vi">⌨️ Giáo Án 2: Luyện Gõ Hangul Chuẩn (Touch Typing) & Hancom Typing Từng Bước</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:12%"><span data-lang="ko">주차</span><span data-lang="my">ရက်သတ္တပတ်</span><span data-lang="vi">Tuần</span></th>
+              <th style="width:28%"><span data-lang="ko">타자 훈련 단계</span><span data-lang="my">လက်ရိုက် လေ့ကျင့်မှု အဆင့်</span><span data-lang="vi">Giai đoạn luyện gõ</span></th>
+              <th style="width:40%"><span data-lang="ko">운지법 및 실습 내용</span><span data-lang="my">လက်ချောင်းနေရာနှင့် လေ့ကျင့်မည့် အကြောင်းအရာ</span><span data-lang="vi">Cách đặt ngón & Nội dung</span></th>
+              <th style="width:20%"><span data-lang="ko">목표 및 성취 기준</span><span data-lang="my">ရည်မှန်းချက်နှင့် စံနှုန်း</span><span data-lang="vi">Mục tiêu & Tiêu chuẩn</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1주차</strong><br><a class="lec-link" href="w1-typing.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[자판 마스터] 기본/위/아래/가운데 + 된소리·이중모음</td>
+              <td>• 자판 익히기 완결: F/J 돌기 기준 기본자리<br>• 윗글자/아랫글자 뻗기 각도 및 ㅠ(B) 예외<br>• 한글 자모음 전 과정 운지법 총정리 (Shift 조합 포함)</td>
+              <td>자판 보지 않고 전 자모음 인지</td>
+            </tr>
+            <tr>
+              <td><strong>2주차</strong><br><a class="lec-link" href="w2-typing.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[자리연습 집중] 8개 구역 분할 숙달</td>
+              <td>• 한컴타자 자리연습 8단계 순차 훈련<br>① 기본자리 ② 왼손윗자리 ③ 오른손윗자리 ④ 왼손아랫자리<br>⑤ 오른손아랫자리 ⑥ 가운데자리 ⑦ 전체자리 ⑧ 숫자자리</td>
+              <td>자리연습 전체 정확도 90% 이상</td>
+            </tr>
+            <tr>
+              <td><strong>3주차</strong><br><span class="lec-soon">준비 중</span></td>
+              <td>[자리연습 심화 & 낱말연습] 요양보호 실무 단어</td>
+              <td>• Shift 키를 활용한 된소리/이중모음 복습 및 한컴타자 낱말연습<br>• 요양보호 단어: 어르신, 식사, 기저귀, 칫솔, 턱받침대 등</td>
+              <td>실무 낱말 100타 및 Shift 오타율 5% 이하</td>
+            </tr>
+            <tr>
+              <td><strong>4주차</strong><br><a class="lec-link" href="w4-typing.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[단문연습] 문장부호 및 요양보호 단문</td>
+              <td>• 문장부호: 쉼표(,), 마침표(.), 물음표(?), 느낌표(!), 콜론(:)<br>• 단문연습: "어르신께서 아침 식사를 모두 드셨습니다."</td>
+              <td>단문 정확도 90% 이상 (150타)</td>
+            </tr>
+            <tr>
+              <td><strong>5주차</strong><br><a class="lec-link" href="w5-typing.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[장문연습] 숫자 키열 및 생체징후 복합문</td>
+              <td>• 상단 숫자 자판(1~0) 및 기호(/, %, :)<br>• 장문연습: "09:30 혈압 125/80mmHg, 체온 36.5도 측정 완료"</td>
+              <td>숫자 혼합 실무 문장 180타 달성</td>
+            </tr>
+            <tr>
+              <td><strong>6주차</strong><br><a class="lec-link" href="w6-typing.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[실무 완성] 일지 특이사항 장문 종합 타이핑</td>
+              <td>• [세면도움]: "오실 때 얼굴에 상처가 있어 소독하고 약 발라드림."<br>• [화장실]: "강박이 있어 화장실을 10분에 한 번씩 다니심."</td>
+              <td>종합 타자 200타 이상 (정확도 90%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="syllabus-sec" id="curri3">
+      <div class="badge">CURRICULUM 3 (매주 3교시 / 총 6시간)</div>
+      <h2>
+        <span data-lang="ko">📄 아래아 한글 2020 실무 및 요양보호 일지 표 편집 교안</span>
+        <span data-lang="my">📄 Hangul 2020 စာရွက်စာတမ်းနှင့် စောင့်ရှောက်မှုမှတ်တမ်း ဇယားဖြည့်သွင်းခြင်း သင်ရိုး</span>
+        <span data-lang="vi">📄 Giáo Án 3: Soạn Thảo HWP 2020 & Xử Lý Biểu Mẫu Nhật Ký Chăm Sóc</span>
+      </h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:12%"><span data-lang="ko">주차</span><span data-lang="my">ရက်သတ္တပတ်</span><span data-lang="vi">Tuần</span></th>
+              <th style="width:28%"><span data-lang="ko">핵심 주제</span><span data-lang="my">အဓိက ခေါင်းစဉ်</span><span data-lang="vi">Chủ đề cốt lõi</span></th>
+              <th style="width:40%"><span data-lang="ko">실습 내용 및 표 조작 테크닉</span><span data-lang="my">လေ့ကျင့်မည့် အကြောင်းအရာနှင့် ဇယားပြင်ဆင်နည်း</span><span data-lang="vi">Nội dung thực hành & Kỹ thuật thao tác bảng</span></th>
+              <th style="width:20%"><span data-lang="ko">실습 산출물</span><span data-lang="my">ရရှိလာမည့် ရလဒ်</span><span data-lang="vi">Sản phẩm đầu ra</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1주차</strong><br><a class="lec-link" href="w1-hwp.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>워드프로세서 개념과 아래아한글 화면 기초</td>
+              <td>• 워드프로세서 종류(HWP, Word), 한글 기원(1989) 및 버전<br>• 한글 2020 실행, 커서 확인, 문서 닫기 및 '저장 안 함' 종료</td>
+              <td>한글 2020 기본 환경 익히기</td>
+            </tr>
+            <tr>
+              <td><strong>2주차</strong><br><a class="lec-link" href="w2-hwp.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>양식 파일 불러오기(열기)와 경로별 저장 기초</td>
+              <td>• 공유폴더에 제공한 `기본실습_서식.hwp` 열기(Ctrl + O)<br>• [절대 실수 방지]: 단순 저장 vs 다른 이름으로 저장(Alt + V)<br>• [바탕화면] ➔ [본인이름 폴더]로 저장 위치 변경 훈련</td>
+              <td>지정 폴더에 첫 저장 파일 생성</td>
+            </tr>
+            <tr>
+              <td><strong>3주차</strong><br><span class="lec-soon">준비 중</span></td>
+              <td>표(Table) 내부 탐색과 커서 이동, 텍스트 편집 글쇠</td>
+              <td>• 표의 셀 클릭, 방향키 이동, Tab, Shift+Tab<br>• Backspace(앞 글자 삭제) vs Delete(뒷 글자 삭제)<br>• 실수했을 때 되돌리기(Ctrl + Z) 구급약 훈련</td>
+              <td>표 안에서 칸 이동하며 오타 수정</td>
+            </tr>
+            <tr>
+              <td><strong>4주차</strong><br><a class="lec-link" href="w4-hwp.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>일지 표 다루기 (크기 조절 및 셀 병합/분할)</td>
+              <td>• 마우스로 열 구분선 끌어서 [칸 폭 줄이고 늘이기]<br>• 행 구분선 끌어서 [행 높이 늘이고 줄이기]<br>• 블록 지정(F5) 후: 셀 합치기(M), 나누기(S)</td>
+              <td>서식 표 폭/높이 자유자재 조절</td>
+            </tr>
+            <tr>
+              <td><strong>5주차</strong><br><a class="lec-link" href="w5-hwp.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>특수문자 체크박스 입력과 선임일지 필수규칙</td>
+              <td>• 문자표 삽입(Ctrl+F10): 기호(■, □, ☑, V) 넣기<br>• 필수 규칙: 수행 시간 분 단위 기재, 서명란 확인<br>• 글자 정렬, 굵게(Ctrl+B), 글자색 변경</td>
+              <td>체크박스 및 분 단위 기재 일지 완성</td>
+            </tr>
+            <tr>
+              <td><strong>6주차</strong><br><a class="lec-link" href="w6-hwp.html">📘 <span data-lang="ko">강의자료</span><span data-lang="my">သင်ခန်းစာ</span><span data-lang="vi">Bài giảng</span></a></td>
+              <td>[실전 종합] 일지 모사 및 창작 완성</td>
+              <td>• [모사] 공통 서식을 불러와 인쇄물 그대로 따라 치기<br>• [창작] 빈 양식에 상상력 동원하여 환자 상태 작문하기<br>• 완성된 2개의 파일을 지정 폴더에 저장 후 USB 백업 (제출 없음)</td>
+              <td>실무 일지 2종 독립 산출물 완성</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6주차 상세 시나리오 (수정본 반영) -->
+    <section class="syllabus-sec" id="week6">
+      <div class="badge">FINAL EVALUATION (6주차 실전 종합 평가)</div>
+      <h2>
+        <span data-lang="ko">🏆 6차시 종합 실습 및 평가 시나리오 상세 지침</span>
+        <span data-lang="my">🏆 ၆ ကြိမ်မြောက် နောက်ဆုံး လက်တွေ့စစ်ဆေးမှု လမ်းညွှန်ချက်</span>
+        <span data-lang="vi">🏆 Hướng Dẫn Chi Tiết Đánh Giá Tổng Hợp Tuần 6</span>
+      </h2>
+      
+      <details open>
+        <summary>
+          <span>
+            <span data-lang="ko">1교시 (50분): 컴퓨터 기초 - 파일/폴더 관리 종합 실습</span>
+            <span data-lang="my">၁ ချိန် (၅၀ မိနစ်): ကွန်ပျူတာ အခြေခံ - ဖိုင်/ဖိုဒါ စီမံခန့်ခွဲမှု အလုံးစုံ လက်တွေ့</span>
+            <span data-lang="vi">Tiết 1 (50 phút): Tin học cơ bản - Thực hành tổng hợp quản lý Tệp/Thư mục</span>
+          </span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="fold">
+          <p>
+            <span data-lang="ko">• <strong>과제:</strong> 바탕화면에 <code>[본인이름_기말과제]</code> 새 폴더를 생성하고, 강사의 공유 폴더에서 빈 실습 양식 2개를 찾아 복사(Ctrl+C)한 뒤 내 방으로 가져와 붙여넣기(Ctrl+V) 합니다.</span>
+            <span data-lang="my">• <strong>လုပ်ဆောင်ရန်:</strong> Desktop တွင် <code>[မိမိအမည်_စာမေးပွဲ]</code> ဖိုဒါအသစ် ပြုလုပ်ပြီး၊ ဆရာ၏ Share ဖိုဒါမှ ဖောင်အလွတ် ၂ ခုကို ကူးယူ (Ctrl+C) ကာ မိမိအခန်းသို့ ကူးထည့် (Ctrl+V) ပါ။</span>
+            <span data-lang="vi">• <strong>Nhiệm vụ:</strong> Tạo thư mục mới <code>[Tên_Bạn_ThiCuoiKhoa]</code> trên Desktop, sao chép (Ctrl+C) 2 biểu mẫu trống từ thư mục chia sẻ của giảng viên và dán (Ctrl+V) vào phòng của mình.</span>
+          </p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>
+          <span>
+            <span data-lang="ko">2교시 (50분): 한글 타자 - 요양실무 문장 종합 타자 검정</span>
+            <span data-lang="my">၂ ချိန် (၅၀ မိနစ်): လက်ရိုက် - စောင့်ရှောက်ရေး ဝါကျများ လက်ရိုက်စာမေးပွဲ</span>
+            <span data-lang="vi">Tiết 2 (50 phút): Đánh máy - Kiểm tra gõ câu điều dưỡng thực tế</span>
+          </span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="fold">
+          <p>
+            <span data-lang="ko">• <strong>과제:</strong> 신체활동지원(세면, 목욕, 식사 등) 및 인지관리 상황별로 제공된 특이사항 실무 문장들을 타자 연습하며 눈과 손에 익힙니다. (목표: 200타 이상, 정확도 90%)</span>
+            <span data-lang="my">• <strong>လုပ်ဆောင်ရန်:</strong> ရုပ်ပိုင်းဆိုင်ရာ ကူညီမှု (မျက်နှာသစ်၊ ရေချိုး၊ အစာစား စသည်) နှင့် မှတ်ဉာဏ်ထိန်းသိမ်းမှု အခြေအနေအလိုက် ပေးထားသော လက်တွေ့ဝါကျများကို ရိုက်နှိပ်လေ့ကျင့်ပါ။ (ရည်မှန်းချက်: အမြန်နှုန်း ၂၀၀ အထက်၊ တိကျမှု ၉၀%)</span>
+            <span data-lang="vi">• <strong>Nhiệm vụ:</strong> Luyện gõ các câu thực tế lưu ý đặc biệt theo từng tình huống hỗ trợ thể chất (rửa mặt, tắm, ăn uống...) và quản lý nhận thức để quen mắt quen tay. (Mục tiêu: >200 CPM, chính xác 90%)</span>
+          </p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>
+          <span>
+            <span data-lang="ko">3교시 (50분): 아래아 한글 - 실전 일지 모사 및 창작 작성 후 USB 담아가기</span>
+            <span data-lang="my">၃ ချိန် (၅၀ မိနစ်): Hangul - မှတ်တမ်းပြီးစီးခြင်းနှင့် USB ယူဆောင်သွားခြင်း (တင်ပြရန်မလို)</span>
+            <span data-lang="vi">Tiết 3 (50 phút): Hangul - Mô phỏng & Sáng tạo nhật ký rồi Lưu USB mang về</span>
+          </span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="fold">
+          <p>
+            <span data-lang="ko">• <strong>과제 1 [모사]:</strong> 강사가 제공한 빈 양식을 열어 <code>[20261029_모사_이름.hwp]</code>로 '다른 이름으로 저장'한 후, 인쇄된 예시문(특이사항)을 그대로 똑같이 표 안에 따라 칩니다.</span>
+            <span data-lang="my">• <strong>မစ်ရှင် ၁ [ကူးယူခြင်း]:</strong> ဖောင်အလွတ်ကို ဖွင့်၍ <code>[20261029_ကူးယူ_အမည်.hwp]</code> ဖြင့် Save As လုပ်ပြီး၊ စက္ကူဖြင့်ပေးထားသော ဥပမာဝါကျများကို ဇယားတွင်း အတိအကျ ကူးရိုက်ပါ။</span>
+            <span data-lang="vi">• <strong>Nhiệm vụ 1 [Mô phỏng]:</strong> Mở biểu mẫu trống, Save As thành <code>[20261029_MoPhong_Tên.hwp]</code>, rồi gõ y hệt câu ví dụ trên bản in vào trong bảng.</span>
+          </p>
+          <p>
+            <span data-lang="ko">• <strong>과제 2 [창작]:</strong> 새로운 빈 양식을 열어 <code>[20261029_창작_이름.hwp]</code>로 저장한 뒤, 가상의 환자 상태(치매, 거동불편 등)를 상상하여 관찰 내용과 조치 내용(분 단위 포함)을 스스로 작성해 넣습니다.</span>
+            <span data-lang="my">• <strong>မစ်ရှင် ၂ [ကိုယ်တိုင်ရေး]:</strong> ဖောင်အလွတ်အသစ် ဖွင့်၍ <code>[20261029_ကိုယ်တိုင်ရေး_အမည်.hwp]</code> ဖြင့် သိမ်းပြီး၊ လူနာအခြေအနေကို စိတ်ကူး၍ လေ့လာချက်နှင့် လုပ်ဆောင်ချက် (မိနစ်အပါအဝင်) ကို ကိုယ်တိုင်ရေးပါ။</span>
+            <span data-lang="vi">• <strong>Nhiệm vụ 2 [Sáng tạo]:</strong> Mở biểu mẫu trống mới, lưu thành <code>[20261029_SangTao_Tên.hwp]</code>, tưởng tượng tình trạng bệnh nhân và tự viết nội dung quan sát & thực hiện (gồm cả số phút).</span>
+          </p>
+          <p>
+            <span data-lang="ko">• <strong>과제 3 [USB 백업]:</strong> 작성이 완료된 2개의 파일이 들어있는 내 바탕화면 폴더를 USB에 통째로 복사(백업)합니다. <strong>(※ 강사에게 제출하여 채점받지 않으며, 스스로 실무 자료를 담아가는 것으로 6주 과정을 수료합니다.)</strong></span>
+            <span data-lang="my">• <strong>မစ်ရှင် ၃ [USB ယူဆောင်ခြင်း]:</strong> ရေးသားပြီးသော ဖိုင် ၂ ခုပါသည့် Desktop ရှိ မိမိဖိုဒါကို USB သို့ တစ်ခုလုံး ကူးယူ (Backup) ပါ။ <strong>(※ ဆရာ့ထံ အမှတ်ပေးရန် တင်ပြစရာမလိုဘဲ၊ မိမိဖိုင်ကို ကိုယ်တိုင်ယူဆောင်သွားခြင်းဖြင့် ၆ ပတ် သင်တန်း အောင်မြင်စွာ ပြီးဆုံးပါမည်။)</strong></span>
+            <span data-lang="vi">• <strong>Nhiệm vụ 3 [Lưu USB mang về]:</strong> Sao chép toàn bộ thư mục trên Desktop chứa 2 tệp vừa làm vào USB của bạn. <strong>(※ Không cần nộp cho giảng viên chấm điểm, việc bạn tự lưu tài liệu mang về nhà đánh dấu hoàn thành khóa học 6 tuần.)</strong></span>
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      <svg width="18" height="18" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#102a4c"/><path d="M31 36 Q21 31 10 34 V52 Q21 49 31 54 Z" fill="#f0a83c"/><path d="M33 36 Q43 31 54 34 V52 Q43 49 33 54 Z" fill="#f0a83c"/></svg>
+      <span>Tony's Library · Gather to learn, unfold to teach.</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+function setLang(lang){
+  document.documentElement.setAttribute('data-cur-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  try{ localStorage.setItem('tl-course-lang', lang); }catch(e){}
+}
+
+(function(){
+  var saved = 'ko';
+  try{ localStorage.getItem('tl-course-lang') || 'ko'; }catch(e){}
+  document.documentElement.setAttribute('data-cur-lang', saved);
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('mode');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){ return root.getAttribute('data-theme') === 'dark' || (root.getAttribute('data-theme') !== 'light' && mq.matches); }
+  function paint(){
+    var d = isDark();
+    root.classList.toggle('is-dark', d);
+    btn.setAttribute('aria-label', d ? '밝은 화면으로 보기' : '어두운 화면으로 보기');
+  }
+  try{ var t = localStorage.getItem('tl-theme'); if(t) root.setAttribute('data-theme', t); }catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('tl-theme', next); }catch(e){}
+  });
+
+  var sections = document.querySelectorAll('main.deck section');
+  var navLinks = document.querySelectorAll('aside nav a');
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          if(link.getAttribute('href') === '#' + id){
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-10% 0px -70% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(sec){
+    observer.observe(sec);
+  });
+})();
+</script>
+</body>
+</html>
