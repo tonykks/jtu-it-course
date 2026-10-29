@@ -54,6 +54,7 @@ main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150
 .diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
 .diagram-wrap svg{width:100%;max-width:680px;height:auto}
 .diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
+.diagram-wrap img{width:100%;max-width:680px;height:auto;border-radius:8px;display:block}
 
 .tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
 .warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
@@ -127,4 +128,7 @@ body.book{background:var(--book-bg)}
 .bookwrap h2{font:700 26px/1.4 var(--f-serif);padding-bottom:16px;border-bottom:2px solid currentColor}
 .bookwrap footer{padding-top:16px;margin-top:8px;font:12.5px/1.4 var(--f-sans);letter-spacing:.02em}
 .bookwrap footer .mark{width:16px;height:16px;opacity:.9}
+.bookwrap .fig{margin:0;display:grid;gap:6px}
+.bookwrap .fig img{width:100%;height:auto;display:block;border-radius:8px}
+.bookwrap .fig figcaption{font:13px/1.6 var(--f-sans);color:var(--muted);text-align:center}
 @media (prefers-reduced-motion:reduce){:is(.lesson-card,.intro-card) summary .chev{transition:none}}
