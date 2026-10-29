@@ -79,11 +79,15 @@ html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
 html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
 
 @media(max-width:768px){
-  .shell{grid-template-columns:1fr}
+  .shell{grid-template-columns:minmax(0,1fr)}
+  main.deck{grid-template-columns:minmax(0,1fr)}
   aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
   aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
   .topbar h1{font-size:15px}
 }
+
+/* 표는 넓으면 표 안에서만 옆으로 밀리게 (휴대폰 폭) */
+.tablewrap{overflow-x:auto}
 
 /* 목차를 눌렀을 때 장면 제목이 머리띠에 가리지 않게 (모든 쪽 공통) */
 main.deck section[id]{scroll-margin-top:calc(var(--barh) + 16px)}
