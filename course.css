@@ -98,3 +98,10 @@ padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;t
 font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 .back-home:hover{background:#1561c4}
 @media print{.back-home{display:none}}
+
+/* 바깥 링크 단추 (index에서 옮김: 목차와 1차시 타자에서 함께 씀) */
+.ext-links{display:flex;gap:8px;flex-wrap:wrap}
+.ext-link{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:999px;border:1px solid var(--accent);
+color:var(--accent) !important;font-size:13.5px;font-weight:600;text-decoration:none !important;white-space:nowrap}
+.ext-link:hover{background:var(--accent);color:#fff !important}
+html[data-cur-lang="ko"] .ext-link span[data-lang="ko"],html[data-cur-lang="my"] .ext-link span[data-lang="my"],html[data-cur-lang="vi"] .ext-link span[data-lang="vi"]{display:inline}
