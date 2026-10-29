@@ -5,6 +5,7 @@
   --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
   --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
   --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
+  --f-serif:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
   --barh:64px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -105,3 +106,25 @@ font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-
 color:var(--accent) !important;font-size:13.5px;font-weight:600;text-decoration:none !important;white-space:nowrap}
 .ext-link:hover{background:var(--accent);color:#fff !important}
 html[data-cur-lang="ko"] .ext-link span[data-lang="ko"],html[data-cur-lang="my"] .ext-link span[data-lang="my"],html[data-cur-lang="vi"] .ext-link span[data-lang="vi"]{display:inline}
+
+/* ── 장면 메모(요약 펼치기)·스크립트(자세히 읽기): Tony's Library 견본에서 옮김 ──
+   목차(index)의 details·.fold·.chev는 모양이 없어야 하므로 장면 카드 안과 책 보기 안에만 적용한다 */
+.lesson-card details{border:1px solid var(--line);border-radius:10px;background:var(--fold)}
+.lesson-card summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:13px 16px;font-weight:600}
+.lesson-card summary::-webkit-details-marker{display:none}
+.lesson-card summary .mark{width:22px;height:22px;flex:none}
+.lesson-card summary .chev{margin-left:auto;color:var(--muted);transition:transform .15s}
+.lesson-card details[open] summary .chev{transform:rotate(90deg)}
+.lesson-card .fold{padding:0 16px 14px;display:grid;gap:10px;font-size:16px}
+.lesson-card .more{color:var(--link);font-weight:600;text-decoration:none;width:max-content}
+.lesson-card .more:hover{text-decoration:underline}
+/* 책 보기: 주소가 #read-장면id 이면 발표 화면(.shell)을 숨기고 그 글만 한 단으로 보인다 */
+body.book{background:var(--book-bg)}
+.shell[hidden],.bookwrap[hidden]{display:none}
+.bookwrap{max-width:calc(36em + 32px);margin:0 auto;padding:40px 16px 32px;font:18px/1.95 var(--f-serif);color:var(--book-ink);display:grid;gap:20px}
+.bookwrap .back{font:600 14px var(--f-sans);color:var(--link);text-decoration:none;width:max-content}
+.bookwrap .kicker{font:600 13px/1.4 var(--f-sans);letter-spacing:.1em;color:var(--amber)}
+.bookwrap h2{font:700 26px/1.4 var(--f-serif);padding-bottom:16px;border-bottom:2px solid currentColor}
+.bookwrap footer{padding-top:16px;margin-top:8px;font:12.5px/1.4 var(--f-sans);letter-spacing:.02em}
+.bookwrap footer .mark{width:16px;height:16px;opacity:.9}
+@media (prefers-reduced-motion:reduce){.lesson-card summary .chev{transition:none}}
