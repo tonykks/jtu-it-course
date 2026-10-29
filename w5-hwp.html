@@ -3,94 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>외국인 유학생을 위한 IT 실무 교육</title>
-<style>
-:root{
-  --bar:#102a4c; --bar-fg:#ffffff; --side:#163559; --side-fg:#dce9f9; --side-on:#24507f;
-  --bg:#eef2f7; --card:#fbfcfe; --fold:#f3f7fc; --ink:#1c2f48; --muted:#52647a; --line:#dce5ef;
-  --teal:#007f85; --link:#1561c4; --amber:#a5620a; --book-bg:#fbfaf7; --book-ink:#1f2a40;
-  --accent:#1561c4; --accent-soft:#e3edfb; --warn:#c0603a; --warn-soft:#fdf2e9; --quote-bg:#f6efe2;
-  --f-sans:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕","Noto Sans Myanmar","Pyidaungsu",sans-serif;
-  --barh:64px;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
-  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
-  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
-  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bar:#0a1628; --side:#0d1d35; --side-fg:#cddcf0; --side-on:#1f3d66;
-  --bg:#12223b; --card:#182c4b; --fold:#1e3559; --ink:#e3eaf4; --muted:#a3b3c8; --line:#2a4166;
-  --teal:#5fd0d4; --link:#8fb8ff; --amber:#f0b45a; --book-bg:#14243d; --book-ink:#e4e8f0;
-  --accent:#8fb8ff; --accent-soft:#223e66; --warn:#f09a78; --warn-soft:#34231b; --quote-bg:#2a2f3c; color-scheme:dark}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:15.5px/1.85 var(--f-sans);margin:0;padding:0;word-break:keep-all;overflow-wrap:break-word}
-h1,h2,h3,h4{margin:0;text-wrap:balance}
-p{margin:0}
-.topbar{position:sticky;top:0;z-index:30;height:var(--barh);background:var(--bar);color:var(--bar-fg);display:flex;align-items:center;gap:12px;padding:0 20px;}
-.topbar h1{font:800 18px/1.3 var(--f-sans);color:var(--bar-fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lang-group{display:flex;gap:4px;margin-left:auto;background:rgba(255,255,255,0.12);padding:3px;border-radius:20px;border:1px solid rgba(255,255,255,0.25)}
-.lang-btn{background:transparent;border:none;color:var(--bar-fg);padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .2s}
-.lang-btn.active{background:#fff;color:var(--bar)}
-.mode{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:var(--bar-fg);display:grid;place-items:center;cursor:pointer}
-.mode:hover{background:rgba(255,255,255,.12)}
-.mode svg{width:20px;height:20px}
-.mode .sun{display:none}
-html.is-dark .mode .sun{display:block}
-html.is-dark .mode .moon{display:none}
-
-.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - var(--barh))}
-aside{background:var(--side);color:var(--side-fg);padding:24px 16px;}
-aside nav{position:sticky;top:calc(var(--barh) + 20px);display:grid;gap:6px}
-aside .label{font-size:12px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:8px;text-transform:uppercase}
-aside a{color:var(--side-fg);text-decoration:none;font-size:13.5px;line-height:1.5;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:background .2s}
-aside a:hover{background:rgba(255,255,255,.08)}
-aside a[aria-current]{background:var(--side-on);color:#fff;font-weight:800}
-
-main.deck{padding:28px clamp(16px,4vw,44px);display:grid;gap:26px;max-width:1150px}
-.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px clamp(18px,3vw,34px);display:grid;gap:18px;scroll-margin-top:calc(var(--barh) + 16px)}
-.lesson-card .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:800;width:fit-content}
-.lesson-card h2{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4}
-.lesson-card h3{font-size:17px;font-weight:700;color:var(--teal);margin-top:6px}
-
-.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:14px;margin-top:6px}
-.meta-item{background:var(--bg);padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
-
-.diagram-wrap{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
-.diagram-wrap svg{width:100%;max-width:680px;height:auto}
-.diagram-caption{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
-
-.tip-box{background:var(--fold);border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px}
-.warn-box{background:var(--warn-soft);border-left:4px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;display:grid;gap:6px;font-size:14.5px;color:var(--ink)}
-
-.action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
-.action-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
-.action-card .act-title{font-weight:800;font-size:15px;color:var(--accent);display:flex;align-items:center;gap:6px}
-
-table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
-th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
-th{background:var(--fold);color:var(--ink);font-weight:700}
-.hl-blue{color:var(--primary);font-weight:700}
-.hl-red{color:var(--warn);font-weight:700}
-
-footer{display:flex;justify-content:center;align-items:center;gap:8px;border-top:1px solid var(--line);padding:24px 0 16px;margin-top:20px;font:13px var(--f-sans);color:var(--muted)}
-
-[data-lang]{display:none}
-html[data-cur-lang="ko"] [data-lang="ko"]{display:block}
-html[data-cur-lang="my"] [data-lang="my"]{display:block}
-html[data-cur-lang="vi"] [data-lang="vi"]{display:block}
-span[data-lang]{display:none}
-html[data-cur-lang="ko"] span[data-lang="ko"]{display:inline}
-html[data-cur-lang="my"] span[data-lang="my"]{display:inline}
-html[data-cur-lang="vi"] span[data-lang="vi"]{display:inline}
-
-@media(max-width:768px){
-  .shell{grid-template-columns:1fr}
-  aside nav{position:static;display:flex;overflow-x:auto;padding-bottom:8px}
-  aside nav a{white-space:nowrap;font-size:13px;padding:6px 12px}
-  .topbar h1{font-size:15px}
-}
-</style>
+<title>아래아 한글 실무 5차시: 특수문자와 선임일지 규칙 반영</title>
+<link rel="stylesheet" href="course.css">
 </head>
 <body>
 <header class="topbar">
@@ -411,12 +325,12 @@ function setLang(lang){
     b.classList.remove('active');
   });
   event.target.classList.add('active');
-  try{ localStorage.setItem('tl-course5-lang', lang); }catch(e){}
+  try{ localStorage.setItem('tl-lang', lang); }catch(e){}
 }
 
 (function(){
   var saved = 'ko';
-  try{ saved = localStorage.getItem('tl-course5-lang') || 'ko'; }catch(e){}
+  try{ saved = localStorage.getItem('tl-lang') || 'ko'; }catch(e){}
   document.documentElement.setAttribute('data-cur-lang', saved);
   document.querySelectorAll('.lang-btn').forEach(function(b){
     if(b.textContent.includes(saved === 'ko' ? '한국어' : (saved === 'my' ? 'မြန်မာ' : 'Tiếng Việt'))){
@@ -446,17 +360,35 @@ function setLang(lang){
   var sections = document.querySelectorAll('main.deck section');
   var navLinks = document.querySelectorAll('aside nav a');
 
+  // 목차 표시: 누른 칸에 바로 불을 켜고, 페이지 끝에서는 마지막 칸을 켠다
+  var holdUntil = 0;
+  function markNav(id){
+    navLinks.forEach(function(link){
+      if(link.getAttribute('href') === '#' + id){
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+  navLinks.forEach(function(link){
+    link.addEventListener('click', function(){
+      markNav(link.getAttribute('href').slice(1));
+      holdUntil = Date.now() + 800;
+    });
+  });
+  window.addEventListener('scroll', function(){
+    if(Date.now() < holdUntil || !sections.length) return;
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2){
+      markNav(sections[sections.length - 1].id);
+    }
+  }, {passive: true});
+
   var observer = new IntersectionObserver(function(entries){
+    if(Date.now() < holdUntil) return;
     entries.forEach(function(entry){
       if(entry.isIntersecting){
-        var id = entry.target.id;
-        navLinks.forEach(function(link){
-          if(link.getAttribute('href') === '#' + id){
-            link.setAttribute('aria-current', 'location');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        });
+        markNav(entry.target.id);
       }
     });
   }, {
@@ -471,13 +403,7 @@ function setLang(lang){
 </script>
 
 <!-- return-to-index -->
-<style>
-.back-home{position:fixed;left:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;
-padding:10px 16px;border-radius:999px;background:#102a4c;color:#fff !important;text-decoration:none !important;
-font:600 14px/1 -apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)}
-.back-home:hover{background:#1561c4}
-@media print{.back-home{display:none}}
-</style>
+
 <a class="back-home" href="index.html" aria-label="종합계획표로 돌아가기">&#8592; 종합계획표</a>
 </body>
 </html>
