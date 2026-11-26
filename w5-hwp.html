@@ -3,15 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>아래아 한글 실무 5차시: 특수문자와 선임일지 규칙 반영</title>
+<title>아래아 한글 실무 5차시: 특수문자와 이력서 사진 넣기</title>
 <link rel="stylesheet" href="course.css">
+<style>
+.lesson-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lesson-heading h2{flex:1 1 400px}
+.lesson-heading .ext-link{white-space:normal;max-width:100%}
+.lesson-heading .ext-link:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+</style>
 </head>
 <body>
 <header class="topbar">
   <h1 id="top-title">
-    <span data-lang="ko">아래아 한글 실무 5차시: 특수문자와 선임일지 규칙 반영</span>
-    <span data-lang="my">Hangul လက်တွေ့ (၅) ကြိမ်မြောက်: အထူးသင်္ကေတများနှင့် မှတ်တမ်းစည်းမျဉ်းများ</span>
-    <span data-lang="vi">Thực Hành Hangul Bài 5: Chèn Ký Tự Đặc Biệt & Quy Tắc Nhật Ký</span>
+    <span data-lang="ko">아래아 한글 실무 5차시: 특수문자와 이력서 사진 넣기</span>
+    <span data-lang="my">Hangul လက်တွေ့ (၅) ကြိမ်မြောက်: အထူးသင်္ကေတများနှင့် ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံထည့်ခြင်း</span>
+    <span data-lang="vi">Thực Hành Hangul Bài 5: Chèn Ký Tự Đặc Biệt & Ảnh Sơ Yếu Lý Lịch</span>
   </h1>
   <div class="lang-group">
     <button class="lang-btn active" onclick="setLang('ko')">한국어</button>
@@ -45,11 +51,11 @@
         <span data-lang="my">၂။ အထူးသင်္ကေတ (Checkbox)</span>
         <span data-lang="vi">2. Chèn Ký Tự Đặc Biệt</span>
       </a>
-      <a href="#rules" id="nav-rules">
-        <span>🚨</span>
-        <span data-lang="ko">3. 선임일지 필수 작성 3대 규칙</span>
-        <span data-lang="my">၃။ မှတ်တမ်း မရှိမဖြစ် စည်းမျဉ်း ၃ ခု</span>
-        <span data-lang="vi">3. 3 Quy Tắc Bắt Buộc Nhật Ký</span>
+      <a href="#photo" id="nav-photo">
+        <span>📷</span>
+        <span data-lang="ko">3. 이력서 사진 넣기</span>
+        <span data-lang="my">၃။ ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံထည့်ခြင်း</span>
+        <span data-lang="vi">3. Chèn Ảnh Vào Sơ Yếu Lý Lịch</span>
       </a>
       <a href="#style" id="nav-style">
         <span>🎨</span>
@@ -78,9 +84,9 @@
     <section class="lesson-card" id="intro">
       <div class="badge">LESSON OVERVIEW (15/18)</div>
       <h2>
-        <span data-lang="ko">1. 수업 개요 및 목표: 선임일지 필수규칙 준수 및 특수문자/꾸미기</span>
-        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: မှတ်တမ်းစည်းမျဉ်းများ လိုက်နာခြင်းနှင့် အထူးသင်္ကေတ/စာလုံးပြင်ဆင်ခြင်း</span>
-        <span data-lang="vi">1. Mục Tiêu Bài Học: Tuân Thủ Quy Tắc Nhật Ký & Ký Tự Đặc Biệt/Trang Trí</span>
+        <span data-lang="ko">1. 수업 개요 및 목표: 특수문자·이력서 사진 넣기·꾸미기</span>
+        <span data-lang="my">၁။ သင်ခန်းစာ ရည်ရွယ်ချက်: အထူးသင်္ကေတ·ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံ·စာလုံးပြင်ဆင်ခြင်း</span>
+        <span data-lang="vi">1. Mục Tiêu Bài Học: Ký Tự Đặc Biệt · Ảnh Sơ Yếu Lý Lịch · Trang Trí</span>
       </h2>
       <div class="meta-grid">
         <div class="meta-item">
@@ -100,9 +106,9 @@
         </div>
       </div>
       <p>
-        <span data-lang="ko">요양일지에는 글씨만 쓰는 것이 아니라 체크박스 기호(☑)를 넣어야 할 때가 많습니다. 마지막 5차시에서는 <strong>특수문자 단축키(Ctrl+F10)</strong>를 배워 표 안을 채우고, 2026년 기준 <strong>선임요양보호사 일지의 법적 필수 3대 규칙</strong>을 서식에 정확히 반영하는 훈련을 합니다. 글자를 예쁘게 정렬하고 강조하는 법도 함께 익힙니다.</span>
-        <span data-lang="my">စောင့်ရှောက်ရေးမှတ်တမ်းတွင် စာရေးရုံသာမက Checkbox သင်္ကေတ (☑) ထည့်ရမည့် အချိန်များစွာ ရှိပါသည်။ နောက်ဆုံး ၅ ကြိမ်မြောက်တွင် <strong>အထူးသင်္ကေတ Shortcut (Ctrl+F10)</strong> ဖြင့် ဇယားကို ဖြည့်စွက်ပြီး၊ ၂၀၂၆ စံသတ်မှတ်ချက်အရ <strong>မှတ်တမ်းအတွက် တရားဝင်မရှိမဖြစ် စည်းမျဉ်း ၃ ခု</strong> ကို ဖောင်တွင် တိကျစွာထည့်သွင်းရန် လေ့ကျင့်ပါမည်။ စာသားကို လှပစွာ နေရာချထားခြင်းနှင့် အသားပေးဖော်ပြနည်းကိုပါ သင်ယူပါမည်။</span>
-        <span data-lang="vi">Trong nhật ký điều dưỡng, không chỉ gõ chữ mà bạn còn phải chèn các ký hiệu checkbox (☑). Ở bài 5 cuối cùng này, bạn sẽ học <strong>phím tắt Ký tự đặc biệt (Ctrl+F10)</strong> để điền vào bảng, và thực hành phản ánh chính xác <strong>3 quy tắc pháp lý bắt buộc của Nhật ký điều dưỡng viên</strong> (chuẩn năm 2026) vào biểu mẫu. Bạn cũng sẽ học cách căn lề và nhấn mạnh chữ cho đẹp.</span>
+        <span data-lang="ko">요양일지에는 글씨만 쓰는 것이 아니라 체크박스 기호(☑)를 넣어야 할 때가 많습니다. 마지막 5차시에서는 <strong>특수문자 단축키(Ctrl+F10)</strong>를 배워 표 안을 채우고, <strong>이력서 사진 칸에 사진을 딱 맞게 넣는 법</strong>을 실습합니다. 글자를 예쁘게 정렬하고 강조하는 법도 함께 익힙니다.</span>
+        <span data-lang="my">စောင့်ရှောက်ရေးမှတ်တမ်းတွင် စာရေးရုံသာမက Checkbox သင်္ကေတ (☑) ထည့်ရမည့် အချိန်များစွာ ရှိပါသည်။ နောက်ဆုံး ၅ ကြိမ်မြောက်တွင် <strong>အထူးသင်္ကေတ Shortcut (Ctrl+F10)</strong> ဖြင့် ဇယားကို ဖြည့်စွက်ပြီး၊ <strong>ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံကွက်တွင် ဓာတ်ပုံကို အံဝင်ခွင်ကျ ထည့်နည်း</strong> ကို လေ့ကျင့်ပါမည်။ စာသားကို လှပစွာ နေရာချထားခြင်းနှင့် အသားပေးဖော်ပြနည်းကိုပါ သင်ယူပါမည်။</span>
+        <span data-lang="vi">Trong nhật ký điều dưỡng, không chỉ gõ chữ mà bạn còn phải chèn các ký hiệu checkbox (☑). Ở bài 5 cuối cùng này, bạn sẽ học <strong>phím tắt Ký tự đặc biệt (Ctrl+F10)</strong> để điền vào bảng, và thực hành <strong>chèn ảnh vừa khít vào ô ảnh của sơ yếu lý lịch</strong>. Bạn cũng sẽ học cách căn lề và nhấn mạnh chữ cho đẹp.</span>
       </p>
     </section>
 
@@ -141,46 +147,40 @@
       </div>
     </section>
 
-    <section class="lesson-card" id="rules">
-      <div class="badge">STEP 2: LEGAL RULES</div>
-      <h2>
-        <span data-lang="ko">3. 선임요양보호사 일지 필수 작성 3대 규칙 (2026년 기준)</span>
-        <span data-lang="my">၃။ မှတ်တမ်းအတွက် တရားဝင်မရှိမဖြစ် စည်းမျဉ်း ၃ ခု (၂၀၂၆ စံသတ်မှတ်ချက်)</span>
-        <span data-lang="vi">3. 3 Quy Tắc Pháp Lý Bắt Buộc Ghi Nhật Ký (Chuẩn 2026)</span>
-      </h2>
-      <p>
-        <span data-lang="ko">일지는 법적 증거가 되는 공식 문서입니다. 유튜브 실무 영상에서 강조한 <strong>가장 중요한 3가지 규칙</strong>을 일지에 정확히 입력하는 훈련을 합니다.</span>
-        <span data-lang="my">မှတ်တမ်းသည် တရားဝင် အထောက်အထားဖြစ်သော စာရွက်စာတမ်း ဖြစ်ပါသည်။ YouTube လက်တွေ့ဗီဒီယိုတွင် အလေးထားပြောကြားခဲ့သော <strong>အရေးကြီးဆုံး စည်းမျဉ်း ၃ ခု</strong> ကို မှတ်တမ်းတွင် တိကျစွာ ထည့်သွင်းလေ့ကျင့်ပါမည်။</span>
-        <span data-lang="vi">Nhật ký là tài liệu chính thức có giá trị pháp lý. Chúng ta sẽ thực hành nhập chính xác <strong>3 quy tắc quan trọng nhất</strong> được nhấn mạnh trong video thực tế trên YouTube vào nhật ký.</span>
-      </p>
+    <section class="lesson-card" id="photo">
+      <div class="badge">STEP 2: RESUME PHOTO</div>
+      <div class="lesson-heading">
+        <h2>
+          <span data-lang="ko">3. 이력서 사진, 칸에 딱 맞게 넣기</span>
+          <span data-lang="my">၃။ ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံကို ကွက်ထဲ အံဝင်ခွင်ကျ ထည့်ခြင်း</span>
+          <span data-lang="vi">3. Chèn Ảnh Vừa Khít Vào Ô Ảnh Sơ Yếu Lý Lịch</span>
+        </h2>
+        <a class="ext-link" href="resume-photo-practice.zip" download="이력서_사진넣기_실습.zip">
+          <span aria-hidden="true">⬇</span>
+          <span data-lang="ko">이력서·사진 실습 파일 다운로드 (.zip)</span>
+          <span data-lang="my">ကိုယ်ရေးရာဇဝင်·ဓာတ်ပုံ လေ့ကျင့်ခန်း ဖိုင် ဒေါင်းလုဒ် (.zip)</span>
+          <span data-lang="vi">Tải tệp thực hành sơ yếu lý lịch &amp; ảnh (.zip)</span>
+        </a>
+      </div>
 
-      <div class="warn-box" style="border-left-color:var(--warn); background:var(--warn-soft);">
+      <div class="tip-box">
         <span data-lang="ko">
-          <strong>🚨 3대 필수 규칙 훈련:</strong><br>
-          1. <strong>수행 시간은 무조건 '분 단위'로!</strong><br>
-             (틀린 예: 1시간 30분 ➔ 올바른 예: <code>90분</code>)<br>
-          2. <strong>대상자 실명과 인원수 정확히 명시!</strong><br>
-             (올바른 예: <code>김순자 어르신 등 3명</code>)<br>
-          3. <strong>시설장 서명 확인란 체크!</strong><br>
-             (일지 맨 아래쪽에 <code>장원장 시설장님 서명 완료</code> 등 결재를 올린 기록을 마무리에 넣어야 법적 문서가 완성됩니다.)
+          ① 사진 칸 <strong>우클릭</strong> ➔ <strong>셀 테두리/배경</strong> ➔ <strong>각 셀마다 적용</strong><br>
+          ② <strong>배경</strong> ➔ <strong>그림</strong> 체크 ➔ 사진 파일 선택<br>
+          ③ 채우기 유형 <strong>'크기에 맞추어'</strong> ➔ <strong>선택된 셀</strong> ➔ <strong>설정</strong><br>
+          ④ 사진 위에 남은 <strong>'사 진'</strong> 글자 삭제
         </span>
         <span data-lang="my">
-          <strong>🚨 မရှိမဖြစ် စည်းမျဉ်း ၃ ခု လေ့ကျင့်မှု:</strong><br>
-          ၁။ <strong>ကြာချိန်ကို မဖြစ်မနေ 'မိနစ်' ဖြင့်သာ ရေးပါ!</strong><br>
-             (အမှား: 1 နာရီ 30 မိနစ် ➔ အမှန်: <code>90 မိနစ်</code>)<br>
-          ၂။ <strong>လူနာအမည်နှင့် လူဦးရေကို အတိအကျ ဖော်ပြပါ!</strong><br>
-             (အမှန်: <code>အဘွား Kim Sun-ja အပါအဝင် ၃ ဦး</code>)<br>
-          ၃။ <strong>တာဝန်ခံ လက်မှတ် စစ်ဆေးခြင်း!</strong><br>
-             (မှတ်တမ်းအောက်ဆုံးတွင် <code>တာဝန်ခံ Jang ၏ လက်မှတ် ပြီးစီးသည်</code> စသည်ဖြင့် အတည်ပြုချက်မှတ်တမ်း ထည့်မှသာ တရားဝင်ဖိုင် ဖြစ်မည်။)
+          ① ဓာတ်ပုံကွက်ကို <strong>Right Click</strong> ➔ <strong>셀 테두리/배경</strong> ➔ <strong>각 셀마다 적용</strong><br>
+          ② <strong>배경</strong> ➔ <strong>그림</strong> ကို အမှန်ခြစ် ➔ ဓာတ်ပုံဖိုင် ရွေးပါ<br>
+          ③ 채우기 유형 <strong>'크기에 맞추어'</strong> ➔ <strong>선택된 셀</strong> ➔ <strong>설정</strong><br>
+          ④ ဓာတ်ပုံပေါ်တွင် ကျန်နေသော <strong>'사 진'</strong> စာလုံးကို ဖျက်ပါ
         </span>
         <span data-lang="vi">
-          <strong>🚨 Luyện tập 3 quy tắc bắt buộc:</strong><br>
-          1. <strong>Thời gian thực hiện bắt buộc ghi bằng 'Phút'!</strong><br>
-             (Sai: 1 tiếng 30 phút ➔ Đúng: <code>90 phút</code>)<br>
-          2. <strong>Ghi rõ họ tên và số lượng người!</strong><br>
-             (Đúng: <code>Cụ Kim Sun-ja và 3 người khác</code>)<br>
-          3. <strong>Kiểm tra phần ký tên của Quản lý!</strong><br>
-             (Ở cuối nhật ký phải có dòng ghi nhận trình duyệt như <code>Quản lý Jang đã ký duyệt xong</code> thì mới hoàn thiện văn bản pháp lý.)
+          ① <strong>Nhấp chuột phải</strong> vào ô ảnh ➔ <strong>셀 테두리/배경</strong> ➔ <strong>각 셀마다 적용</strong><br>
+          ② <strong>배경</strong> ➔ tích <strong>그림</strong> ➔ chọn tệp ảnh<br>
+          ③ Kiểu tô <strong>'크기에 맞추어'</strong> ➔ <strong>선택된 셀</strong> ➔ <strong>설정</strong><br>
+          ④ Xóa chữ <strong>'사 진'</strong> còn lại trên ảnh
         </span>
       </div>
     </section>
@@ -284,9 +284,9 @@
             </tr>
             <tr>
               <td>
-                <span data-lang="ko">2. 유튜브 선임일지 규칙에 맞춰, 시간을 '1시간'이 아닌 '60분'으로 분 단위로 정확히 적어넣었다.</span>
-                <span data-lang="my">၂။ YouTube မှတ်တမ်းစည်းမျဉ်းအတိုင်း၊ အချိန်ကို '၁ နာရီ' အစား '၆၀ မိနစ်' ဟု တိကျစွာ ရေးသားခြင်း။</span>
-                <span data-lang="vi">2. Đã tuân thủ quy tắc ghi thời gian bằng phút (VD: Ghi '60 phút' thay vì '1 tiếng') theo chuẩn nhật ký.</span>
+                <span data-lang="ko">2. 이력서 사진 칸에 사진을 '크기에 맞추어' 넣고, 남은 '사 진' 글자를 지웠다.</span>
+                <span data-lang="my">၂။ ကိုယ်ရေးရာဇဝင် ဓာတ်ပုံကွက်တွင် ဓာတ်ပုံကို '크기에 맞추어' ဖြင့် ထည့်ပြီး၊ ကျန်နေသော '사 진' စာလုံးကို ဖျက်ခြင်း။</span>
+                <span data-lang="vi">2. Đã chèn ảnh vào ô ảnh sơ yếu lý lịch bằng '크기에 맞추어' và xóa chữ '사 진' còn lại.</span>
               </td>
               <td style="text-align:center">☑ <span data-lang="ko">통과</span><span data-lang="my">အောင်မြင်</span><span data-lang="vi">Đạt</span></td>
             </tr>
